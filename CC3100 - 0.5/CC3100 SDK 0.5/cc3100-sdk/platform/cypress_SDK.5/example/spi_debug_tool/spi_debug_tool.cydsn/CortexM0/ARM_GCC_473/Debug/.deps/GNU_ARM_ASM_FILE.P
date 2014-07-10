@@ -1,0 +1,4 @@
+C:/Users/X0217454/Desktop/CC31xx/CC3100/CC3100\ SDK/cc3100-sdk/platform/cypress\ cy8ckit-042/example_project_psoc4.0/spi_debug_tool/spi_debug_tool/spi_debug_tool.cydsn/CortexM0/ARM_GCC_473/Debug/CyBootAsmGnu.o : C:/Users/X0217454/Desktop/CC31xx/CC3100/CC3100\ SDK/cc3100-sdk/platform/cypress\ cy8ckit-042/example_project_psoc4.0/spi_debug_tool/spi_debug_tool/spi_debug_tool.cydsn/Generated_Source/PSoC4/CyBootAsmGnu.s 
+
+C:/Users/X0217454/Desktop/CC31xx/CC3100/CC3100\ SDK/cc3100-sdk/platform/cypress\ cy8ckit-042/example_project_psoc4.0/spi_debug_tool/spi_debug_tool/spi_debug_tool.cydsn/Generated_Source/PSoC4/CyBootAsmGnu.s : 
+

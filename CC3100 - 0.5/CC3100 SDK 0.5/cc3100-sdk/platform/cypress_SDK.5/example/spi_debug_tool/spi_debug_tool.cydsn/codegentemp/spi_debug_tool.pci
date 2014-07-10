@@ -1,0 +1,18 @@
+# spi_debug_tool
+# 2014-07-03 08:36:52Z
+
+# IO_2@[IOP=(3)][IoId=(2)] is reserved: SWDDebugEnabled
+dont_use_io iocell 3 2
+# IO_3@[IOP=(3)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 3 3
+set_location "ClockGenBlock" m0s8clockgenblockcell -1 -1 0
+set_io "IRQ_Pin(0)" iocell 0 0
+set_io "LED_BLUE(0)" iocell 0 3
+set_io "LED_GREEN(0)" iocell 0 2
+set_io "\UART_1:rx(0)\" iocell 4 0
+set_io "\UART_1:tx(0)\" iocell 4 1
+set_io "m_miso_pin(0)" iocell 3 1
+set_io "m_mosi_pin(0)" iocell 3 0
+set_io "m_sclk_pin(0)" iocell 0 6
+set_io "m_ss_pin(0)" iocell 3 4
+set_io "nHIB(0)" iocell 3 6

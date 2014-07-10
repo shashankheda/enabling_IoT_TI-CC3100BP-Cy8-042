@@ -1,0 +1,2164 @@
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"main.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	g_testStage
+  18              		.bss
+  19              		.type	g_testStage, %object
+  20              		.size	g_testStage, 1
+  21              	g_testStage:
+  22 0000 00       		.space	1
+  23              		.global	g_irqCounter
+  24 0001 000000   		.align	2
+  25              		.type	g_irqCounter, %object
+  26              		.size	g_irqCounter, 4
+  27              	g_irqCounter:
+  28 0004 00000000 		.space	4
+  29              		.global	TxSeqNum
+  30              		.type	TxSeqNum, %object
+  31              		.size	TxSeqNum, 1
+  32              	TxSeqNum:
+  33 0008 00       		.space	1
+  34 0009 000000   		.section	.text.DiagIrqHandler,"ax",%progbits
+  35              		.align	2
+  36              		.global	DiagIrqHandler
+  37              		.code	16
+  38              		.thumb_func
+  39              		.type	DiagIrqHandler, %function
+  40              	DiagIrqHandler:
+  41              	.LFB0:
+  42              		.file 1 ".\\main.c"
+   1:.\main.c      **** /*
+   2:.\main.c      ****  * main.c - tool to debug the spi interface
+   3:.\main.c      ****  *
+   4:.\main.c      ****  * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
+   5:.\main.c      ****  * 
+   6:.\main.c      ****  * 
+   7:.\main.c      ****  *  Redistribution and use in source and binary forms, with or without 
+   8:.\main.c      ****  *  modification, are permitted provided that the following conditions 
+   9:.\main.c      ****  *  are met:
+  10:.\main.c      ****  *
+  11:.\main.c      ****  *    Redistributions of source code must retain the above copyright 
+  12:.\main.c      ****  *    notice, this list of conditions and the following disclaimer.
+  13:.\main.c      ****  *
+  14:.\main.c      ****  *    Redistributions in binary form must reproduce the above copyright
+  15:.\main.c      ****  *    notice, this list of conditions and the following disclaimer in the 
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 2
+
+
+  16:.\main.c      ****  *    documentation and/or other materials provided with the   
+  17:.\main.c      ****  *    distribution.
+  18:.\main.c      ****  *
+  19:.\main.c      ****  *    Neither the name of Texas Instruments Incorporated nor the names of
+  20:.\main.c      ****  *    its contributors may be used to endorse or promote products derived
+  21:.\main.c      ****  *    from this software without specific prior written permission.
+  22:.\main.c      ****  *
+  23:.\main.c      ****  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+  24:.\main.c      ****  *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+  25:.\main.c      ****  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  26:.\main.c      ****  *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+  27:.\main.c      ****  *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  28:.\main.c      ****  *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+  29:.\main.c      ****  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  30:.\main.c      ****  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  31:.\main.c      ****  *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+  32:.\main.c      ****  *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+  33:.\main.c      ****  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  34:.\main.c      ****  *
+  35:.\main.c      **** */
+  36:.\main.c      **** 
+  37:.\main.c      **** /*
+  38:.\main.c      ****  * Application Name     -   Spi debug tool
+  39:.\main.c      ****  * Application Overview -   This is a sample test application for verifying/validating
+  40:.\main.c      ****  *                          the porting of CC3100 host-driver to a new MCU platform.
+  41:.\main.c      ****  * Application Details  -   http://processors.wiki.ti.com/index.php/CC31xx_SPI_Debug_Tool
+  42:.\main.c      ****  *                          doc\examples\spi_debug_tool.pdf
+  43:.\main.c      ****  */
+  44:.\main.c      **** 
+  45:.\main.c      **** #include "daignostic.h"
+  46:.\main.c      **** #include "user.h"
+  47:.\main.c      **** 
+  48:.\main.c      **** #define APPLICATION_VERSION "1.0.0"
+  49:.\main.c      **** 
+  50:.\main.c      **** #define TEST_SPI_BEGIN                  "Spi Test Begin"
+  51:.\main.c      **** #define TEST_SPI_OPEN_PASSED            "Spi Open Passed"
+  52:.\main.c      **** #define TEST_DEVICE_DISABLE_PASSED      "Device Disable Passed"
+  53:.\main.c      **** #define TEST_DEVICE_ENABLE_PASSED       "Device Enable Passed"
+  54:.\main.c      **** #define TEST_SPI_WRITE_PASSED           "Spi Write Passed"
+  55:.\main.c      **** #define TEST_SPI_READ_PASSED            "Spi Read Passed"
+  56:.\main.c      **** #define TEST_SPI_IRQ_PASSED             "Host IRQ Passed"
+  57:.\main.c      **** #define SPI_TEST_COMPLETED              "Spi Test Completed"
+  58:.\main.c      **** #define SPI_INIT_COMPLETE_READ_PASSED   "Spi Init read complete Passed"
+  59:.\main.c      **** 
+  60:.\main.c      **** #define H2N_SYNC_PATTERN     {0x4321,0x34,0x12}
+  61:.\main.c      **** #define H2N_CNYS_PATTERN     {0x8765,0x78,0x56}
+  62:.\main.c      **** 
+  63:.\main.c      **** #define H2N_DUMMY_PATTERN    0xFFFFFFFF
+  64:.\main.c      **** #define N2H_SYNC_PATTERN     0xABCDDCBA
+  65:.\main.c      **** #define SYNC_PATTERN_LEN     sizeof(UINT32)
+  66:.\main.c      **** 
+  67:.\main.c      **** /* SPI bus issue
+  68:.\main.c      **** *  2 LSB of the N2H_SYNC_PATTERN are for sequence number
+  69:.\main.c      **** *  only in SPI interface
+  70:.\main.c      **** *  support backward sync pattern
+  71:.\main.c      **** */
+  72:.\main.c      **** /* Bits 0..1    - use the 2 LBS for seq num */
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 3
+
+
+  73:.\main.c      **** #define N2H_SYNC_PATTERN_SEQ_NUM_BITS       ((UINT32)0x00000003)
+  74:.\main.c      **** /* Bit  2       - sign that sequence number exists in the sync pattern */
+  75:.\main.c      **** #define N2H_SYNC_PATTERN_SEQ_NUM_EXISTS     ((UINT32)0x00000004)
+  76:.\main.c      **** /* Bits 3..31   - constant SYNC PATTERN */
+  77:.\main.c      **** #define N2H_SYNC_PATTERN_MASK               ((UINT32)0xFFFFFFF8)
+  78:.\main.c      **** /* Bits 7,15,31 - ignore the SPI (8,16,32 bites bus) error bits */
+  79:.\main.c      **** #define N2H_SYNC_SPI_BUGS_MASK   ((UINT32)0x7FFF7F7F) 
+  80:.\main.c      **** #define BUF_SYNC_SPIM(pBuf)      ((*(UINT32 *)(pBuf)) & N2H_SYNC_SPI_BUGS_MASK)
+  81:.\main.c      **** #define N2H_SYNC_SPIM            (N2H_SYNC_PATTERN    & N2H_SYNC_SPI_BUGS_MASK)
+  82:.\main.c      **** 
+  83:.\main.c      **** #define N2H_SYNC_SPIM_WITH_SEQ(TxSeqNum)                                      \
+  84:.\main.c      ****     ((N2H_SYNC_SPIM & N2H_SYNC_PATTERN_MASK) | N2H_SYNC_PATTERN_SEQ_NUM_EXISTS \
+  85:.\main.c      ****     | ((TxSeqNum) & (N2H_SYNC_PATTERN_SEQ_NUM_BITS)))
+  86:.\main.c      ****     
+  87:.\main.c      **** #define MATCH_WOUT_SEQ_NUM(pBuf)   (BUF_SYNC_SPIM(pBuf) == N2H_SYNC_SPIM)
+  88:.\main.c      **** 
+  89:.\main.c      **** #define MATCH_WITH_SEQ_NUM(pBuf, TxSeqNum)                                     \
+  90:.\main.c      ****     (BUF_SYNC_SPIM(pBuf) == (N2H_SYNC_SPIM_WITH_SEQ(TxSeqNum)))
+  91:.\main.c      ****     
+  92:.\main.c      **** #define N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum)                                \
+  93:.\main.c      ****     (                                                                         \
+  94:.\main.c      ****         ((*((UINT32 *)pBuf) & N2H_SYNC_PATTERN_SEQ_NUM_EXISTS) &&             \
+  95:.\main.c      ****             (MATCH_WITH_SEQ_NUM(pBuf, TxSeqNum))) ||                          \
+  96:.\main.c      ****         (!(*((UINT32 *)pBuf) & N2H_SYNC_PATTERN_SEQ_NUM_EXISTS) &&            \
+  97:.\main.c      ****             ( MATCH_WOUT_SEQ_NUM(pBuf)))                                      \
+  98:.\main.c      ****     )
+  99:.\main.c      **** 
+ 100:.\main.c      **** #define SL_OPCODE_DEVICE_INITCOMPLETE                                   0x0008
+ 101:.\main.c      **** 
+ 102:.\main.c      **** #define SUCCESS         0
+ 103:.\main.c      **** 
+ 104:.\main.c      **** typedef unsigned long   UINT32;
+ 105:.\main.c      **** 
+ 106:.\main.c      ****  /* Status values - These are used to set/reset the corresponding bits in a 'status_variable' */
+ 107:.\main.c      **** typedef enum
+ 108:.\main.c      **** {
+ 109:.\main.c      ****     TEST_STAGE_SPI_TEST_BEGIN,
+ 110:.\main.c      ****     TEST_STAGE_SPI_OPEN_PASSED,
+ 111:.\main.c      ****     TEST_STAGE_DISABLE_PASSED,
+ 112:.\main.c      ****     TEST_STAGE_ENABLE_PASSED,
+ 113:.\main.c      ****     TEST_STAGE_SPI_WRITE_PASSED,
+ 114:.\main.c      ****     TEST_STAGE_SPI_READ_PASSED,
+ 115:.\main.c      ****     TEST_STAGE_SPI_IRQ_PASSED,
+ 116:.\main.c      ****     TEST_STAGE_INIT_COMPLETE_READ_PASSED,
+ 117:.\main.c      ****     TEST_STAGE_SPI_TEST_COMPLETE
+ 118:.\main.c      **** }testStage_e;
+ 119:.\main.c      **** 
+ 120:.\main.c      **** typedef struct
+ 121:.\main.c      **** {
+ 122:.\main.c      ****     unsigned short  Short;  
+ 123:.\main.c      ****     unsigned char   Byte1;  
+ 124:.\main.c      ****     unsigned char   Byte2;   
+ 125:.\main.c      **** }_SlSyncPattern_t;
+ 126:.\main.c      **** 
+ 127:.\main.c      **** 
+ 128:.\main.c      **** /*
+ 129:.\main.c      ****  * GLOBAL VARIABLES -- Start
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 4
+
+
+ 130:.\main.c      ****  */
+ 131:.\main.c      **** testStage_e g_testStage = TEST_STAGE_SPI_TEST_BEGIN;
+ 132:.\main.c      **** 
+ 133:.\main.c      **** int g_irqCounter = 0;
+ 134:.\main.c      **** 
+ 135:.\main.c      **** unsigned char TxSeqNum = 0;
+ 136:.\main.c      **** /*
+ 137:.\main.c      ****  * GLOBAL VARIABLES -- End
+ 138:.\main.c      ****  */
+ 139:.\main.c      **** 
+ 140:.\main.c      **** /*
+ 141:.\main.c      ****  * STATIC FUNCTION DEFINITIONS -- Start
+ 142:.\main.c      ****  */
+ 143:.\main.c      **** static int TestSpi();
+ 144:.\main.c      **** static void SetTestStage(testStage_e stage);
+ 145:.\main.c      **** /*
+ 146:.\main.c      ****  * STATIC FUNCTION DEFINITIONS -- End
+ 147:.\main.c      ****  */
+ 148:.\main.c      **** 
+ 149:.\main.c      **** 
+ 150:.\main.c      **** /*!
+ 151:.\main.c      ****     \brief register an interrupt handler for the host IRQ
+ 152:.\main.c      **** 
+ 153:.\main.c      ****     \param[in]      none
+ 154:.\main.c      **** 
+ 155:.\main.c      ****     \return         upon successful registration, the function shall return 0.
+ 156:.\main.c      ****                     Otherwise, -1 shall be returned
+ 157:.\main.c      **** 
+ 158:.\main.c      ****     \sa
+ 159:.\main.c      ****     \note           If there is already registered interrupt handler, the 
+ 160:.\main.c      ****                     function should overwrite the old handler with the new one
+ 161:.\main.c      ****     \warning
+ 162:.\main.c      **** */
+ 163:.\main.c      **** void DiagIrqHandler()
+ 164:.\main.c      **** {
+  43              		.loc 1 164 0
+  44              		.cfi_startproc
+  45 0000 80B5     		push	{r7, lr}
+  46              	.LCFI0:
+  47              		.cfi_def_cfa_offset 8
+  48              		.cfi_offset 7, -8
+  49              		.cfi_offset 14, -4
+  50 0002 00AF     		add	r7, sp, #0
+  51              	.LCFI1:
+  52              		.cfi_def_cfa_register 7
+ 165:.\main.c      ****     g_irqCounter++;
+  53              		.loc 1 165 0
+  54 0004 034B     		ldr	r3, .L2
+  55 0006 1B68     		ldr	r3, [r3]
+  56 0008 5A1C     		add	r2, r3, #1
+  57 000a 024B     		ldr	r3, .L2
+  58 000c 1A60     		str	r2, [r3]
+ 166:.\main.c      **** }
+  59              		.loc 1 166 0
+  60 000e BD46     		mov	sp, r7
+  61              		@ sp needed for prologue
+  62 0010 80BD     		pop	{r7, pc}
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 5
+
+
+  63              	.L3:
+  64 0012 C046     		.align	2
+  65              	.L2:
+  66 0014 00000000 		.word	g_irqCounter
+  67              		.cfi_endproc
+  68              	.LFE0:
+  69              		.size	DiagIrqHandler, .-DiagIrqHandler
+  70              		.section	.text.main,"ax",%progbits
+  71              		.align	2
+  72              		.global	main
+  73              		.code	16
+  74              		.thumb_func
+  75              		.type	main, %function
+  76              	main:
+  77              	.LFB1:
+ 167:.\main.c      **** 
+ 168:.\main.c      **** 
+ 169:.\main.c      **** /*
+ 170:.\main.c      ****  * Application's entry point
+ 171:.\main.c      ****  */
+ 172:.\main.c      **** int main(void)
+ 173:.\main.c      **** {
+  78              		.loc 1 173 0
+  79              		.cfi_startproc
+  80 0000 80B5     		push	{r7, lr}
+  81              	.LCFI2:
+  82              		.cfi_def_cfa_offset 8
+  83              		.cfi_offset 7, -8
+  84              		.cfi_offset 14, -4
+  85 0002 00AF     		add	r7, sp, #0
+  86              	.LCFI3:
+  87              		.cfi_def_cfa_register 7
+ 174:.\main.c      ****     /* Stop WDT and initialize the system-clock of the MCU
+ 175:.\main.c      ****        These functions needs to be implemented in PAL */
+ 176:.\main.c      ****     StopWDT();
+  88              		.loc 1 176 0
+  89 0004 FFF7FEFF 		bl	stopWDT
+ 177:.\main.c      ****     Init_Clk();
+  90              		.loc 1 177 0
+  91 0008 FFF7FEFF 		bl	initClk
+ 178:.\main.c      **** 
+ 179:.\main.c      ****     /* initialize the Application Uart interface */
+ 180:.\main.c      ****     CLI_Configure();
+  92              		.loc 1 180 0
+  93 000c FFF7FEFF 		bl	CLI_Configure
+ 181:.\main.c      **** 
+ 182:.\main.c      ****     TestSpi();
+  94              		.loc 1 182 0
+  95 0010 FFF7FEFF 		bl	TestSpi
+ 183:.\main.c      **** 
+ 184:.\main.c      ****     return 0;
+  96              		.loc 1 184 0
+  97 0014 0023     		mov	r3, #0
+ 185:.\main.c      **** }
+  98              		.loc 1 185 0
+  99 0016 181C     		mov	r0, r3
+ 100 0018 BD46     		mov	sp, r7
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 6
+
+
+ 101              		@ sp needed for prologue
+ 102 001a 80BD     		pop	{r7, pc}
+ 103              		.cfi_endproc
+ 104              	.LFE1:
+ 105              		.size	main, .-main
+ 106              		.section	.rodata
+ 107              		.align	2
+ 108              	.LC4:
+ 109 0000 53706920 		.ascii	"Spi Test Begin\000"
+ 109      54657374 
+ 109      20426567 
+ 109      696E00
+ 110 000f 00       		.align	2
+ 111              	.LC6:
+ 112 0010 0D0A00   		.ascii	"\015\012\000"
+ 113 0013 00       		.align	2
+ 114              	.LC8:
+ 115 0014 53706920 		.ascii	"Spi Open Passed\000"
+ 115      4F70656E 
+ 115      20506173 
+ 115      73656400 
+ 116              		.align	2
+ 117              	.LC10:
+ 118 0024 44657669 		.ascii	"Device Disable Passed\000"
+ 118      63652044 
+ 118      69736162 
+ 118      6C652050 
+ 118      61737365 
+ 119 003a 0000     		.align	2
+ 120              	.LC12:
+ 121 003c 44657669 		.ascii	"Device Enable Passed\000"
+ 121      63652045 
+ 121      6E61626C 
+ 121      65205061 
+ 121      73736564 
+ 122 0051 000000   		.align	2
+ 123              	.LC14:
+ 124 0054 53706920 		.ascii	"Spi Write Passed\000"
+ 124      57726974 
+ 124      65205061 
+ 124      73736564 
+ 124      00
+ 125 0065 000000   		.align	2
+ 126              	.LC16:
+ 127 0068 53706920 		.ascii	"Spi Read Passed\000"
+ 127      52656164 
+ 127      20506173 
+ 127      73656400 
+ 128              		.align	2
+ 129              	.LC18:
+ 130 0078 486F7374 		.ascii	"Host IRQ Passed\000"
+ 130      20495251 
+ 130      20506173 
+ 130      73656400 
+ 131              		.align	2
+ 132              	.LC20:
+ 133 0088 53706920 		.ascii	"Spi Init read complete Passed\000"
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 7
+
+
+ 133      496E6974 
+ 133      20726561 
+ 133      6420636F 
+ 133      6D706C65 
+ 134 00a6 0000     		.align	2
+ 135              	.LC22:
+ 136 00a8 53706920 		.ascii	"Spi Test Completed\000"
+ 136      54657374 
+ 136      20436F6D 
+ 136      706C6574 
+ 136      656400
+ 137 00bb 00       		.align	2
+ 138              	.LC24:
+ 139 00bc 0D0A0D0A 		.ascii	"\015\012\015\012\000"
+ 139      00
+ 140              		.section	.text.SetTestStage,"ax",%progbits
+ 141              		.align	2
+ 142              		.code	16
+ 143              		.thumb_func
+ 144              		.type	SetTestStage, %function
+ 145              	SetTestStage:
+ 146              	.LFB2:
+ 186:.\main.c      **** 
+ 187:.\main.c      **** /*!
+ 188:.\main.c      ****     \brief Update the state machine and write the output on Application UART
+ 189:.\main.c      **** 
+ 190:.\main.c      ****     \param[in]      stage - New state of the application
+ 191:.\main.c      **** 
+ 192:.\main.c      ****     \return         none
+ 193:.\main.c      **** 
+ 194:.\main.c      ****     \warning
+ 195:.\main.c      **** */
+ 196:.\main.c      **** static void SetTestStage(testStage_e stage)
+ 197:.\main.c      **** {
+ 147              		.loc 1 197 0
+ 148              		.cfi_startproc
+ 149 0000 80B5     		push	{r7, lr}
+ 150              	.LCFI4:
+ 151              		.cfi_def_cfa_offset 8
+ 152              		.cfi_offset 7, -8
+ 153              		.cfi_offset 14, -4
+ 154 0002 82B0     		sub	sp, sp, #8
+ 155              	.LCFI5:
+ 156              		.cfi_def_cfa_offset 16
+ 157 0004 00AF     		add	r7, sp, #0
+ 158              	.LCFI6:
+ 159              		.cfi_def_cfa_register 7
+ 160 0006 021C     		mov	r2, r0
+ 161 0008 FB1D     		add	r3, r7, #7
+ 162 000a 1A70     		strb	r2, [r3]
+ 198:.\main.c      ****     g_testStage = stage;
+ 163              		.loc 1 198 0
+ 164 000c 304B     		ldr	r3, .L18
+ 165 000e FA1D     		add	r2, r7, #7
+ 166 0010 1278     		ldrb	r2, [r2]
+ 167 0012 1A70     		strb	r2, [r3]
+ 199:.\main.c      ****     switch(stage)
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 8
+
+
+ 168              		.loc 1 199 0
+ 169 0014 FB1D     		add	r3, r7, #7
+ 170 0016 1B78     		ldrb	r3, [r3]
+ 171 0018 082B     		cmp	r3, #8
+ 172 001a 55D8     		bhi	.L6
+ 173 001c 9A00     		lsl	r2, r3, #2
+ 174 001e 2D4B     		ldr	r3, .L18+4
+ 175 0020 D318     		add	r3, r2, r3
+ 176 0022 1B68     		ldr	r3, [r3]
+ 177 0024 9F46     		mov	pc, r3
+ 178              		.section	.rodata
+ 179 00c1 000000   		.align	2
+ 180              	.L17:
+ 181 00c4 26000000 		.word	.L8
+ 182 00c8 38000000 		.word	.L9
+ 183 00cc 4A000000 		.word	.L10
+ 184 00d0 5C000000 		.word	.L11
+ 185 00d4 6E000000 		.word	.L12
+ 186 00d8 80000000 		.word	.L13
+ 187 00dc 92000000 		.word	.L14
+ 188 00e0 A4000000 		.word	.L15
+ 189 00e4 B6000000 		.word	.L16
+ 190              		.section	.text.SetTestStage
+ 191              	.L8:
+ 200:.\main.c      ****    {
+ 201:.\main.c      ****     case TEST_STAGE_SPI_TEST_BEGIN:
+ 202:.\main.c      ****       UartWrite((unsigned char *)TEST_SPI_BEGIN);
+ 192              		.loc 1 202 0
+ 193 0026 2C4B     		ldr	r3, .L18+8
+ 194 0028 181C     		mov	r0, r3
+ 195 002a FFF7FEFF 		bl	CLI_Write
+ 203:.\main.c      ****       UartWrite((unsigned char *)"\r\n");
+ 196              		.loc 1 203 0
+ 197 002e 2B4B     		ldr	r3, .L18+12
+ 198 0030 181C     		mov	r0, r3
+ 199 0032 FFF7FEFF 		bl	CLI_Write
+ 204:.\main.c      ****       break;
+ 200              		.loc 1 204 0
+ 201 0036 47E0     		b	.L6
+ 202              	.L9:
+ 205:.\main.c      ****     case TEST_STAGE_SPI_OPEN_PASSED:
+ 206:.\main.c      ****       UartWrite((unsigned char *)TEST_SPI_OPEN_PASSED);
+ 203              		.loc 1 206 0
+ 204 0038 294B     		ldr	r3, .L18+16
+ 205 003a 181C     		mov	r0, r3
+ 206 003c FFF7FEFF 		bl	CLI_Write
+ 207:.\main.c      ****       UartWrite((unsigned char *)"\r\n");
+ 207              		.loc 1 207 0
+ 208 0040 264B     		ldr	r3, .L18+12
+ 209 0042 181C     		mov	r0, r3
+ 210 0044 FFF7FEFF 		bl	CLI_Write
+ 208:.\main.c      ****       break;
+ 211              		.loc 1 208 0
+ 212 0048 3EE0     		b	.L6
+ 213              	.L10:
+ 209:.\main.c      ****     case TEST_STAGE_DISABLE_PASSED:
+ 210:.\main.c      ****       UartWrite((unsigned char *)TEST_DEVICE_DISABLE_PASSED);
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 9
+
+
+ 214              		.loc 1 210 0
+ 215 004a 264B     		ldr	r3, .L18+20
+ 216 004c 181C     		mov	r0, r3
+ 217 004e FFF7FEFF 		bl	CLI_Write
+ 211:.\main.c      ****       UartWrite((unsigned char *)"\r\n");
+ 218              		.loc 1 211 0
+ 219 0052 224B     		ldr	r3, .L18+12
+ 220 0054 181C     		mov	r0, r3
+ 221 0056 FFF7FEFF 		bl	CLI_Write
+ 212:.\main.c      ****       break;
+ 222              		.loc 1 212 0
+ 223 005a 35E0     		b	.L6
+ 224              	.L11:
+ 213:.\main.c      ****     case TEST_STAGE_ENABLE_PASSED:
+ 214:.\main.c      ****       UartWrite((unsigned char *)TEST_DEVICE_ENABLE_PASSED);
+ 225              		.loc 1 214 0
+ 226 005c 224B     		ldr	r3, .L18+24
+ 227 005e 181C     		mov	r0, r3
+ 228 0060 FFF7FEFF 		bl	CLI_Write
+ 215:.\main.c      ****       UartWrite((unsigned char *)"\r\n");
+ 229              		.loc 1 215 0
+ 230 0064 1D4B     		ldr	r3, .L18+12
+ 231 0066 181C     		mov	r0, r3
+ 232 0068 FFF7FEFF 		bl	CLI_Write
+ 216:.\main.c      ****       break;
+ 233              		.loc 1 216 0
+ 234 006c 2CE0     		b	.L6
+ 235              	.L12:
+ 217:.\main.c      ****     case TEST_STAGE_SPI_WRITE_PASSED:
+ 218:.\main.c      ****       UartWrite((unsigned char *)TEST_SPI_WRITE_PASSED);
+ 236              		.loc 1 218 0
+ 237 006e 1F4B     		ldr	r3, .L18+28
+ 238 0070 181C     		mov	r0, r3
+ 239 0072 FFF7FEFF 		bl	CLI_Write
+ 219:.\main.c      ****       UartWrite((unsigned char *)"\r\n");
+ 240              		.loc 1 219 0
+ 241 0076 194B     		ldr	r3, .L18+12
+ 242 0078 181C     		mov	r0, r3
+ 243 007a FFF7FEFF 		bl	CLI_Write
+ 220:.\main.c      ****       break;
+ 244              		.loc 1 220 0
+ 245 007e 23E0     		b	.L6
+ 246              	.L13:
+ 221:.\main.c      ****     case TEST_STAGE_SPI_READ_PASSED:
+ 222:.\main.c      ****       UartWrite((unsigned char *)TEST_SPI_READ_PASSED);
+ 247              		.loc 1 222 0
+ 248 0080 1B4B     		ldr	r3, .L18+32
+ 249 0082 181C     		mov	r0, r3
+ 250 0084 FFF7FEFF 		bl	CLI_Write
+ 223:.\main.c      ****       UartWrite((unsigned char *)"\r\n");
+ 251              		.loc 1 223 0
+ 252 0088 144B     		ldr	r3, .L18+12
+ 253 008a 181C     		mov	r0, r3
+ 254 008c FFF7FEFF 		bl	CLI_Write
+ 224:.\main.c      ****       break;
+ 255              		.loc 1 224 0
+ 256 0090 1AE0     		b	.L6
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 10
+
+
+ 257              	.L14:
+ 225:.\main.c      ****     case TEST_STAGE_SPI_IRQ_PASSED:
+ 226:.\main.c      ****       UartWrite((unsigned char *)TEST_SPI_IRQ_PASSED);
+ 258              		.loc 1 226 0
+ 259 0092 184B     		ldr	r3, .L18+36
+ 260 0094 181C     		mov	r0, r3
+ 261 0096 FFF7FEFF 		bl	CLI_Write
+ 227:.\main.c      ****       UartWrite((unsigned char *)"\r\n");
+ 262              		.loc 1 227 0
+ 263 009a 104B     		ldr	r3, .L18+12
+ 264 009c 181C     		mov	r0, r3
+ 265 009e FFF7FEFF 		bl	CLI_Write
+ 228:.\main.c      ****       break;
+ 266              		.loc 1 228 0
+ 267 00a2 11E0     		b	.L6
+ 268              	.L15:
+ 229:.\main.c      ****     case TEST_STAGE_INIT_COMPLETE_READ_PASSED:
+ 230:.\main.c      ****       UartWrite((unsigned char *)SPI_INIT_COMPLETE_READ_PASSED);
+ 269              		.loc 1 230 0
+ 270 00a4 144B     		ldr	r3, .L18+40
+ 271 00a6 181C     		mov	r0, r3
+ 272 00a8 FFF7FEFF 		bl	CLI_Write
+ 231:.\main.c      ****       UartWrite((unsigned char *)"\r\n");
+ 273              		.loc 1 231 0
+ 274 00ac 0B4B     		ldr	r3, .L18+12
+ 275 00ae 181C     		mov	r0, r3
+ 276 00b0 FFF7FEFF 		bl	CLI_Write
+ 232:.\main.c      ****       break;
+ 277              		.loc 1 232 0
+ 278 00b4 08E0     		b	.L6
+ 279              	.L16:
+ 233:.\main.c      ****     case TEST_STAGE_SPI_TEST_COMPLETE:
+ 234:.\main.c      ****       UartWrite((unsigned char *)SPI_TEST_COMPLETED);
+ 280              		.loc 1 234 0
+ 281 00b6 114B     		ldr	r3, .L18+44
+ 282 00b8 181C     		mov	r0, r3
+ 283 00ba FFF7FEFF 		bl	CLI_Write
+ 235:.\main.c      ****       UartWrite((unsigned char *)"\r\n\r\n");
+ 284              		.loc 1 235 0
+ 285 00be 104B     		ldr	r3, .L18+48
+ 286 00c0 181C     		mov	r0, r3
+ 287 00c2 FFF7FEFF 		bl	CLI_Write
+ 236:.\main.c      ****       break;
+ 288              		.loc 1 236 0
+ 289 00c6 C046     		mov	r8, r8
+ 290              	.L6:
+ 237:.\main.c      ****     }
+ 238:.\main.c      **** }
+ 291              		.loc 1 238 0
+ 292 00c8 BD46     		mov	sp, r7
+ 293 00ca 02B0     		add	sp, sp, #8
+ 294              		@ sp needed for prologue
+ 295 00cc 80BD     		pop	{r7, pc}
+ 296              	.L19:
+ 297 00ce C046     		.align	2
+ 298              	.L18:
+ 299 00d0 00000000 		.word	g_testStage
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 11
+
+
+ 300 00d4 C4000000 		.word	.L17
+ 301 00d8 00000000 		.word	.LC4
+ 302 00dc 10000000 		.word	.LC6
+ 303 00e0 14000000 		.word	.LC8
+ 304 00e4 24000000 		.word	.LC10
+ 305 00e8 3C000000 		.word	.LC12
+ 306 00ec 54000000 		.word	.LC14
+ 307 00f0 68000000 		.word	.LC16
+ 308 00f4 78000000 		.word	.LC18
+ 309 00f8 88000000 		.word	.LC20
+ 310 00fc A8000000 		.word	.LC22
+ 311 0100 BC000000 		.word	.LC24
+ 312              		.cfi_endproc
+ 313              	.LFE2:
+ 314              		.size	SetTestStage, .-SetTestStage
+ 315              		.section	.rodata
+ 316              		.align	2
+ 317              	.LC30:
+ 318 00e8 4572726F 		.ascii	"Error in Spi Testing\015\012\000"
+ 318      7220696E 
+ 318      20537069 
+ 318      20546573 
+ 318      74696E67 
+ 319 00ff 00       		.align	2
+ 320              	.LC0:
+ 321 0100 6587     		.short	-30875
+ 322 0102 78       		.byte	120
+ 323 0103 56       		.byte	86
+ 324              		.section	.text.TestSpi,"ax",%progbits
+ 325              		.align	2
+ 326              		.code	16
+ 327              		.thumb_func
+ 328              		.type	TestSpi, %function
+ 329              	TestSpi:
+ 330              	.LFB3:
+ 239:.\main.c      **** 
+ 240:.\main.c      **** /*!
+ 241:.\main.c      ****     \brief Test the spi communication
+ 242:.\main.c      **** 
+ 243:.\main.c      ****     \param[in]      none
+ 244:.\main.c      **** 
+ 245:.\main.c      ****     \return         upon successful, the function shall return 0.
+ 246:.\main.c      ****                     Otherwise, -1 shall be returned
+ 247:.\main.c      **** 
+ 248:.\main.c      ****     \warning
+ 249:.\main.c      **** */
+ 250:.\main.c      **** static int TestSpi()
+ 251:.\main.c      **** {
+ 331              		.loc 1 251 0
+ 332              		.cfi_startproc
+ 333 0000 80B5     		push	{r7, lr}
+ 334              	.LCFI7:
+ 335              		.cfi_def_cfa_offset 8
+ 336              		.cfi_offset 7, -8
+ 337              		.cfi_offset 14, -4
+ 338 0002 86B0     		sub	sp, sp, #24
+ 339              	.LCFI8:
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 12
+
+
+ 340              		.cfi_def_cfa_offset 32
+ 341 0004 00AF     		add	r7, sp, #0
+ 342              	.LCFI9:
+ 343              		.cfi_def_cfa_register 7
+ 252:.\main.c      ****     const _SlSyncPattern_t     H2NCnysPattern = H2N_CNYS_PATTERN;
+ 344              		.loc 1 252 0
+ 345 0006 3A1C     		mov	r2, r7
+ 346 0008 0832     		add	r2, r2, #8
+ 347 000a 8D4B     		ldr	r3, .L38
+ 348 000c 111C     		mov	r1, r2
+ 349 000e 1A1C     		mov	r2, r3
+ 350 0010 0423     		mov	r3, #4
+ 351 0012 081C     		mov	r0, r1
+ 352 0014 111C     		mov	r1, r2
+ 353 0016 1A1C     		mov	r2, r3
+ 354 0018 FFF7FEFF 		bl	memcpy
+ 253:.\main.c      **** 
+ 254:.\main.c      ****     _SlFd_t FD = 0;
+ 355              		.loc 1 254 0
+ 356 001c 0023     		mov	r3, #0
+ 357 001e 3B61     		str	r3, [r7, #16]
+ 255:.\main.c      ****     unsigned int             irqCheck = 0;
+ 358              		.loc 1 255 0
+ 359 0020 0023     		mov	r3, #0
+ 360 0022 FB60     		str	r3, [r7, #12]
+ 256:.\main.c      ****     unsigned char            pBuf[8] = {'\0'};
+ 361              		.loc 1 256 0
+ 362 0024 3B1C     		mov	r3, r7
+ 363 0026 0022     		mov	r2, #0
+ 364 0028 1A60     		str	r2, [r3]
+ 365 002a 0022     		mov	r2, #0
+ 366 002c 5A60     		str	r2, [r3, #4]
+ 257:.\main.c      ****     unsigned char            SyncCnt  = 0;
+ 367              		.loc 1 257 0
+ 368 002e 3B1C     		mov	r3, r7
+ 369 0030 1733     		add	r3, r3, #23
+ 370 0032 0022     		mov	r2, #0
+ 371 0034 1A70     		strb	r2, [r3]
+ 258:.\main.c      ****     unsigned char            ShiftIdx = 0;
+ 372              		.loc 1 258 0
+ 373 0036 3B1C     		mov	r3, r7
+ 374 0038 1633     		add	r3, r3, #22
+ 375 003a 0022     		mov	r2, #0
+ 376 003c 1A70     		strb	r2, [r3]
+ 259:.\main.c      ****   
+ 260:.\main.c      ****     /* Start the state machine */
+ 261:.\main.c      ****     SetTestStage(TEST_STAGE_SPI_TEST_BEGIN);
+ 377              		.loc 1 261 0
+ 378 003e 0020     		mov	r0, #0
+ 379 0040 FFF7FEFF 		bl	SetTestStage
+ 262:.\main.c      ****   
+ 263:.\main.c      ****     /* Initialize the Spi interface */
+ 264:.\main.c      ****     FD = sl_IfOpen(0, 0);
+ 380              		.loc 1 264 0
+ 381 0044 0020     		mov	r0, #0
+ 382 0046 0021     		mov	r1, #0
+ 383 0048 FFF7FEFF 		bl	spi_Open
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 13
+
+
+ 384 004c 031C     		mov	r3, r0
+ 385 004e 3B61     		str	r3, [r7, #16]
+ 265:.\main.c      ****     SetTestStage(TEST_STAGE_SPI_OPEN_PASSED);
+ 386              		.loc 1 265 0
+ 387 0050 0120     		mov	r0, #1
+ 388 0052 FFF7FEFF 		bl	SetTestStage
+ 266:.\main.c      ****   
+ 267:.\main.c      ****     /* Register IRQ handler */
+ 268:.\main.c      ****     sl_IfRegIntHdlr((P_EVENT_HANDLER)DiagIrqHandler, 0);
+ 389              		.loc 1 268 0
+ 390 0056 7B4B     		ldr	r3, .L38+4
+ 391 0058 181C     		mov	r0, r3
+ 392 005a 0021     		mov	r1, #0
+ 393 005c FFF7FEFF 		bl	registerInterruptHandler
+ 269:.\main.c      ****   
+ 270:.\main.c      ****     /*Make Sure that the device is turned off */
+ 271:.\main.c      ****     sl_DeviceDisable();
+ 394              		.loc 1 271 0
+ 395 0060 FFF7FEFF 		bl	CC3100_disable
+ 272:.\main.c      ****     SetTestStage(TEST_STAGE_DISABLE_PASSED);
+ 396              		.loc 1 272 0
+ 397 0064 0220     		mov	r0, #2
+ 398 0066 FFF7FEFF 		bl	SetTestStage
+ 273:.\main.c      ****   
+ 274:.\main.c      ****     /* Save IRQ counter before activating the Device */
+ 275:.\main.c      ****     irqCheck = g_irqCounter;
+ 399              		.loc 1 275 0
+ 400 006a 774B     		ldr	r3, .L38+8
+ 401 006c 1B68     		ldr	r3, [r3]
+ 402 006e FB60     		str	r3, [r7, #12]
+ 276:.\main.c      ****   
+ 277:.\main.c      ****     /* Turn on the device */
+ 278:.\main.c      ****     sl_DeviceEnable();
+ 403              		.loc 1 278 0
+ 404 0070 FFF7FEFF 		bl	CC3100_enable
+ 279:.\main.c      ****     SetTestStage(TEST_STAGE_ENABLE_PASSED);
+ 405              		.loc 1 279 0
+ 406 0074 0320     		mov	r0, #3
+ 407 0076 FFF7FEFF 		bl	SetTestStage
+ 280:.\main.c      ****   
+ 281:.\main.c      ****     /* Wait until we get an increment on IRQ value */
+ 282:.\main.c      ****     while( irqCheck == g_irqCounter )
+ 408              		.loc 1 282 0
+ 409 007a C046     		mov	r8, r8
+ 410              	.L21:
+ 411              		.loc 1 282 0 is_stmt 0 discriminator 1
+ 412 007c 724B     		ldr	r3, .L38+8
+ 413 007e 1B68     		ldr	r3, [r3]
+ 414 0080 1A1C     		mov	r2, r3
+ 415 0082 FB68     		ldr	r3, [r7, #12]
+ 416 0084 9A42     		cmp	r2, r3
+ 417 0086 F9D0     		beq	.L21
+ 283:.\main.c      ****     {
+ 284:.\main.c      ****     }  
+ 285:.\main.c      ****   
+ 286:.\main.c      ****     SetTestStage(TEST_STAGE_SPI_IRQ_PASSED);
+ 418              		.loc 1 286 0 is_stmt 1
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 14
+
+
+ 419 0088 0620     		mov	r0, #6
+ 420 008a FFF7FEFF 		bl	SetTestStage
+ 287:.\main.c      ****   
+ 288:.\main.c      ****     /* Generate the sync pattern for getting the response */
+ 289:.\main.c      ****     sl_IfWrite(FD, (unsigned char *)&H2NCnysPattern, SYNC_PATTERN_LEN);
+ 421              		.loc 1 289 0
+ 422 008e 3A69     		ldr	r2, [r7, #16]
+ 423 0090 3B1C     		mov	r3, r7
+ 424 0092 0833     		add	r3, r3, #8
+ 425 0094 101C     		mov	r0, r2
+ 426 0096 191C     		mov	r1, r3
+ 427 0098 0422     		mov	r2, #4
+ 428 009a FFF7FEFF 		bl	spi_Write
+ 290:.\main.c      ****     SetTestStage(TEST_STAGE_SPI_WRITE_PASSED);
+ 429              		.loc 1 290 0
+ 430 009e 0420     		mov	r0, #4
+ 431 00a0 FFF7FEFF 		bl	SetTestStage
+ 291:.\main.c      ****   
+ 292:.\main.c      ****     /* Read 4 bytes from the Spi */
+ 293:.\main.c      ****     sl_IfRead(FD, &pBuf[0], 4);
+ 432              		.loc 1 293 0
+ 433 00a4 3A69     		ldr	r2, [r7, #16]
+ 434 00a6 3B1C     		mov	r3, r7
+ 435 00a8 101C     		mov	r0, r2
+ 436 00aa 191C     		mov	r1, r3
+ 437 00ac 0422     		mov	r2, #4
+ 438 00ae FFF7FEFF 		bl	spi_Read
+ 294:.\main.c      ****   
+ 295:.\main.c      ****     /* Sync on read pattern */
+ 296:.\main.c      ****     while ( ! N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 439              		.loc 1 296 0
+ 440 00b2 35E0     		b	.L22
+ 441              	.L28:
+ 297:.\main.c      ****     {
+ 298:.\main.c      ****         /* Read next 4 bytes to Low 4 bytes of buffer */
+ 299:.\main.c      ****         if(0 == (SyncCnt % SYNC_PATTERN_LEN))
+ 442              		.loc 1 299 0
+ 443 00b4 3B1C     		mov	r3, r7
+ 444 00b6 1733     		add	r3, r3, #23
+ 445 00b8 1A78     		ldrb	r2, [r3]
+ 446 00ba 0323     		mov	r3, #3
+ 447 00bc 1340     		and	r3, r2
+ 448 00be DBB2     		uxtb	r3, r3
+ 449 00c0 002B     		cmp	r3, #0
+ 450 00c2 07D1     		bne	.L23
+ 300:.\main.c      ****         {
+ 301:.\main.c      ****             sl_IfRead(FD, &pBuf[4], 4);
+ 451              		.loc 1 301 0
+ 452 00c4 3A69     		ldr	r2, [r7, #16]
+ 453 00c6 3B1C     		mov	r3, r7
+ 454 00c8 0433     		add	r3, r3, #4
+ 455 00ca 101C     		mov	r0, r2
+ 456 00cc 191C     		mov	r1, r3
+ 457 00ce 0422     		mov	r2, #4
+ 458 00d0 FFF7FEFF 		bl	spi_Read
+ 459              	.L23:
+ 302:.\main.c      ****         }
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 15
+
+
+ 303:.\main.c      ****      
+ 304:.\main.c      ****         /* Shift Buffer Up for checking if the sync is shifted */
+ 305:.\main.c      ****         for(ShiftIdx = 0; ShiftIdx < 7; ShiftIdx++)
+ 460              		.loc 1 305 0
+ 461 00d4 3B1C     		mov	r3, r7
+ 462 00d6 1633     		add	r3, r3, #22
+ 463 00d8 0022     		mov	r2, #0
+ 464 00da 1A70     		strb	r2, [r3]
+ 465 00dc 11E0     		b	.L24
+ 466              	.L25:
+ 306:.\main.c      ****         {
+ 307:.\main.c      ****             pBuf[ShiftIdx] = pBuf[ShiftIdx+1];
+ 467              		.loc 1 307 0 discriminator 2
+ 468 00de 3B1C     		mov	r3, r7
+ 469 00e0 1633     		add	r3, r3, #22
+ 470 00e2 1B78     		ldrb	r3, [r3]
+ 471 00e4 3A1C     		mov	r2, r7
+ 472 00e6 1632     		add	r2, r2, #22
+ 473 00e8 1278     		ldrb	r2, [r2]
+ 474 00ea 0132     		add	r2, r2, #1
+ 475 00ec 391C     		mov	r1, r7
+ 476 00ee 895C     		ldrb	r1, [r1, r2]
+ 477 00f0 3A1C     		mov	r2, r7
+ 478 00f2 D154     		strb	r1, [r2, r3]
+ 305:.\main.c      ****         for(ShiftIdx = 0; ShiftIdx < 7; ShiftIdx++)
+ 479              		.loc 1 305 0 discriminator 2
+ 480 00f4 3B1C     		mov	r3, r7
+ 481 00f6 1633     		add	r3, r3, #22
+ 482 00f8 3A1C     		mov	r2, r7
+ 483 00fa 1632     		add	r2, r2, #22
+ 484 00fc 1278     		ldrb	r2, [r2]
+ 485 00fe 0132     		add	r2, r2, #1
+ 486 0100 1A70     		strb	r2, [r3]
+ 487              	.L24:
+ 305:.\main.c      ****         for(ShiftIdx = 0; ShiftIdx < 7; ShiftIdx++)
+ 488              		.loc 1 305 0 is_stmt 0 discriminator 1
+ 489 0102 3B1C     		mov	r3, r7
+ 490 0104 1633     		add	r3, r3, #22
+ 491 0106 1B78     		ldrb	r3, [r3]
+ 492 0108 062B     		cmp	r3, #6
+ 493 010a E8D9     		bls	.L25
+ 308:.\main.c      ****         }
+ 309:.\main.c      ****         pBuf[7] = 0;
+ 494              		.loc 1 309 0 is_stmt 1
+ 495 010c 3B1C     		mov	r3, r7
+ 496 010e 0022     		mov	r2, #0
+ 497 0110 DA71     		strb	r2, [r3, #7]
+ 310:.\main.c      ****         SyncCnt++;
+ 498              		.loc 1 310 0
+ 499 0112 3B1C     		mov	r3, r7
+ 500 0114 1733     		add	r3, r3, #23
+ 501 0116 3A1C     		mov	r2, r7
+ 502 0118 1732     		add	r2, r2, #23
+ 503 011a 1278     		ldrb	r2, [r2]
+ 504 011c 0132     		add	r2, r2, #1
+ 505 011e 1A70     		strb	r2, [r3]
+ 506              	.L22:
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 16
+
+
+ 296:.\main.c      ****     while ( ! N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 507              		.loc 1 296 0 discriminator 1
+ 508 0120 3B1C     		mov	r3, r7
+ 509 0122 1A68     		ldr	r2, [r3]
+ 510 0124 0423     		mov	r3, #4
+ 511 0126 1340     		and	r3, r2
+ 512 0128 0CD0     		beq	.L26
+ 296:.\main.c      ****     while ( ! N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 513              		.loc 1 296 0 is_stmt 0 discriminator 3
+ 514 012a 3B1C     		mov	r3, r7
+ 515 012c 1A68     		ldr	r2, [r3]
+ 516 012e 474B     		ldr	r3, .L38+12
+ 517 0130 1A40     		and	r2, r3
+ 518 0132 474B     		ldr	r3, .L38+16
+ 519 0134 1B78     		ldrb	r3, [r3]
+ 520 0136 191C     		mov	r1, r3
+ 521 0138 0323     		mov	r3, #3
+ 522 013a 0B40     		and	r3, r1
+ 523 013c 4549     		ldr	r1, .L38+20
+ 524 013e 0B43     		orr	r3, r1
+ 525 0140 9A42     		cmp	r2, r3
+ 526 0142 0BD0     		beq	.L27
+ 527              	.L26:
+ 296:.\main.c      ****     while ( ! N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 528              		.loc 1 296 0 discriminator 2
+ 529 0144 3B1C     		mov	r3, r7
+ 530 0146 1A68     		ldr	r2, [r3]
+ 531 0148 0423     		mov	r3, #4
+ 532 014a 1340     		and	r3, r2
+ 533 014c B2D1     		bne	.L28
+ 296:.\main.c      ****     while ( ! N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 534              		.loc 1 296 0 discriminator 1
+ 535 014e 3B1C     		mov	r3, r7
+ 536 0150 1A68     		ldr	r2, [r3]
+ 537 0152 3E4B     		ldr	r3, .L38+12
+ 538 0154 1A40     		and	r2, r3
+ 539 0156 404B     		ldr	r3, .L38+24
+ 540 0158 9A42     		cmp	r2, r3
+ 541 015a ABD1     		bne	.L28
+ 542              	.L27:
+ 311:.\main.c      ****     }
+ 312:.\main.c      ****   
+ 313:.\main.c      ****     /*Sync pattern found. If needed, complete number of read bytes to multiple
+ 314:.\main.c      ****     * of 4 (protocol align) */
+ 315:.\main.c      ****     SyncCnt %= SYNC_PATTERN_LEN;
+ 543              		.loc 1 315 0 is_stmt 1
+ 544 015c 3B1C     		mov	r3, r7
+ 545 015e 1733     		add	r3, r3, #23
+ 546 0160 3A1C     		mov	r2, r7
+ 547 0162 1732     		add	r2, r2, #23
+ 548 0164 1178     		ldrb	r1, [r2]
+ 549 0166 0322     		mov	r2, #3
+ 550 0168 0A40     		and	r2, r1
+ 551 016a 1A70     		strb	r2, [r3]
+ 316:.\main.c      ****   
+ 317:.\main.c      ****     if(SyncCnt > 0)
+ 552              		.loc 1 317 0
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 17
+
+
+ 553 016c 3B1C     		mov	r3, r7
+ 554 016e 1733     		add	r3, r3, #23
+ 555 0170 1B78     		ldrb	r3, [r3]
+ 556 0172 002B     		cmp	r3, #0
+ 557 0174 15D0     		beq	.L29
+ 318:.\main.c      ****     {
+ 319:.\main.c      ****         *(UINT32 *)&pBuf[0] = *(UINT32 *)&pBuf[4];
+ 558              		.loc 1 319 0
+ 559 0176 3B1C     		mov	r3, r7
+ 560 0178 3A1C     		mov	r2, r7
+ 561 017a 0432     		add	r2, r2, #4
+ 562 017c 1268     		ldr	r2, [r2]
+ 563 017e 1A60     		str	r2, [r3]
+ 320:.\main.c      ****         sl_IfRead(FD, &pBuf[SYNC_PATTERN_LEN - SyncCnt], SyncCnt);
+ 564              		.loc 1 320 0
+ 565 0180 3969     		ldr	r1, [r7, #16]
+ 566 0182 3B1C     		mov	r3, r7
+ 567 0184 1733     		add	r3, r3, #23
+ 568 0186 1B78     		ldrb	r3, [r3]
+ 569 0188 0422     		mov	r2, #4
+ 570 018a D31A     		sub	r3, r2, r3
+ 571 018c 3A1C     		mov	r2, r7
+ 572 018e D218     		add	r2, r2, r3
+ 573 0190 3B1C     		mov	r3, r7
+ 574 0192 1733     		add	r3, r3, #23
+ 575 0194 1B78     		ldrb	r3, [r3]
+ 576 0196 081C     		mov	r0, r1
+ 577 0198 111C     		mov	r1, r2
+ 578 019a 1A1C     		mov	r2, r3
+ 579 019c FFF7FEFF 		bl	spi_Read
+ 321:.\main.c      ****     }
+ 322:.\main.c      ****     else
+ 323:.\main.c      ****     {
+ 324:.\main.c      ****         sl_IfRead(FD, &pBuf[0], 4);
+ 325:.\main.c      ****     }
+ 326:.\main.c      ****   
+ 327:.\main.c      ****     /* Scan for possible double pattern */
+ 328:.\main.c      ****     while( N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 580              		.loc 1 328 0
+ 581 01a0 0EE0     		b	.L31
+ 582              	.L29:
+ 324:.\main.c      ****         sl_IfRead(FD, &pBuf[0], 4);
+ 583              		.loc 1 324 0
+ 584 01a2 3A69     		ldr	r2, [r7, #16]
+ 585 01a4 3B1C     		mov	r3, r7
+ 586 01a6 101C     		mov	r0, r2
+ 587 01a8 191C     		mov	r1, r3
+ 588 01aa 0422     		mov	r2, #4
+ 589 01ac FFF7FEFF 		bl	spi_Read
+ 590              		.loc 1 328 0
+ 591 01b0 06E0     		b	.L31
+ 592              	.L33:
+ 329:.\main.c      ****     {
+ 330:.\main.c      ****         sl_IfRead(FD, &pBuf[0], SYNC_PATTERN_LEN);
+ 593              		.loc 1 330 0
+ 594 01b2 3A69     		ldr	r2, [r7, #16]
+ 595 01b4 3B1C     		mov	r3, r7
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 18
+
+
+ 596 01b6 101C     		mov	r0, r2
+ 597 01b8 191C     		mov	r1, r3
+ 598 01ba 0422     		mov	r2, #4
+ 599 01bc FFF7FEFF 		bl	spi_Read
+ 600              	.L31:
+ 328:.\main.c      ****     while( N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 601              		.loc 1 328 0 discriminator 1
+ 602 01c0 3B1C     		mov	r3, r7
+ 603 01c2 1A68     		ldr	r2, [r3]
+ 604 01c4 0423     		mov	r3, #4
+ 605 01c6 1340     		and	r3, r2
+ 606 01c8 0CD0     		beq	.L32
+ 328:.\main.c      ****     while( N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 607              		.loc 1 328 0 is_stmt 0 discriminator 2
+ 608 01ca 3B1C     		mov	r3, r7
+ 609 01cc 1A68     		ldr	r2, [r3]
+ 610 01ce 1F4B     		ldr	r3, .L38+12
+ 611 01d0 1A40     		and	r2, r3
+ 612 01d2 1F4B     		ldr	r3, .L38+16
+ 613 01d4 1B78     		ldrb	r3, [r3]
+ 614 01d6 191C     		mov	r1, r3
+ 615 01d8 0323     		mov	r3, #3
+ 616 01da 0B40     		and	r3, r1
+ 617 01dc 1D49     		ldr	r1, .L38+20
+ 618 01de 0B43     		orr	r3, r1
+ 619 01e0 9A42     		cmp	r2, r3
+ 620 01e2 E6D0     		beq	.L33
+ 621              	.L32:
+ 328:.\main.c      ****     while( N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 622              		.loc 1 328 0 discriminator 3
+ 623 01e4 3B1C     		mov	r3, r7
+ 624 01e6 1A68     		ldr	r2, [r3]
+ 625 01e8 0423     		mov	r3, #4
+ 626 01ea 1340     		and	r3, r2
+ 627 01ec 06D1     		bne	.L34
+ 328:.\main.c      ****     while( N2H_SYNC_PATTERN_MATCH(pBuf, TxSeqNum))
+ 628              		.loc 1 328 0 discriminator 1
+ 629 01ee 3B1C     		mov	r3, r7
+ 630 01f0 1A68     		ldr	r2, [r3]
+ 631 01f2 164B     		ldr	r3, .L38+12
+ 632 01f4 1A40     		and	r2, r3
+ 633 01f6 184B     		ldr	r3, .L38+24
+ 634 01f8 9A42     		cmp	r2, r3
+ 635 01fa DAD0     		beq	.L33
+ 636              	.L34:
+ 331:.\main.c      ****     }
+ 332:.\main.c      ****   
+ 333:.\main.c      ****     /* Read the Resp Specific header (4 more bytes) */
+ 334:.\main.c      ****     sl_IfRead(FD, &pBuf[SYNC_PATTERN_LEN], 4);
+ 637              		.loc 1 334 0 is_stmt 1
+ 638 01fc 3A69     		ldr	r2, [r7, #16]
+ 639 01fe 3B1C     		mov	r3, r7
+ 640 0200 0433     		add	r3, r3, #4
+ 641 0202 101C     		mov	r0, r2
+ 642 0204 191C     		mov	r1, r3
+ 643 0206 0422     		mov	r2, #4
+ 644 0208 FFF7FEFF 		bl	spi_Read
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 19
+
+
+ 335:.\main.c      ****     SetTestStage(TEST_STAGE_SPI_READ_PASSED);
+ 645              		.loc 1 335 0
+ 646 020c 0520     		mov	r0, #5
+ 647 020e FFF7FEFF 		bl	SetTestStage
+ 336:.\main.c      ****   
+ 337:.\main.c      ****     /* Check the init complete message opcode */
+ 338:.\main.c      ****     if(SL_OPCODE_DEVICE_INITCOMPLETE != (*(unsigned short*)(pBuf)))
+ 648              		.loc 1 338 0
+ 649 0212 3B1C     		mov	r3, r7
+ 650 0214 1B88     		ldrh	r3, [r3]
+ 651 0216 082B     		cmp	r3, #8
+ 652 0218 06D0     		beq	.L35
+ 339:.\main.c      ****     {
+ 340:.\main.c      ****         UartWrite((unsigned char *)"Error in Spi Testing\r\n");
+ 653              		.loc 1 340 0
+ 654 021a 104B     		ldr	r3, .L38+28
+ 655 021c 181C     		mov	r0, r3
+ 656 021e FFF7FEFF 		bl	CLI_Write
+ 341:.\main.c      ****         return -1; /* failed to read init complete */
+ 657              		.loc 1 341 0
+ 658 0222 0123     		mov	r3, #1
+ 659 0224 5B42     		neg	r3, r3
+ 660 0226 06E0     		b	.L37
+ 661              	.L35:
+ 342:.\main.c      ****     }
+ 343:.\main.c      ****   
+ 344:.\main.c      ****     SetTestStage(TEST_STAGE_INIT_COMPLETE_READ_PASSED);
+ 662              		.loc 1 344 0
+ 663 0228 0720     		mov	r0, #7
+ 664 022a FFF7FEFF 		bl	SetTestStage
+ 345:.\main.c      ****     SetTestStage(TEST_STAGE_SPI_TEST_COMPLETE);
+ 665              		.loc 1 345 0
+ 666 022e 0820     		mov	r0, #8
+ 667 0230 FFF7FEFF 		bl	SetTestStage
+ 346:.\main.c      ****   
+ 347:.\main.c      ****     return SUCCESS;
+ 668              		.loc 1 347 0
+ 669 0234 0023     		mov	r3, #0
+ 670              	.L37:
+ 348:.\main.c      **** }
+ 671              		.loc 1 348 0
+ 672 0236 181C     		mov	r0, r3
+ 673 0238 BD46     		mov	sp, r7
+ 674 023a 06B0     		add	sp, sp, #24
+ 675              		@ sp needed for prologue
+ 676 023c 80BD     		pop	{r7, pc}
+ 677              	.L39:
+ 678 023e C046     		.align	2
+ 679              	.L38:
+ 680 0240 00010000 		.word	.LC0
+ 681 0244 00000000 		.word	DiagIrqHandler
+ 682 0248 00000000 		.word	g_irqCounter
+ 683 024c 7F7FFF7F 		.word	2147450751
+ 684 0250 00000000 		.word	TxSeqNum
+ 685 0254 3C5CCD2B 		.word	734878780
+ 686 0258 3A5CCD2B 		.word	734878778
+ 687 025c E8000000 		.word	.LC30
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 20
+
+
+ 688              		.cfi_endproc
+ 689              	.LFE3:
+ 690              		.size	TestSpi, .-TestSpi
+ 691              		.text
+ 692              	.Letext0:
+ 693              		.file 2 "..\\..\\../board.h"
+ 694              		.section	.debug_info,"",%progbits
+ 695              	.Ldebug_info0:
+ 696 0000 41020000 		.4byte	0x241
+ 697 0004 0200     		.2byte	0x2
+ 698 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 699 000a 04       		.byte	0x4
+ 700 000b 01       		.uleb128 0x1
+ 701 000c B3020000 		.4byte	.LASF37
+ 702 0010 01       		.byte	0x1
+ 703 0011 A9010000 		.4byte	.LASF38
+ 704 0015 03010000 		.4byte	.LASF39
+ 705 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 706 001d 00000000 		.4byte	0
+ 707 0021 00000000 		.4byte	0
+ 708 0025 00000000 		.4byte	.Ldebug_line0
+ 709 0029 02       		.uleb128 0x2
+ 710 002a 01       		.byte	0x1
+ 711 002b 06       		.byte	0x6
+ 712 002c 13030000 		.4byte	.LASF0
+ 713 0030 02       		.uleb128 0x2
+ 714 0031 01       		.byte	0x1
+ 715 0032 08       		.byte	0x8
+ 716 0033 A5000000 		.4byte	.LASF1
+ 717 0037 02       		.uleb128 0x2
+ 718 0038 02       		.byte	0x2
+ 719 0039 05       		.byte	0x5
+ 720 003a A9020000 		.4byte	.LASF2
+ 721 003e 02       		.uleb128 0x2
+ 722 003f 02       		.byte	0x2
+ 723 0040 07       		.byte	0x7
+ 724 0041 D6000000 		.4byte	.LASF3
+ 725 0045 02       		.uleb128 0x2
+ 726 0046 04       		.byte	0x4
+ 727 0047 05       		.byte	0x5
+ 728 0048 FC020000 		.4byte	.LASF4
+ 729 004c 02       		.uleb128 0x2
+ 730 004d 04       		.byte	0x4
+ 731 004e 07       		.byte	0x7
+ 732 004f B3000000 		.4byte	.LASF5
+ 733 0053 02       		.uleb128 0x2
+ 734 0054 08       		.byte	0x8
+ 735 0055 05       		.byte	0x5
+ 736 0056 5E020000 		.4byte	.LASF6
+ 737 005a 02       		.uleb128 0x2
+ 738 005b 08       		.byte	0x8
+ 739 005c 07       		.byte	0x7
+ 740 005d FB010000 		.4byte	.LASF7
+ 741 0061 03       		.uleb128 0x3
+ 742 0062 04       		.byte	0x4
+ 743 0063 05       		.byte	0x5
+ 744 0064 696E7400 		.ascii	"int\000"
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 21
+
+
+ 745 0068 02       		.uleb128 0x2
+ 746 0069 04       		.byte	0x4
+ 747 006a 07       		.byte	0x7
+ 748 006b 5E000000 		.4byte	.LASF8
+ 749 006f 04       		.uleb128 0x4
+ 750 0070 1F030000 		.4byte	.LASF11
+ 751 0074 02       		.byte	0x2
+ 752 0075 35       		.byte	0x35
+ 753 0076 7A000000 		.4byte	0x7a
+ 754 007a 05       		.uleb128 0x5
+ 755 007b 04       		.byte	0x4
+ 756 007c 80000000 		.4byte	0x80
+ 757 0080 06       		.uleb128 0x6
+ 758 0081 01       		.byte	0x1
+ 759 0082 8C000000 		.4byte	0x8c
+ 760 0086 07       		.uleb128 0x7
+ 761 0087 8C000000 		.4byte	0x8c
+ 762 008b 00       		.byte	0
+ 763 008c 08       		.uleb128 0x8
+ 764 008d 04       		.byte	0x4
+ 765 008e 02       		.uleb128 0x2
+ 766 008f 04       		.byte	0x4
+ 767 0090 07       		.byte	0x7
+ 768 0091 39020000 		.4byte	.LASF9
+ 769 0095 02       		.uleb128 0x2
+ 770 0096 01       		.byte	0x1
+ 771 0097 08       		.byte	0x8
+ 772 0098 7B020000 		.4byte	.LASF10
+ 773 009c 04       		.uleb128 0x4
+ 774 009d 9A020000 		.4byte	.LASF12
+ 775 00a1 01       		.byte	0x1
+ 776 00a2 68       		.byte	0x68
+ 777 00a3 4C000000 		.4byte	0x4c
+ 778 00a7 09       		.uleb128 0x9
+ 779 00a8 01       		.byte	0x1
+ 780 00a9 01       		.byte	0x1
+ 781 00aa 6C       		.byte	0x6c
+ 782 00ab E6000000 		.4byte	0xe6
+ 783 00af 0A       		.uleb128 0xa
+ 784 00b0 80020000 		.4byte	.LASF13
+ 785 00b4 00       		.sleb128 0
+ 786 00b5 0A       		.uleb128 0xa
+ 787 00b6 E0010000 		.4byte	.LASF14
+ 788 00ba 01       		.sleb128 1
+ 789 00bb 0A       		.uleb128 0xa
+ 790 00bc 44000000 		.4byte	.LASF15
+ 791 00c0 02       		.sleb128 2
+ 792 00c1 0A       		.uleb128 0xa
+ 793 00c2 8C000000 		.4byte	.LASF16
+ 794 00c6 03       		.sleb128 3
+ 795 00c7 0A       		.uleb128 0xa
+ 796 00c8 42020000 		.4byte	.LASF17
+ 797 00cc 04       		.sleb128 4
+ 798 00cd 0A       		.uleb128 0xa
+ 799 00ce 8E010000 		.4byte	.LASF18
+ 800 00d2 05       		.sleb128 5
+ 801 00d3 0A       		.uleb128 0xa
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 22
+
+
+ 802 00d4 E9000000 		.4byte	.LASF19
+ 803 00d8 06       		.sleb128 6
+ 804 00d9 0A       		.uleb128 0xa
+ 805 00da 09000000 		.4byte	.LASF20
+ 806 00de 07       		.sleb128 7
+ 807 00df 0A       		.uleb128 0xa
+ 808 00e0 B2010000 		.4byte	.LASF21
+ 809 00e4 08       		.sleb128 8
+ 810 00e5 00       		.byte	0
+ 811 00e6 04       		.uleb128 0x4
+ 812 00e7 6B000000 		.4byte	.LASF22
+ 813 00eb 01       		.byte	0x1
+ 814 00ec 76       		.byte	0x76
+ 815 00ed A7000000 		.4byte	0xa7
+ 816 00f1 0B       		.uleb128 0xb
+ 817 00f2 04       		.byte	0x4
+ 818 00f3 01       		.byte	0x1
+ 819 00f4 78       		.byte	0x78
+ 820 00f5 24010000 		.4byte	0x124
+ 821 00f9 0C       		.uleb128 0xc
+ 822 00fa 05030000 		.4byte	.LASF23
+ 823 00fe 01       		.byte	0x1
+ 824 00ff 7A       		.byte	0x7a
+ 825 0100 3E000000 		.4byte	0x3e
+ 826 0104 02       		.byte	0x2
+ 827 0105 23       		.byte	0x23
+ 828 0106 00       		.uleb128 0
+ 829 0107 0C       		.uleb128 0xc
+ 830 0108 D4010000 		.4byte	.LASF24
+ 831 010c 01       		.byte	0x1
+ 832 010d 7B       		.byte	0x7b
+ 833 010e 30000000 		.4byte	0x30
+ 834 0112 02       		.byte	0x2
+ 835 0113 23       		.byte	0x23
+ 836 0114 02       		.uleb128 0x2
+ 837 0115 0C       		.uleb128 0xc
+ 838 0116 DA010000 		.4byte	.LASF25
+ 839 011a 01       		.byte	0x1
+ 840 011b 7C       		.byte	0x7c
+ 841 011c 30000000 		.4byte	0x30
+ 842 0120 02       		.byte	0x2
+ 843 0121 23       		.byte	0x23
+ 844 0122 03       		.uleb128 0x3
+ 845 0123 00       		.byte	0
+ 846 0124 04       		.uleb128 0x4
+ 847 0125 C5000000 		.4byte	.LASF26
+ 848 0129 01       		.byte	0x1
+ 849 012a 7D       		.byte	0x7d
+ 850 012b F1000000 		.4byte	0xf1
+ 851 012f 0D       		.uleb128 0xd
+ 852 0130 01       		.byte	0x1
+ 853 0131 77000000 		.4byte	.LASF40
+ 854 0135 01       		.byte	0x1
+ 855 0136 A3       		.byte	0xa3
+ 856 0137 00000000 		.4byte	.LFB0
+ 857 013b 18000000 		.4byte	.LFE0
+ 858 013f 00000000 		.4byte	.LLST0
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 23
+
+
+ 859 0143 01       		.byte	0x1
+ 860 0144 0E       		.uleb128 0xe
+ 861 0145 01       		.byte	0x1
+ 862 0146 CF010000 		.4byte	.LASF41
+ 863 014a 01       		.byte	0x1
+ 864 014b AC       		.byte	0xac
+ 865 014c 01       		.byte	0x1
+ 866 014d 61000000 		.4byte	0x61
+ 867 0151 00000000 		.4byte	.LFB1
+ 868 0155 1C000000 		.4byte	.LFE1
+ 869 0159 2C000000 		.4byte	.LLST1
+ 870 015d 01       		.byte	0x1
+ 871 015e 0F       		.uleb128 0xf
+ 872 015f 23020000 		.4byte	.LASF27
+ 873 0163 01       		.byte	0x1
+ 874 0164 C4       		.byte	0xc4
+ 875 0165 01       		.byte	0x1
+ 876 0166 00000000 		.4byte	.LFB2
+ 877 016a 04010000 		.4byte	.LFE2
+ 878 016e 58000000 		.4byte	.LLST2
+ 879 0172 01       		.byte	0x1
+ 880 0173 86010000 		.4byte	0x186
+ 881 0177 10       		.uleb128 0x10
+ 882 0178 86000000 		.4byte	.LASF42
+ 883 017c 01       		.byte	0x1
+ 884 017d C4       		.byte	0xc4
+ 885 017e E6000000 		.4byte	0xe6
+ 886 0182 02       		.byte	0x2
+ 887 0183 91       		.byte	0x91
+ 888 0184 77       		.sleb128 -9
+ 889 0185 00       		.byte	0
+ 890 0186 11       		.uleb128 0x11
+ 891 0187 0B030000 		.4byte	.LASF28
+ 892 018b 01       		.byte	0x1
+ 893 018c FA       		.byte	0xfa
+ 894 018d 61000000 		.4byte	0x61
+ 895 0191 00000000 		.4byte	.LFB3
+ 896 0195 60020000 		.4byte	.LFE3
+ 897 0199 90000000 		.4byte	.LLST3
+ 898 019d 01       		.byte	0x1
+ 899 019e F9010000 		.4byte	0x1f9
+ 900 01a2 12       		.uleb128 0x12
+ 901 01a3 6C020000 		.4byte	.LASF29
+ 902 01a7 01       		.byte	0x1
+ 903 01a8 FC       		.byte	0xfc
+ 904 01a9 F9010000 		.4byte	0x1f9
+ 905 01ad 02       		.byte	0x2
+ 906 01ae 91       		.byte	0x91
+ 907 01af 68       		.sleb128 -24
+ 908 01b0 13       		.uleb128 0x13
+ 909 01b1 464400   		.ascii	"FD\000"
+ 910 01b4 01       		.byte	0x1
+ 911 01b5 FE       		.byte	0xfe
+ 912 01b6 61000000 		.4byte	0x61
+ 913 01ba 02       		.byte	0x2
+ 914 01bb 91       		.byte	0x91
+ 915 01bc 70       		.sleb128 -16
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 24
+
+
+ 916 01bd 12       		.uleb128 0x12
+ 917 01be 00000000 		.4byte	.LASF30
+ 918 01c2 01       		.byte	0x1
+ 919 01c3 FF       		.byte	0xff
+ 920 01c4 68000000 		.4byte	0x68
+ 921 01c8 02       		.byte	0x2
+ 922 01c9 91       		.byte	0x91
+ 923 01ca 6C       		.sleb128 -20
+ 924 01cb 14       		.uleb128 0x14
+ 925 01cc 1E020000 		.4byte	.LASF31
+ 926 01d0 01       		.byte	0x1
+ 927 01d1 0001     		.2byte	0x100
+ 928 01d3 FE010000 		.4byte	0x1fe
+ 929 01d7 02       		.byte	0x2
+ 930 01d8 91       		.byte	0x91
+ 931 01d9 60       		.sleb128 -32
+ 932 01da 14       		.uleb128 0x14
+ 933 01db A1020000 		.4byte	.LASF32
+ 934 01df 01       		.byte	0x1
+ 935 01e0 0101     		.2byte	0x101
+ 936 01e2 30000000 		.4byte	0x30
+ 937 01e6 02       		.byte	0x2
+ 938 01e7 91       		.byte	0x91
+ 939 01e8 77       		.sleb128 -9
+ 940 01e9 14       		.uleb128 0x14
+ 941 01ea 30020000 		.4byte	.LASF33
+ 942 01ee 01       		.byte	0x1
+ 943 01ef 0201     		.2byte	0x102
+ 944 01f1 30000000 		.4byte	0x30
+ 945 01f5 02       		.byte	0x2
+ 946 01f6 91       		.byte	0x91
+ 947 01f7 76       		.sleb128 -10
+ 948 01f8 00       		.byte	0
+ 949 01f9 15       		.uleb128 0x15
+ 950 01fa 24010000 		.4byte	0x124
+ 951 01fe 16       		.uleb128 0x16
+ 952 01ff 30000000 		.4byte	0x30
+ 953 0203 0E020000 		.4byte	0x20e
+ 954 0207 17       		.uleb128 0x17
+ 955 0208 8E000000 		.4byte	0x8e
+ 956 020c 07       		.byte	0x7
+ 957 020d 00       		.byte	0
+ 958 020e 18       		.uleb128 0x18
+ 959 020f 12020000 		.4byte	.LASF34
+ 960 0213 01       		.byte	0x1
+ 961 0214 83       		.byte	0x83
+ 962 0215 E6000000 		.4byte	0xe6
+ 963 0219 01       		.byte	0x1
+ 964 021a 05       		.byte	0x5
+ 965 021b 03       		.byte	0x3
+ 966 021c 00000000 		.4byte	g_testStage
+ 967 0220 18       		.uleb128 0x18
+ 968 0221 37000000 		.4byte	.LASF35
+ 969 0225 01       		.byte	0x1
+ 970 0226 85       		.byte	0x85
+ 971 0227 61000000 		.4byte	0x61
+ 972 022b 01       		.byte	0x1
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 25
+
+
+ 973 022c 05       		.byte	0x5
+ 974 022d 03       		.byte	0x3
+ 975 022e 00000000 		.4byte	g_irqCounter
+ 976 0232 18       		.uleb128 0x18
+ 977 0233 2E000000 		.4byte	.LASF36
+ 978 0237 01       		.byte	0x1
+ 979 0238 87       		.byte	0x87
+ 980 0239 30000000 		.4byte	0x30
+ 981 023d 01       		.byte	0x1
+ 982 023e 05       		.byte	0x5
+ 983 023f 03       		.byte	0x3
+ 984 0240 00000000 		.4byte	TxSeqNum
+ 985 0244 00       		.byte	0
+ 986              		.section	.debug_abbrev,"",%progbits
+ 987              	.Ldebug_abbrev0:
+ 988 0000 01       		.uleb128 0x1
+ 989 0001 11       		.uleb128 0x11
+ 990 0002 01       		.byte	0x1
+ 991 0003 25       		.uleb128 0x25
+ 992 0004 0E       		.uleb128 0xe
+ 993 0005 13       		.uleb128 0x13
+ 994 0006 0B       		.uleb128 0xb
+ 995 0007 03       		.uleb128 0x3
+ 996 0008 0E       		.uleb128 0xe
+ 997 0009 1B       		.uleb128 0x1b
+ 998 000a 0E       		.uleb128 0xe
+ 999 000b 55       		.uleb128 0x55
+ 1000 000c 06       		.uleb128 0x6
+ 1001 000d 11       		.uleb128 0x11
+ 1002 000e 01       		.uleb128 0x1
+ 1003 000f 52       		.uleb128 0x52
+ 1004 0010 01       		.uleb128 0x1
+ 1005 0011 10       		.uleb128 0x10
+ 1006 0012 06       		.uleb128 0x6
+ 1007 0013 00       		.byte	0
+ 1008 0014 00       		.byte	0
+ 1009 0015 02       		.uleb128 0x2
+ 1010 0016 24       		.uleb128 0x24
+ 1011 0017 00       		.byte	0
+ 1012 0018 0B       		.uleb128 0xb
+ 1013 0019 0B       		.uleb128 0xb
+ 1014 001a 3E       		.uleb128 0x3e
+ 1015 001b 0B       		.uleb128 0xb
+ 1016 001c 03       		.uleb128 0x3
+ 1017 001d 0E       		.uleb128 0xe
+ 1018 001e 00       		.byte	0
+ 1019 001f 00       		.byte	0
+ 1020 0020 03       		.uleb128 0x3
+ 1021 0021 24       		.uleb128 0x24
+ 1022 0022 00       		.byte	0
+ 1023 0023 0B       		.uleb128 0xb
+ 1024 0024 0B       		.uleb128 0xb
+ 1025 0025 3E       		.uleb128 0x3e
+ 1026 0026 0B       		.uleb128 0xb
+ 1027 0027 03       		.uleb128 0x3
+ 1028 0028 08       		.uleb128 0x8
+ 1029 0029 00       		.byte	0
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 26
+
+
+ 1030 002a 00       		.byte	0
+ 1031 002b 04       		.uleb128 0x4
+ 1032 002c 16       		.uleb128 0x16
+ 1033 002d 00       		.byte	0
+ 1034 002e 03       		.uleb128 0x3
+ 1035 002f 0E       		.uleb128 0xe
+ 1036 0030 3A       		.uleb128 0x3a
+ 1037 0031 0B       		.uleb128 0xb
+ 1038 0032 3B       		.uleb128 0x3b
+ 1039 0033 0B       		.uleb128 0xb
+ 1040 0034 49       		.uleb128 0x49
+ 1041 0035 13       		.uleb128 0x13
+ 1042 0036 00       		.byte	0
+ 1043 0037 00       		.byte	0
+ 1044 0038 05       		.uleb128 0x5
+ 1045 0039 0F       		.uleb128 0xf
+ 1046 003a 00       		.byte	0
+ 1047 003b 0B       		.uleb128 0xb
+ 1048 003c 0B       		.uleb128 0xb
+ 1049 003d 49       		.uleb128 0x49
+ 1050 003e 13       		.uleb128 0x13
+ 1051 003f 00       		.byte	0
+ 1052 0040 00       		.byte	0
+ 1053 0041 06       		.uleb128 0x6
+ 1054 0042 15       		.uleb128 0x15
+ 1055 0043 01       		.byte	0x1
+ 1056 0044 27       		.uleb128 0x27
+ 1057 0045 0C       		.uleb128 0xc
+ 1058 0046 01       		.uleb128 0x1
+ 1059 0047 13       		.uleb128 0x13
+ 1060 0048 00       		.byte	0
+ 1061 0049 00       		.byte	0
+ 1062 004a 07       		.uleb128 0x7
+ 1063 004b 05       		.uleb128 0x5
+ 1064 004c 00       		.byte	0
+ 1065 004d 49       		.uleb128 0x49
+ 1066 004e 13       		.uleb128 0x13
+ 1067 004f 00       		.byte	0
+ 1068 0050 00       		.byte	0
+ 1069 0051 08       		.uleb128 0x8
+ 1070 0052 0F       		.uleb128 0xf
+ 1071 0053 00       		.byte	0
+ 1072 0054 0B       		.uleb128 0xb
+ 1073 0055 0B       		.uleb128 0xb
+ 1074 0056 00       		.byte	0
+ 1075 0057 00       		.byte	0
+ 1076 0058 09       		.uleb128 0x9
+ 1077 0059 04       		.uleb128 0x4
+ 1078 005a 01       		.byte	0x1
+ 1079 005b 0B       		.uleb128 0xb
+ 1080 005c 0B       		.uleb128 0xb
+ 1081 005d 3A       		.uleb128 0x3a
+ 1082 005e 0B       		.uleb128 0xb
+ 1083 005f 3B       		.uleb128 0x3b
+ 1084 0060 0B       		.uleb128 0xb
+ 1085 0061 01       		.uleb128 0x1
+ 1086 0062 13       		.uleb128 0x13
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 27
+
+
+ 1087 0063 00       		.byte	0
+ 1088 0064 00       		.byte	0
+ 1089 0065 0A       		.uleb128 0xa
+ 1090 0066 28       		.uleb128 0x28
+ 1091 0067 00       		.byte	0
+ 1092 0068 03       		.uleb128 0x3
+ 1093 0069 0E       		.uleb128 0xe
+ 1094 006a 1C       		.uleb128 0x1c
+ 1095 006b 0D       		.uleb128 0xd
+ 1096 006c 00       		.byte	0
+ 1097 006d 00       		.byte	0
+ 1098 006e 0B       		.uleb128 0xb
+ 1099 006f 13       		.uleb128 0x13
+ 1100 0070 01       		.byte	0x1
+ 1101 0071 0B       		.uleb128 0xb
+ 1102 0072 0B       		.uleb128 0xb
+ 1103 0073 3A       		.uleb128 0x3a
+ 1104 0074 0B       		.uleb128 0xb
+ 1105 0075 3B       		.uleb128 0x3b
+ 1106 0076 0B       		.uleb128 0xb
+ 1107 0077 01       		.uleb128 0x1
+ 1108 0078 13       		.uleb128 0x13
+ 1109 0079 00       		.byte	0
+ 1110 007a 00       		.byte	0
+ 1111 007b 0C       		.uleb128 0xc
+ 1112 007c 0D       		.uleb128 0xd
+ 1113 007d 00       		.byte	0
+ 1114 007e 03       		.uleb128 0x3
+ 1115 007f 0E       		.uleb128 0xe
+ 1116 0080 3A       		.uleb128 0x3a
+ 1117 0081 0B       		.uleb128 0xb
+ 1118 0082 3B       		.uleb128 0x3b
+ 1119 0083 0B       		.uleb128 0xb
+ 1120 0084 49       		.uleb128 0x49
+ 1121 0085 13       		.uleb128 0x13
+ 1122 0086 38       		.uleb128 0x38
+ 1123 0087 0A       		.uleb128 0xa
+ 1124 0088 00       		.byte	0
+ 1125 0089 00       		.byte	0
+ 1126 008a 0D       		.uleb128 0xd
+ 1127 008b 2E       		.uleb128 0x2e
+ 1128 008c 00       		.byte	0
+ 1129 008d 3F       		.uleb128 0x3f
+ 1130 008e 0C       		.uleb128 0xc
+ 1131 008f 03       		.uleb128 0x3
+ 1132 0090 0E       		.uleb128 0xe
+ 1133 0091 3A       		.uleb128 0x3a
+ 1134 0092 0B       		.uleb128 0xb
+ 1135 0093 3B       		.uleb128 0x3b
+ 1136 0094 0B       		.uleb128 0xb
+ 1137 0095 11       		.uleb128 0x11
+ 1138 0096 01       		.uleb128 0x1
+ 1139 0097 12       		.uleb128 0x12
+ 1140 0098 01       		.uleb128 0x1
+ 1141 0099 40       		.uleb128 0x40
+ 1142 009a 06       		.uleb128 0x6
+ 1143 009b 9742     		.uleb128 0x2117
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 28
+
+
+ 1144 009d 0C       		.uleb128 0xc
+ 1145 009e 00       		.byte	0
+ 1146 009f 00       		.byte	0
+ 1147 00a0 0E       		.uleb128 0xe
+ 1148 00a1 2E       		.uleb128 0x2e
+ 1149 00a2 00       		.byte	0
+ 1150 00a3 3F       		.uleb128 0x3f
+ 1151 00a4 0C       		.uleb128 0xc
+ 1152 00a5 03       		.uleb128 0x3
+ 1153 00a6 0E       		.uleb128 0xe
+ 1154 00a7 3A       		.uleb128 0x3a
+ 1155 00a8 0B       		.uleb128 0xb
+ 1156 00a9 3B       		.uleb128 0x3b
+ 1157 00aa 0B       		.uleb128 0xb
+ 1158 00ab 27       		.uleb128 0x27
+ 1159 00ac 0C       		.uleb128 0xc
+ 1160 00ad 49       		.uleb128 0x49
+ 1161 00ae 13       		.uleb128 0x13
+ 1162 00af 11       		.uleb128 0x11
+ 1163 00b0 01       		.uleb128 0x1
+ 1164 00b1 12       		.uleb128 0x12
+ 1165 00b2 01       		.uleb128 0x1
+ 1166 00b3 40       		.uleb128 0x40
+ 1167 00b4 06       		.uleb128 0x6
+ 1168 00b5 9642     		.uleb128 0x2116
+ 1169 00b7 0C       		.uleb128 0xc
+ 1170 00b8 00       		.byte	0
+ 1171 00b9 00       		.byte	0
+ 1172 00ba 0F       		.uleb128 0xf
+ 1173 00bb 2E       		.uleb128 0x2e
+ 1174 00bc 01       		.byte	0x1
+ 1175 00bd 03       		.uleb128 0x3
+ 1176 00be 0E       		.uleb128 0xe
+ 1177 00bf 3A       		.uleb128 0x3a
+ 1178 00c0 0B       		.uleb128 0xb
+ 1179 00c1 3B       		.uleb128 0x3b
+ 1180 00c2 0B       		.uleb128 0xb
+ 1181 00c3 27       		.uleb128 0x27
+ 1182 00c4 0C       		.uleb128 0xc
+ 1183 00c5 11       		.uleb128 0x11
+ 1184 00c6 01       		.uleb128 0x1
+ 1185 00c7 12       		.uleb128 0x12
+ 1186 00c8 01       		.uleb128 0x1
+ 1187 00c9 40       		.uleb128 0x40
+ 1188 00ca 06       		.uleb128 0x6
+ 1189 00cb 9642     		.uleb128 0x2116
+ 1190 00cd 0C       		.uleb128 0xc
+ 1191 00ce 01       		.uleb128 0x1
+ 1192 00cf 13       		.uleb128 0x13
+ 1193 00d0 00       		.byte	0
+ 1194 00d1 00       		.byte	0
+ 1195 00d2 10       		.uleb128 0x10
+ 1196 00d3 05       		.uleb128 0x5
+ 1197 00d4 00       		.byte	0
+ 1198 00d5 03       		.uleb128 0x3
+ 1199 00d6 0E       		.uleb128 0xe
+ 1200 00d7 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 29
+
+
+ 1201 00d8 0B       		.uleb128 0xb
+ 1202 00d9 3B       		.uleb128 0x3b
+ 1203 00da 0B       		.uleb128 0xb
+ 1204 00db 49       		.uleb128 0x49
+ 1205 00dc 13       		.uleb128 0x13
+ 1206 00dd 02       		.uleb128 0x2
+ 1207 00de 0A       		.uleb128 0xa
+ 1208 00df 00       		.byte	0
+ 1209 00e0 00       		.byte	0
+ 1210 00e1 11       		.uleb128 0x11
+ 1211 00e2 2E       		.uleb128 0x2e
+ 1212 00e3 01       		.byte	0x1
+ 1213 00e4 03       		.uleb128 0x3
+ 1214 00e5 0E       		.uleb128 0xe
+ 1215 00e6 3A       		.uleb128 0x3a
+ 1216 00e7 0B       		.uleb128 0xb
+ 1217 00e8 3B       		.uleb128 0x3b
+ 1218 00e9 0B       		.uleb128 0xb
+ 1219 00ea 49       		.uleb128 0x49
+ 1220 00eb 13       		.uleb128 0x13
+ 1221 00ec 11       		.uleb128 0x11
+ 1222 00ed 01       		.uleb128 0x1
+ 1223 00ee 12       		.uleb128 0x12
+ 1224 00ef 01       		.uleb128 0x1
+ 1225 00f0 40       		.uleb128 0x40
+ 1226 00f1 06       		.uleb128 0x6
+ 1227 00f2 9642     		.uleb128 0x2116
+ 1228 00f4 0C       		.uleb128 0xc
+ 1229 00f5 01       		.uleb128 0x1
+ 1230 00f6 13       		.uleb128 0x13
+ 1231 00f7 00       		.byte	0
+ 1232 00f8 00       		.byte	0
+ 1233 00f9 12       		.uleb128 0x12
+ 1234 00fa 34       		.uleb128 0x34
+ 1235 00fb 00       		.byte	0
+ 1236 00fc 03       		.uleb128 0x3
+ 1237 00fd 0E       		.uleb128 0xe
+ 1238 00fe 3A       		.uleb128 0x3a
+ 1239 00ff 0B       		.uleb128 0xb
+ 1240 0100 3B       		.uleb128 0x3b
+ 1241 0101 0B       		.uleb128 0xb
+ 1242 0102 49       		.uleb128 0x49
+ 1243 0103 13       		.uleb128 0x13
+ 1244 0104 02       		.uleb128 0x2
+ 1245 0105 0A       		.uleb128 0xa
+ 1246 0106 00       		.byte	0
+ 1247 0107 00       		.byte	0
+ 1248 0108 13       		.uleb128 0x13
+ 1249 0109 34       		.uleb128 0x34
+ 1250 010a 00       		.byte	0
+ 1251 010b 03       		.uleb128 0x3
+ 1252 010c 08       		.uleb128 0x8
+ 1253 010d 3A       		.uleb128 0x3a
+ 1254 010e 0B       		.uleb128 0xb
+ 1255 010f 3B       		.uleb128 0x3b
+ 1256 0110 0B       		.uleb128 0xb
+ 1257 0111 49       		.uleb128 0x49
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 30
+
+
+ 1258 0112 13       		.uleb128 0x13
+ 1259 0113 02       		.uleb128 0x2
+ 1260 0114 0A       		.uleb128 0xa
+ 1261 0115 00       		.byte	0
+ 1262 0116 00       		.byte	0
+ 1263 0117 14       		.uleb128 0x14
+ 1264 0118 34       		.uleb128 0x34
+ 1265 0119 00       		.byte	0
+ 1266 011a 03       		.uleb128 0x3
+ 1267 011b 0E       		.uleb128 0xe
+ 1268 011c 3A       		.uleb128 0x3a
+ 1269 011d 0B       		.uleb128 0xb
+ 1270 011e 3B       		.uleb128 0x3b
+ 1271 011f 05       		.uleb128 0x5
+ 1272 0120 49       		.uleb128 0x49
+ 1273 0121 13       		.uleb128 0x13
+ 1274 0122 02       		.uleb128 0x2
+ 1275 0123 0A       		.uleb128 0xa
+ 1276 0124 00       		.byte	0
+ 1277 0125 00       		.byte	0
+ 1278 0126 15       		.uleb128 0x15
+ 1279 0127 26       		.uleb128 0x26
+ 1280 0128 00       		.byte	0
+ 1281 0129 49       		.uleb128 0x49
+ 1282 012a 13       		.uleb128 0x13
+ 1283 012b 00       		.byte	0
+ 1284 012c 00       		.byte	0
+ 1285 012d 16       		.uleb128 0x16
+ 1286 012e 01       		.uleb128 0x1
+ 1287 012f 01       		.byte	0x1
+ 1288 0130 49       		.uleb128 0x49
+ 1289 0131 13       		.uleb128 0x13
+ 1290 0132 01       		.uleb128 0x1
+ 1291 0133 13       		.uleb128 0x13
+ 1292 0134 00       		.byte	0
+ 1293 0135 00       		.byte	0
+ 1294 0136 17       		.uleb128 0x17
+ 1295 0137 21       		.uleb128 0x21
+ 1296 0138 00       		.byte	0
+ 1297 0139 49       		.uleb128 0x49
+ 1298 013a 13       		.uleb128 0x13
+ 1299 013b 2F       		.uleb128 0x2f
+ 1300 013c 0B       		.uleb128 0xb
+ 1301 013d 00       		.byte	0
+ 1302 013e 00       		.byte	0
+ 1303 013f 18       		.uleb128 0x18
+ 1304 0140 34       		.uleb128 0x34
+ 1305 0141 00       		.byte	0
+ 1306 0142 03       		.uleb128 0x3
+ 1307 0143 0E       		.uleb128 0xe
+ 1308 0144 3A       		.uleb128 0x3a
+ 1309 0145 0B       		.uleb128 0xb
+ 1310 0146 3B       		.uleb128 0x3b
+ 1311 0147 0B       		.uleb128 0xb
+ 1312 0148 49       		.uleb128 0x49
+ 1313 0149 13       		.uleb128 0x13
+ 1314 014a 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 31
+
+
+ 1315 014b 0C       		.uleb128 0xc
+ 1316 014c 02       		.uleb128 0x2
+ 1317 014d 0A       		.uleb128 0xa
+ 1318 014e 00       		.byte	0
+ 1319 014f 00       		.byte	0
+ 1320 0150 00       		.byte	0
+ 1321              		.section	.debug_loc,"",%progbits
+ 1322              	.Ldebug_loc0:
+ 1323              	.LLST0:
+ 1324 0000 00000000 		.4byte	.LFB0
+ 1325 0004 02000000 		.4byte	.LCFI0
+ 1326 0008 0200     		.2byte	0x2
+ 1327 000a 7D       		.byte	0x7d
+ 1328 000b 00       		.sleb128 0
+ 1329 000c 02000000 		.4byte	.LCFI0
+ 1330 0010 04000000 		.4byte	.LCFI1
+ 1331 0014 0200     		.2byte	0x2
+ 1332 0016 7D       		.byte	0x7d
+ 1333 0017 08       		.sleb128 8
+ 1334 0018 04000000 		.4byte	.LCFI1
+ 1335 001c 18000000 		.4byte	.LFE0
+ 1336 0020 0200     		.2byte	0x2
+ 1337 0022 77       		.byte	0x77
+ 1338 0023 08       		.sleb128 8
+ 1339 0024 00000000 		.4byte	0
+ 1340 0028 00000000 		.4byte	0
+ 1341              	.LLST1:
+ 1342 002c 00000000 		.4byte	.LFB1
+ 1343 0030 02000000 		.4byte	.LCFI2
+ 1344 0034 0200     		.2byte	0x2
+ 1345 0036 7D       		.byte	0x7d
+ 1346 0037 00       		.sleb128 0
+ 1347 0038 02000000 		.4byte	.LCFI2
+ 1348 003c 04000000 		.4byte	.LCFI3
+ 1349 0040 0200     		.2byte	0x2
+ 1350 0042 7D       		.byte	0x7d
+ 1351 0043 08       		.sleb128 8
+ 1352 0044 04000000 		.4byte	.LCFI3
+ 1353 0048 1C000000 		.4byte	.LFE1
+ 1354 004c 0200     		.2byte	0x2
+ 1355 004e 77       		.byte	0x77
+ 1356 004f 08       		.sleb128 8
+ 1357 0050 00000000 		.4byte	0
+ 1358 0054 00000000 		.4byte	0
+ 1359              	.LLST2:
+ 1360 0058 00000000 		.4byte	.LFB2
+ 1361 005c 02000000 		.4byte	.LCFI4
+ 1362 0060 0200     		.2byte	0x2
+ 1363 0062 7D       		.byte	0x7d
+ 1364 0063 00       		.sleb128 0
+ 1365 0064 02000000 		.4byte	.LCFI4
+ 1366 0068 04000000 		.4byte	.LCFI5
+ 1367 006c 0200     		.2byte	0x2
+ 1368 006e 7D       		.byte	0x7d
+ 1369 006f 08       		.sleb128 8
+ 1370 0070 04000000 		.4byte	.LCFI5
+ 1371 0074 06000000 		.4byte	.LCFI6
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 32
+
+
+ 1372 0078 0200     		.2byte	0x2
+ 1373 007a 7D       		.byte	0x7d
+ 1374 007b 10       		.sleb128 16
+ 1375 007c 06000000 		.4byte	.LCFI6
+ 1376 0080 04010000 		.4byte	.LFE2
+ 1377 0084 0200     		.2byte	0x2
+ 1378 0086 77       		.byte	0x77
+ 1379 0087 10       		.sleb128 16
+ 1380 0088 00000000 		.4byte	0
+ 1381 008c 00000000 		.4byte	0
+ 1382              	.LLST3:
+ 1383 0090 00000000 		.4byte	.LFB3
+ 1384 0094 02000000 		.4byte	.LCFI7
+ 1385 0098 0200     		.2byte	0x2
+ 1386 009a 7D       		.byte	0x7d
+ 1387 009b 00       		.sleb128 0
+ 1388 009c 02000000 		.4byte	.LCFI7
+ 1389 00a0 04000000 		.4byte	.LCFI8
+ 1390 00a4 0200     		.2byte	0x2
+ 1391 00a6 7D       		.byte	0x7d
+ 1392 00a7 08       		.sleb128 8
+ 1393 00a8 04000000 		.4byte	.LCFI8
+ 1394 00ac 06000000 		.4byte	.LCFI9
+ 1395 00b0 0200     		.2byte	0x2
+ 1396 00b2 7D       		.byte	0x7d
+ 1397 00b3 20       		.sleb128 32
+ 1398 00b4 06000000 		.4byte	.LCFI9
+ 1399 00b8 60020000 		.4byte	.LFE3
+ 1400 00bc 0200     		.2byte	0x2
+ 1401 00be 77       		.byte	0x77
+ 1402 00bf 20       		.sleb128 32
+ 1403 00c0 00000000 		.4byte	0
+ 1404 00c4 00000000 		.4byte	0
+ 1405              		.section	.debug_aranges,"",%progbits
+ 1406 0000 34000000 		.4byte	0x34
+ 1407 0004 0200     		.2byte	0x2
+ 1408 0006 00000000 		.4byte	.Ldebug_info0
+ 1409 000a 04       		.byte	0x4
+ 1410 000b 00       		.byte	0
+ 1411 000c 0000     		.2byte	0
+ 1412 000e 0000     		.2byte	0
+ 1413 0010 00000000 		.4byte	.LFB0
+ 1414 0014 18000000 		.4byte	.LFE0-.LFB0
+ 1415 0018 00000000 		.4byte	.LFB1
+ 1416 001c 1C000000 		.4byte	.LFE1-.LFB1
+ 1417 0020 00000000 		.4byte	.LFB2
+ 1418 0024 04010000 		.4byte	.LFE2-.LFB2
+ 1419 0028 00000000 		.4byte	.LFB3
+ 1420 002c 60020000 		.4byte	.LFE3-.LFB3
+ 1421 0030 00000000 		.4byte	0
+ 1422 0034 00000000 		.4byte	0
+ 1423              		.section	.debug_ranges,"",%progbits
+ 1424              	.Ldebug_ranges0:
+ 1425 0000 00000000 		.4byte	.LFB0
+ 1426 0004 18000000 		.4byte	.LFE0
+ 1427 0008 00000000 		.4byte	.LFB1
+ 1428 000c 1C000000 		.4byte	.LFE1
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 33
+
+
+ 1429 0010 00000000 		.4byte	.LFB2
+ 1430 0014 04010000 		.4byte	.LFE2
+ 1431 0018 00000000 		.4byte	.LFB3
+ 1432 001c 60020000 		.4byte	.LFE3
+ 1433 0020 00000000 		.4byte	0
+ 1434 0024 00000000 		.4byte	0
+ 1435              		.section	.debug_line,"",%progbits
+ 1436              	.Ldebug_line0:
+ 1437 0000 12010000 		.section	.debug_str,"MS",%progbits,1
+ 1437      02003300 
+ 1437      00000201 
+ 1437      FB0E0D00 
+ 1437      01010101 
+ 1438              	.LASF30:
+ 1439 0000 69727143 		.ascii	"irqCheck\000"
+ 1439      6865636B 
+ 1439      00
+ 1440              	.LASF20:
+ 1441 0009 54455354 		.ascii	"TEST_STAGE_INIT_COMPLETE_READ_PASSED\000"
+ 1441      5F535441 
+ 1441      47455F49 
+ 1441      4E49545F 
+ 1441      434F4D50 
+ 1442              	.LASF36:
+ 1443 002e 54785365 		.ascii	"TxSeqNum\000"
+ 1443      714E756D 
+ 1443      00
+ 1444              	.LASF35:
+ 1445 0037 675F6972 		.ascii	"g_irqCounter\000"
+ 1445      71436F75 
+ 1445      6E746572 
+ 1445      00
+ 1446              	.LASF15:
+ 1447 0044 54455354 		.ascii	"TEST_STAGE_DISABLE_PASSED\000"
+ 1447      5F535441 
+ 1447      47455F44 
+ 1447      49534142 
+ 1447      4C455F50 
+ 1448              	.LASF8:
+ 1449 005e 756E7369 		.ascii	"unsigned int\000"
+ 1449      676E6564 
+ 1449      20696E74 
+ 1449      00
+ 1450              	.LASF22:
+ 1451 006b 74657374 		.ascii	"testStage_e\000"
+ 1451      53746167 
+ 1451      655F6500 
+ 1452              	.LASF40:
+ 1453 0077 44696167 		.ascii	"DiagIrqHandler\000"
+ 1453      49727148 
+ 1453      616E646C 
+ 1453      657200
+ 1454              	.LASF42:
+ 1455 0086 73746167 		.ascii	"stage\000"
+ 1455      6500
+ 1456              	.LASF16:
+ 1457 008c 54455354 		.ascii	"TEST_STAGE_ENABLE_PASSED\000"
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 34
+
+
+ 1457      5F535441 
+ 1457      47455F45 
+ 1457      4E41424C 
+ 1457      455F5041 
+ 1458              	.LASF1:
+ 1459 00a5 756E7369 		.ascii	"unsigned char\000"
+ 1459      676E6564 
+ 1459      20636861 
+ 1459      7200
+ 1460              	.LASF5:
+ 1461 00b3 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1461      20756E73 
+ 1461      69676E65 
+ 1461      6420696E 
+ 1461      7400
+ 1462              	.LASF26:
+ 1463 00c5 5F536C53 		.ascii	"_SlSyncPattern_t\000"
+ 1463      796E6350 
+ 1463      61747465 
+ 1463      726E5F74 
+ 1463      00
+ 1464              	.LASF3:
+ 1465 00d6 73686F72 		.ascii	"short unsigned int\000"
+ 1465      7420756E 
+ 1465      7369676E 
+ 1465      65642069 
+ 1465      6E7400
+ 1466              	.LASF19:
+ 1467 00e9 54455354 		.ascii	"TEST_STAGE_SPI_IRQ_PASSED\000"
+ 1467      5F535441 
+ 1467      47455F53 
+ 1467      50495F49 
+ 1467      52515F50 
+ 1468              	.LASF39:
+ 1469 0103 433A5C55 		.ascii	"C:\\Users\\X0217454\\Desktop\\CC31xx\\CC3100 - 0.5\\"
+ 1469      73657273 
+ 1469      5C583032 
+ 1469      31373435 
+ 1469      345C4465 
+ 1470 0131 43433331 		.ascii	"CC3100 SDK 0.5\\cc3100-sdk\\platform\\cypress_SDK.5"
+ 1470      30302053 
+ 1470      444B2030 
+ 1470      2E355C63 
+ 1470      63333130 
+ 1471 0161 5C657861 		.ascii	"\\example\\spi_debug_tool\\spi_debug_tool.cydsn\000"
+ 1471      6D706C65 
+ 1471      5C737069 
+ 1471      5F646562 
+ 1471      75675F74 
+ 1472              	.LASF18:
+ 1473 018e 54455354 		.ascii	"TEST_STAGE_SPI_READ_PASSED\000"
+ 1473      5F535441 
+ 1473      47455F53 
+ 1473      50495F52 
+ 1473      4541445F 
+ 1474              	.LASF38:
+ 1475 01a9 2E5C6D61 		.ascii	".\\main.c\000"
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 35
+
+
+ 1475      696E2E63 
+ 1475      00
+ 1476              	.LASF21:
+ 1477 01b2 54455354 		.ascii	"TEST_STAGE_SPI_TEST_COMPLETE\000"
+ 1477      5F535441 
+ 1477      47455F53 
+ 1477      50495F54 
+ 1477      4553545F 
+ 1478              	.LASF41:
+ 1479 01cf 6D61696E 		.ascii	"main\000"
+ 1479      00
+ 1480              	.LASF24:
+ 1481 01d4 42797465 		.ascii	"Byte1\000"
+ 1481      3100
+ 1482              	.LASF25:
+ 1483 01da 42797465 		.ascii	"Byte2\000"
+ 1483      3200
+ 1484              	.LASF14:
+ 1485 01e0 54455354 		.ascii	"TEST_STAGE_SPI_OPEN_PASSED\000"
+ 1485      5F535441 
+ 1485      47455F53 
+ 1485      50495F4F 
+ 1485      50454E5F 
+ 1486              	.LASF7:
+ 1487 01fb 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1487      206C6F6E 
+ 1487      6720756E 
+ 1487      7369676E 
+ 1487      65642069 
+ 1488              	.LASF34:
+ 1489 0212 675F7465 		.ascii	"g_testStage\000"
+ 1489      73745374 
+ 1489      61676500 
+ 1490              	.LASF31:
+ 1491 021e 70427566 		.ascii	"pBuf\000"
+ 1491      00
+ 1492              	.LASF27:
+ 1493 0223 53657454 		.ascii	"SetTestStage\000"
+ 1493      65737453 
+ 1493      74616765 
+ 1493      00
+ 1494              	.LASF33:
+ 1495 0230 53686966 		.ascii	"ShiftIdx\000"
+ 1495      74496478 
+ 1495      00
+ 1496              	.LASF9:
+ 1497 0239 73697A65 		.ascii	"sizetype\000"
+ 1497      74797065 
+ 1497      00
+ 1498              	.LASF17:
+ 1499 0242 54455354 		.ascii	"TEST_STAGE_SPI_WRITE_PASSED\000"
+ 1499      5F535441 
+ 1499      47455F53 
+ 1499      50495F57 
+ 1499      52495445 
+ 1500              	.LASF6:
+ 1501 025e 6C6F6E67 		.ascii	"long long int\000"
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 36
+
+
+ 1501      206C6F6E 
+ 1501      6720696E 
+ 1501      7400
+ 1502              	.LASF29:
+ 1503 026c 48324E43 		.ascii	"H2NCnysPattern\000"
+ 1503      6E797350 
+ 1503      61747465 
+ 1503      726E00
+ 1504              	.LASF10:
+ 1505 027b 63686172 		.ascii	"char\000"
+ 1505      00
+ 1506              	.LASF13:
+ 1507 0280 54455354 		.ascii	"TEST_STAGE_SPI_TEST_BEGIN\000"
+ 1507      5F535441 
+ 1507      47455F53 
+ 1507      50495F54 
+ 1507      4553545F 
+ 1508              	.LASF12:
+ 1509 029a 55494E54 		.ascii	"UINT32\000"
+ 1509      333200
+ 1510              	.LASF32:
+ 1511 02a1 53796E63 		.ascii	"SyncCnt\000"
+ 1511      436E7400 
+ 1512              	.LASF2:
+ 1513 02a9 73686F72 		.ascii	"short int\000"
+ 1513      7420696E 
+ 1513      7400
+ 1514              	.LASF37:
+ 1515 02b3 474E5520 		.ascii	"GNU C 4.7.3 20130312 (release) [ARM/embedded-4_7-br"
+ 1515      4320342E 
+ 1515      372E3320 
+ 1515      32303133 
+ 1515      30333132 
+ 1516 02e6 616E6368 		.ascii	"anch revision 196615]\000"
+ 1516      20726576 
+ 1516      6973696F 
+ 1516      6E203139 
+ 1516      36363135 
+ 1517              	.LASF4:
+ 1518 02fc 6C6F6E67 		.ascii	"long int\000"
+ 1518      20696E74 
+ 1518      00
+ 1519              	.LASF23:
+ 1520 0305 53686F72 		.ascii	"Short\000"
+ 1520      7400
+ 1521              	.LASF28:
+ 1522 030b 54657374 		.ascii	"TestSpi\000"
+ 1522      53706900 
+ 1523              	.LASF0:
+ 1524 0313 7369676E 		.ascii	"signed char\000"
+ 1524      65642063 
+ 1524      68617200 
+ 1525              	.LASF11:
+ 1526 031f 505F4556 		.ascii	"P_EVENT_HANDLER\000"
+ 1526      454E545F 
+ 1526      48414E44 
+ 1526      4C455200 
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccxF4Dpf.s 			page 37
+
+
+ 1527              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.7.3 20130312 (release) [ARM/embedded-4_7-br

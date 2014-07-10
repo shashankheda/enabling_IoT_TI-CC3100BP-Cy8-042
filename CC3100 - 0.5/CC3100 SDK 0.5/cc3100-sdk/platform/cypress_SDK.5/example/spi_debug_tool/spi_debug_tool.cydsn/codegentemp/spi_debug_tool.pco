@@ -1,0 +1,39 @@
+# spi_debug_tool
+# 2014-07-03 08:36:52Z
+
+# IO_2@[IOP=(3)][IoId=(2)] is reserved: SWDDebugEnabled
+dont_use_io iocell 3 2
+# IO_3@[IOP=(3)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 3 3
+set_location "ClockBlock" m0s8clockblockcell -1 -1 0
+set_location "ClockGenBlock" m0s8clockgenblockcell -1 -1 0
+set_location "IRQ_Pin" logicalport -1 -1 0
+set_io "IRQ_Pin(0)" iocell 0 0
+set_io "LED_BLUE(0)" iocell 0 3
+set_io "LED_GREEN(0)" iocell 0 2
+set_location "Net_4" 1 0 1 0
+set_location "Net_79" 0 0 1 0
+set_location "Net_80" 1 1 1 0
+set_location "\SPIM:BSPIM:BitCounter\" 0 1 7
+set_location "\SPIM:BSPIM:RxStsReg\" 1 0 4
+set_location "\SPIM:BSPIM:TxStsReg\" 1 1 4
+set_location "\SPIM:BSPIM:cnt_enable\" 0 1 1 1
+set_location "\SPIM:BSPIM:ld_ident\" 1 0 1 1
+set_location "\SPIM:BSPIM:load_cond\" 1 0 0 2
+set_location "\SPIM:BSPIM:load_rx_data\" 0 1 0 0
+set_location "\SPIM:BSPIM:rx_status_6\" 1 0 0 0
+set_location "\SPIM:BSPIM:sR8:Dp:u0\" 1 0 2
+set_location "\SPIM:BSPIM:state_0\" 1 1 0 3
+set_location "\SPIM:BSPIM:state_1\" 1 1 0 1
+set_location "\SPIM:BSPIM:state_2\" 1 1 1 2
+set_location "\SPIM:BSPIM:tx_status_0\" 1 1 0 0
+set_location "\SPIM:BSPIM:tx_status_4\" 1 1 1 3
+set_location "\UART_1:SCB\" m0s8scbcell -1 -1 0
+set_io "\UART_1:rx(0)\" iocell 4 0
+set_io "\UART_1:tx(0)\" iocell 4 1
+set_location "isr_1" interrupt -1 -1 0
+set_io "m_miso_pin(0)" iocell 3 1
+set_io "m_mosi_pin(0)" iocell 3 0
+set_io "m_sclk_pin(0)" iocell 0 6
+set_io "m_ss_pin(0)" iocell 3 4
+set_io "nHIB(0)" iocell 3 6

@@ -1,0 +1,1058 @@
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"spi.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.spi_Close,"ax",%progbits
+  18              		.align	2
+  19              		.global	spi_Close
+  20              		.code	16
+  21              		.thumb_func
+  22              		.type	spi_Close, %function
+  23              	spi_Close:
+  24              	.LFB0:
+  25              		.file 1 "..\\..\\..\\spi.c"
+   1:..\..\../spi.c **** /*
+   2:..\..\../spi.c ****  * spi.c - msp430f5529 launchpad spi interface implementation
+   3:..\..\../spi.c ****  *
+   4:..\..\../spi.c ****  * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/
+   5:..\..\../spi.c ****  *
+   6:..\..\../spi.c ****  *
+   7:..\..\../spi.c ****  *  Redistribution and use in source and binary forms, with or without
+   8:..\..\../spi.c ****  *  modification, are permitted provided that the following conditions
+   9:..\..\../spi.c ****  *  are met:
+  10:..\..\../spi.c ****  *
+  11:..\..\../spi.c ****  *    Redistributions of source code must retain the above copyright
+  12:..\..\../spi.c ****  *    notice, this list of conditions and the following disclaimer.
+  13:..\..\../spi.c ****  *
+  14:..\..\../spi.c ****  *    Redistributions in binary form must reproduce the above copyright
+  15:..\..\../spi.c ****  *    notice, this list of conditions and the following disclaimer in the
+  16:..\..\../spi.c ****  *    documentation and/or other materials provided with the
+  17:..\..\../spi.c ****  *    distribution.
+  18:..\..\../spi.c ****  *
+  19:..\..\../spi.c ****  *    Neither the name of Texas Instruments Incorporated nor the names of
+  20:..\..\../spi.c ****  *    its contributors may be used to endorse or promote products derived
+  21:..\..\../spi.c ****  *    from this software without specific prior written permission.
+  22:..\..\../spi.c ****  *
+  23:..\..\../spi.c ****  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  24:..\..\../spi.c ****  *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  25:..\..\../spi.c ****  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  26:..\..\../spi.c ****  *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  27:..\..\../spi.c ****  *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  28:..\..\../spi.c ****  *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  29:..\..\../spi.c ****  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  30:..\..\../spi.c ****  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  31:..\..\../spi.c ****  *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  32:..\..\../spi.c ****  *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 2
+
+
+  33:..\..\../spi.c ****  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  34:..\..\../spi.c ****  *
+  35:..\..\../spi.c **** */
+  36:..\..\../spi.c **** #ifndef SL_IF_TYPE_UART
+  37:..\..\../spi.c **** #include "datatypes.h"
+  38:..\..\../spi.c **** #include "simplelink.h"
+  39:..\..\../spi.c **** #include <SPIM.h>
+  40:..\..\../spi.c **** #include <SPIM_IntClock.h>
+  41:..\..\../spi.c **** #include "spi.h"
+  42:..\..\../spi.c **** #include "board.h"
+  43:..\..\../spi.c **** #include "m_ss_pin.h"
+  44:..\..\../spi.c **** 
+  45:..\..\../spi.c **** #define ASSERT_CS()     (m_ss_pin_Write(0))
+  46:..\..\../spi.c **** #define DEASSERT_CS()     (m_ss_pin_Write(1))
+  47:..\..\../spi.c **** 
+  48:..\..\../spi.c **** #define NONOS_RET_OK                            (0)
+  49:..\..\../spi.c **** 
+  50:..\..\../spi.c **** int spi_Close(Fd_t fd)
+  51:..\..\../spi.c **** {
+  26              		.loc 1 51 0
+  27              		.cfi_startproc
+  28 0000 80B5     		push	{r7, lr}
+  29              	.LCFI0:
+  30              		.cfi_def_cfa_offset 8
+  31              		.cfi_offset 7, -8
+  32              		.cfi_offset 14, -4
+  33 0002 82B0     		sub	sp, sp, #8
+  34              	.LCFI1:
+  35              		.cfi_def_cfa_offset 16
+  36 0004 00AF     		add	r7, sp, #0
+  37              	.LCFI2:
+  38              		.cfi_def_cfa_register 7
+  39 0006 7860     		str	r0, [r7, #4]
+  52:..\..\../spi.c ****     SPIM_Stop();
+  40              		.loc 1 52 0
+  41 0008 FFF7FEFF 		bl	SPIM_Stop
+  53:..\..\../spi.c **** 
+  54:..\..\../spi.c ****     /* Disable WLAN Interrupt ... */
+  55:..\..\../spi.c ****     CC3100_InterruptDisable();
+  42              		.loc 1 55 0
+  43 000c FFF7FEFF 		bl	CC3100_InterruptDisable
+  56:..\..\../spi.c **** 
+  57:..\..\../spi.c ****     return 0;
+  44              		.loc 1 57 0
+  45 0010 0023     		mov	r3, #0
+  58:..\..\../spi.c **** }
+  46              		.loc 1 58 0
+  47 0012 181C     		mov	r0, r3
+  48 0014 BD46     		mov	sp, r7
+  49 0016 02B0     		add	sp, sp, #8
+  50              		@ sp needed for prologue
+  51 0018 80BD     		pop	{r7, pc}
+  52              		.cfi_endproc
+  53              	.LFE0:
+  54              		.size	spi_Close, .-spi_Close
+  55 001a C046     		.section	.text.spi_Open,"ax",%progbits
+  56              		.align	2
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 3
+
+
+  57              		.global	spi_Open
+  58              		.code	16
+  59              		.thumb_func
+  60              		.type	spi_Open, %function
+  61              	spi_Open:
+  62              	.LFB1:
+  59:..\..\../spi.c **** 
+  60:..\..\../spi.c **** Fd_t spi_Open(char *ifName, unsigned long flags)
+  61:..\..\../spi.c **** {
+  63              		.loc 1 61 0
+  64              		.cfi_startproc
+  65 0000 80B5     		push	{r7, lr}
+  66              	.LCFI3:
+  67              		.cfi_def_cfa_offset 8
+  68              		.cfi_offset 7, -8
+  69              		.cfi_offset 14, -4
+  70 0002 82B0     		sub	sp, sp, #8
+  71              	.LCFI4:
+  72              		.cfi_def_cfa_offset 16
+  73 0004 00AF     		add	r7, sp, #0
+  74              	.LCFI5:
+  75              		.cfi_def_cfa_register 7
+  76 0006 7860     		str	r0, [r7, #4]
+  77 0008 3960     		str	r1, [r7]
+  62:..\..\../spi.c ****     SPIM_Start();
+  78              		.loc 1 62 0
+  79 000a FFF7FEFF 		bl	SPIM_Start
+  63:..\..\../spi.c **** 
+  64:..\..\../spi.c ****     /* 50 ms delay */
+  65:..\..\../spi.c ****     CyDelay(50u);
+  80              		.loc 1 65 0
+  81 000e 3220     		mov	r0, #50
+  82 0010 FFF7FEFF 		bl	CyDelay
+  66:..\..\../spi.c **** 
+  67:..\..\../spi.c ****     /* Enable WLAN interrupt */
+  68:..\..\../spi.c ****     CC3100_InterruptEnable();
+  83              		.loc 1 68 0
+  84 0014 FFF7FEFF 		bl	CC3100_InterruptEnable
+  69:..\..\../spi.c **** 
+  70:..\..\../spi.c ****     return NONOS_RET_OK;
+  85              		.loc 1 70 0
+  86 0018 0023     		mov	r3, #0
+  71:..\..\../spi.c **** }
+  87              		.loc 1 71 0
+  88 001a 181C     		mov	r0, r3
+  89 001c BD46     		mov	sp, r7
+  90 001e 02B0     		add	sp, sp, #8
+  91              		@ sp needed for prologue
+  92 0020 80BD     		pop	{r7, pc}
+  93              		.cfi_endproc
+  94              	.LFE1:
+  95              		.size	spi_Open, .-spi_Open
+  96 0022 C046     		.section	.text.spi_Write,"ax",%progbits
+  97              		.align	2
+  98              		.global	spi_Write
+  99              		.code	16
+ 100              		.thumb_func
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 4
+
+
+ 101              		.type	spi_Write, %function
+ 102              	spi_Write:
+ 103              	.LFB2:
+  72:..\..\../spi.c **** 
+  73:..\..\../spi.c **** 
+  74:..\..\../spi.c **** int spi_Write(Fd_t fd, unsigned char *pBuff, int len)
+  75:..\..\../spi.c **** {
+ 104              		.loc 1 75 0
+ 105              		.cfi_startproc
+ 106 0000 80B5     		push	{r7, lr}
+ 107              	.LCFI6:
+ 108              		.cfi_def_cfa_offset 8
+ 109              		.cfi_offset 7, -8
+ 110              		.cfi_offset 14, -4
+ 111 0002 86B0     		sub	sp, sp, #24
+ 112              	.LCFI7:
+ 113              		.cfi_def_cfa_offset 32
+ 114 0004 00AF     		add	r7, sp, #0
+ 115              	.LCFI8:
+ 116              		.cfi_def_cfa_register 7
+ 117 0006 F860     		str	r0, [r7, #12]
+ 118 0008 B960     		str	r1, [r7, #8]
+ 119 000a 7A60     		str	r2, [r7, #4]
+  76:..\..\../spi.c ****     int len_to_return = len;
+ 120              		.loc 1 76 0
+ 121 000c 7B68     		ldr	r3, [r7, #4]
+ 122 000e 7B61     		str	r3, [r7, #20]
+  77:..\..\../spi.c ****     ASSERT_CS();
+ 123              		.loc 1 77 0
+ 124 0010 0020     		mov	r0, #0
+ 125 0012 FFF7FEFF 		bl	m_ss_pin_Write
+  78:..\..\../spi.c ****     while (len)
+ 126              		.loc 1 78 0
+ 127 0016 0CE0     		b	.L6
+ 128              	.L7:
+  79:..\..\../spi.c ****     {
+  80:..\..\../spi.c ****         SPIM_WriteTxData(*pBuff); 
+ 129              		.loc 1 80 0
+ 130 0018 BB68     		ldr	r3, [r7, #8]
+ 131 001a 1B78     		ldrb	r3, [r3]
+ 132 001c 181C     		mov	r0, r3
+ 133 001e FFF7FEFF 		bl	SPIM_WriteTxData
+  81:..\..\../spi.c ****         SPIM_ReadRxData();
+ 134              		.loc 1 81 0
+ 135 0022 FFF7FEFF 		bl	SPIM_ReadRxData
+  82:..\..\../spi.c ****         len --;
+ 136              		.loc 1 82 0
+ 137 0026 7B68     		ldr	r3, [r7, #4]
+ 138 0028 013B     		sub	r3, r3, #1
+ 139 002a 7B60     		str	r3, [r7, #4]
+  83:..\..\../spi.c ****         pBuff++;
+ 140              		.loc 1 83 0
+ 141 002c BB68     		ldr	r3, [r7, #8]
+ 142 002e 0133     		add	r3, r3, #1
+ 143 0030 BB60     		str	r3, [r7, #8]
+ 144              	.L6:
+  78:..\..\../spi.c ****     while (len)
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 5
+
+
+ 145              		.loc 1 78 0 discriminator 1
+ 146 0032 7B68     		ldr	r3, [r7, #4]
+ 147 0034 002B     		cmp	r3, #0
+ 148 0036 EFD1     		bne	.L7
+  84:..\..\../spi.c ****     }
+  85:..\..\../spi.c **** 
+  86:..\..\../spi.c ****     /* Alternatively, the Put_Array command may be used (below) */
+  87:..\..\../spi.c ****     /*SPIM_PutArray(pBuff,len);*/
+  88:..\..\../spi.c **** 
+  89:..\..\../spi.c ****     DEASSERT_CS();
+ 149              		.loc 1 89 0
+ 150 0038 0120     		mov	r0, #1
+ 151 003a FFF7FEFF 		bl	m_ss_pin_Write
+  90:..\..\../spi.c **** 
+  91:..\..\../spi.c ****     return len_to_return;
+ 152              		.loc 1 91 0
+ 153 003e 7B69     		ldr	r3, [r7, #20]
+  92:..\..\../spi.c **** }
+ 154              		.loc 1 92 0
+ 155 0040 181C     		mov	r0, r3
+ 156 0042 BD46     		mov	sp, r7
+ 157 0044 06B0     		add	sp, sp, #24
+ 158              		@ sp needed for prologue
+ 159 0046 80BD     		pop	{r7, pc}
+ 160              		.cfi_endproc
+ 161              	.LFE2:
+ 162              		.size	spi_Write, .-spi_Write
+ 163              		.section	.text.spi_Read,"ax",%progbits
+ 164              		.align	2
+ 165              		.global	spi_Read
+ 166              		.code	16
+ 167              		.thumb_func
+ 168              		.type	spi_Read, %function
+ 169              	spi_Read:
+ 170              	.LFB3:
+  93:..\..\../spi.c **** 
+  94:..\..\../spi.c **** 
+  95:..\..\../spi.c **** int spi_Read(Fd_t fd, unsigned char *pBuff, int len)
+  96:..\..\../spi.c **** {
+ 171              		.loc 1 96 0
+ 172              		.cfi_startproc
+ 173 0000 90B5     		push	{r4, r7, lr}
+ 174              	.LCFI9:
+ 175              		.cfi_def_cfa_offset 12
+ 176              		.cfi_offset 4, -12
+ 177              		.cfi_offset 7, -8
+ 178              		.cfi_offset 14, -4
+ 179 0002 87B0     		sub	sp, sp, #28
+ 180              	.LCFI10:
+ 181              		.cfi_def_cfa_offset 40
+ 182 0004 00AF     		add	r7, sp, #0
+ 183              	.LCFI11:
+ 184              		.cfi_def_cfa_register 7
+ 185 0006 F860     		str	r0, [r7, #12]
+ 186 0008 B960     		str	r1, [r7, #8]
+ 187 000a 7A60     		str	r2, [r7, #4]
+  97:..\..\../spi.c ****     int i = 0;
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 6
+
+
+ 188              		.loc 1 97 0
+ 189 000c 0023     		mov	r3, #0
+ 190 000e 7B61     		str	r3, [r7, #20]
+  98:..\..\../spi.c ****     ASSERT_CS();
+ 191              		.loc 1 98 0
+ 192 0010 0020     		mov	r0, #0
+ 193 0012 FFF7FEFF 		bl	m_ss_pin_Write
+  99:..\..\../spi.c ****     
+ 100:..\..\../spi.c ****     for (i = 0; i < len; i ++)
+ 194              		.loc 1 100 0
+ 195 0016 0023     		mov	r3, #0
+ 196 0018 7B61     		str	r3, [r7, #20]
+ 197 001a 0CE0     		b	.L10
+ 198              	.L11:
+ 101:..\..\../spi.c ****     {
+ 102:..\..\../spi.c ****         SPIM_WriteTxData(0xFF);
+ 199              		.loc 1 102 0 discriminator 2
+ 200 001c FF20     		mov	r0, #255
+ 201 001e FFF7FEFF 		bl	SPIM_WriteTxData
+ 103:..\..\../spi.c ****         pBuff[i] = SPIM_ReadRxData();
+ 202              		.loc 1 103 0 discriminator 2
+ 203 0022 7B69     		ldr	r3, [r7, #20]
+ 204 0024 BA68     		ldr	r2, [r7, #8]
+ 205 0026 D418     		add	r4, r2, r3
+ 206 0028 FFF7FEFF 		bl	SPIM_ReadRxData
+ 207 002c 031C     		mov	r3, r0
+ 208 002e 2370     		strb	r3, [r4]
+ 100:..\..\../spi.c ****     for (i = 0; i < len; i ++)
+ 209              		.loc 1 100 0 discriminator 2
+ 210 0030 7B69     		ldr	r3, [r7, #20]
+ 211 0032 0133     		add	r3, r3, #1
+ 212 0034 7B61     		str	r3, [r7, #20]
+ 213              	.L10:
+ 100:..\..\../spi.c ****     for (i = 0; i < len; i ++)
+ 214              		.loc 1 100 0 is_stmt 0 discriminator 1
+ 215 0036 7A69     		ldr	r2, [r7, #20]
+ 216 0038 7B68     		ldr	r3, [r7, #4]
+ 217 003a 9A42     		cmp	r2, r3
+ 218 003c EEDB     		blt	.L11
+ 104:..\..\../spi.c ****     }
+ 105:..\..\../spi.c **** 
+ 106:..\..\../spi.c ****     DEASSERT_CS();
+ 219              		.loc 1 106 0 is_stmt 1
+ 220 003e 0120     		mov	r0, #1
+ 221 0040 FFF7FEFF 		bl	m_ss_pin_Write
+ 107:..\..\../spi.c **** 
+ 108:..\..\../spi.c ****     return len;
+ 222              		.loc 1 108 0
+ 223 0044 7B68     		ldr	r3, [r7, #4]
+ 109:..\..\../spi.c **** }
+ 224              		.loc 1 109 0
+ 225 0046 181C     		mov	r0, r3
+ 226 0048 BD46     		mov	sp, r7
+ 227 004a 07B0     		add	sp, sp, #28
+ 228              		@ sp needed for prologue
+ 229 004c 90BD     		pop	{r4, r7, pc}
+ 230              		.cfi_endproc
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 7
+
+
+ 231              	.LFE3:
+ 232              		.size	spi_Read, .-spi_Read
+ 233 004e C046     		.text
+ 234              	.Letext0:
+ 235              		.file 2 "..\\..\\../spi.h"
+ 236              		.section	.debug_info,"",%progbits
+ 237              	.Ldebug_info0:
+ 238 0000 AC010000 		.4byte	0x1ac
+ 239 0004 0200     		.2byte	0x2
+ 240 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 241 000a 04       		.byte	0x4
+ 242 000b 01       		.uleb128 0x1
+ 243 000c BF000000 		.4byte	.LASF20
+ 244 0010 01       		.byte	0x1
+ 245 0011 BF010000 		.4byte	.LASF21
+ 246 0015 09000000 		.4byte	.LASF22
+ 247 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 248 001d 00000000 		.4byte	0
+ 249 0021 00000000 		.4byte	0
+ 250 0025 00000000 		.4byte	.Ldebug_line0
+ 251 0029 02       		.uleb128 0x2
+ 252 002a 01       		.byte	0x1
+ 253 002b 06       		.byte	0x6
+ 254 002c 9A010000 		.4byte	.LASF0
+ 255 0030 02       		.uleb128 0x2
+ 256 0031 01       		.byte	0x1
+ 257 0032 08       		.byte	0x8
+ 258 0033 55010000 		.4byte	.LASF1
+ 259 0037 02       		.uleb128 0x2
+ 260 0038 02       		.byte	0x2
+ 261 0039 05       		.byte	0x5
+ 262 003a AC010000 		.4byte	.LASF2
+ 263 003e 02       		.uleb128 0x2
+ 264 003f 02       		.byte	0x2
+ 265 0040 07       		.byte	0x7
+ 266 0041 87010000 		.4byte	.LASF3
+ 267 0045 02       		.uleb128 0x2
+ 268 0046 04       		.byte	0x4
+ 269 0047 05       		.byte	0x5
+ 270 0048 77010000 		.4byte	.LASF4
+ 271 004c 02       		.uleb128 0x2
+ 272 004d 04       		.byte	0x4
+ 273 004e 07       		.byte	0x7
+ 274 004f 08010000 		.4byte	.LASF5
+ 275 0053 02       		.uleb128 0x2
+ 276 0054 08       		.byte	0x8
+ 277 0055 07       		.byte	0x7
+ 278 0056 28010000 		.4byte	.LASF6
+ 279 005a 03       		.uleb128 0x3
+ 280 005b 04       		.byte	0x4
+ 281 005c 05       		.byte	0x5
+ 282 005d 696E7400 		.ascii	"int\000"
+ 283 0061 02       		.uleb128 0x2
+ 284 0062 01       		.byte	0x1
+ 285 0063 08       		.byte	0x8
+ 286 0064 6D010000 		.4byte	.LASF7
+ 287 0068 02       		.uleb128 0x2
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 8
+
+
+ 288 0069 04       		.byte	0x4
+ 289 006a 04       		.byte	0x4
+ 290 006b A6010000 		.4byte	.LASF8
+ 291 006f 02       		.uleb128 0x2
+ 292 0070 08       		.byte	0x8
+ 293 0071 04       		.byte	0x4
+ 294 0072 80010000 		.4byte	.LASF9
+ 295 0076 02       		.uleb128 0x2
+ 296 0077 04       		.byte	0x4
+ 297 0078 07       		.byte	0x7
+ 298 0079 9E000000 		.4byte	.LASF10
+ 299 007d 02       		.uleb128 0x2
+ 300 007e 08       		.byte	0x8
+ 301 007f 05       		.byte	0x5
+ 302 0080 1A010000 		.4byte	.LASF11
+ 303 0084 02       		.uleb128 0x2
+ 304 0085 04       		.byte	0x4
+ 305 0086 07       		.byte	0x7
+ 306 0087 B6010000 		.4byte	.LASF12
+ 307 008b 04       		.uleb128 0x4
+ 308 008c 04       		.byte	0x4
+ 309 008d 30000000 		.4byte	0x30
+ 310 0091 04       		.uleb128 0x4
+ 311 0092 04       		.byte	0x4
+ 312 0093 61000000 		.4byte	0x61
+ 313 0097 05       		.uleb128 0x5
+ 314 0098 72010000 		.4byte	.LASF23
+ 315 009c 02       		.byte	0x2
+ 316 009d 33       		.byte	0x33
+ 317 009e 76000000 		.4byte	0x76
+ 318 00a2 06       		.uleb128 0x6
+ 319 00a3 01       		.byte	0x1
+ 320 00a4 94000000 		.4byte	.LASF13
+ 321 00a8 01       		.byte	0x1
+ 322 00a9 32       		.byte	0x32
+ 323 00aa 01       		.byte	0x1
+ 324 00ab 5A000000 		.4byte	0x5a
+ 325 00af 00000000 		.4byte	.LFB0
+ 326 00b3 1A000000 		.4byte	.LFE0
+ 327 00b7 00000000 		.4byte	.LLST0
+ 328 00bb 01       		.byte	0x1
+ 329 00bc CE000000 		.4byte	0xce
+ 330 00c0 07       		.uleb128 0x7
+ 331 00c1 666400   		.ascii	"fd\000"
+ 332 00c4 01       		.byte	0x1
+ 333 00c5 32       		.byte	0x32
+ 334 00c6 97000000 		.4byte	0x97
+ 335 00ca 02       		.byte	0x2
+ 336 00cb 91       		.byte	0x91
+ 337 00cc 74       		.sleb128 -12
+ 338 00cd 00       		.byte	0
+ 339 00ce 06       		.uleb128 0x6
+ 340 00cf 01       		.byte	0x1
+ 341 00d0 4C010000 		.4byte	.LASF14
+ 342 00d4 01       		.byte	0x1
+ 343 00d5 3C       		.byte	0x3c
+ 344 00d6 01       		.byte	0x1
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 9
+
+
+ 345 00d7 97000000 		.4byte	0x97
+ 346 00db 00000000 		.4byte	.LFB1
+ 347 00df 22000000 		.4byte	.LFE1
+ 348 00e3 38000000 		.4byte	.LLST1
+ 349 00e7 01       		.byte	0x1
+ 350 00e8 09010000 		.4byte	0x109
+ 351 00ec 08       		.uleb128 0x8
+ 352 00ed 3F010000 		.4byte	.LASF15
+ 353 00f1 01       		.byte	0x1
+ 354 00f2 3C       		.byte	0x3c
+ 355 00f3 91000000 		.4byte	0x91
+ 356 00f7 02       		.byte	0x2
+ 357 00f8 91       		.byte	0x91
+ 358 00f9 74       		.sleb128 -12
+ 359 00fa 08       		.uleb128 0x8
+ 360 00fb AB000000 		.4byte	.LASF16
+ 361 00ff 01       		.byte	0x1
+ 362 0100 3C       		.byte	0x3c
+ 363 0101 4C000000 		.4byte	0x4c
+ 364 0105 02       		.byte	0x2
+ 365 0106 91       		.byte	0x91
+ 366 0107 70       		.sleb128 -16
+ 367 0108 00       		.byte	0
+ 368 0109 06       		.uleb128 0x6
+ 369 010a 01       		.byte	0x1
+ 370 010b 63010000 		.4byte	.LASF17
+ 371 010f 01       		.byte	0x1
+ 372 0110 4A       		.byte	0x4a
+ 373 0111 01       		.byte	0x1
+ 374 0112 5A000000 		.4byte	0x5a
+ 375 0116 00000000 		.4byte	.LFB2
+ 376 011a 48000000 		.4byte	.LFE2
+ 377 011e 70000000 		.4byte	.LLST2
+ 378 0122 01       		.byte	0x1
+ 379 0123 5F010000 		.4byte	0x15f
+ 380 0127 07       		.uleb128 0x7
+ 381 0128 666400   		.ascii	"fd\000"
+ 382 012b 01       		.byte	0x1
+ 383 012c 4A       		.byte	0x4a
+ 384 012d 97000000 		.4byte	0x97
+ 385 0131 02       		.byte	0x2
+ 386 0132 91       		.byte	0x91
+ 387 0133 6C       		.sleb128 -20
+ 388 0134 08       		.uleb128 0x8
+ 389 0135 46010000 		.4byte	.LASF18
+ 390 0139 01       		.byte	0x1
+ 391 013a 4A       		.byte	0x4a
+ 392 013b 8B000000 		.4byte	0x8b
+ 393 013f 02       		.byte	0x2
+ 394 0140 91       		.byte	0x91
+ 395 0141 68       		.sleb128 -24
+ 396 0142 07       		.uleb128 0x7
+ 397 0143 6C656E00 		.ascii	"len\000"
+ 398 0147 01       		.byte	0x1
+ 399 0148 4A       		.byte	0x4a
+ 400 0149 5A000000 		.4byte	0x5a
+ 401 014d 02       		.byte	0x2
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 10
+
+
+ 402 014e 91       		.byte	0x91
+ 403 014f 64       		.sleb128 -28
+ 404 0150 09       		.uleb128 0x9
+ 405 0151 B1000000 		.4byte	.LASF19
+ 406 0155 01       		.byte	0x1
+ 407 0156 4C       		.byte	0x4c
+ 408 0157 5A000000 		.4byte	0x5a
+ 409 015b 02       		.byte	0x2
+ 410 015c 91       		.byte	0x91
+ 411 015d 74       		.sleb128 -12
+ 412 015e 00       		.byte	0
+ 413 015f 0A       		.uleb128 0xa
+ 414 0160 01       		.byte	0x1
+ 415 0161 00000000 		.4byte	.LASF24
+ 416 0165 01       		.byte	0x1
+ 417 0166 5F       		.byte	0x5f
+ 418 0167 01       		.byte	0x1
+ 419 0168 5A000000 		.4byte	0x5a
+ 420 016c 00000000 		.4byte	.LFB3
+ 421 0170 4E000000 		.4byte	.LFE3
+ 422 0174 A8000000 		.4byte	.LLST3
+ 423 0178 01       		.byte	0x1
+ 424 0179 07       		.uleb128 0x7
+ 425 017a 666400   		.ascii	"fd\000"
+ 426 017d 01       		.byte	0x1
+ 427 017e 5F       		.byte	0x5f
+ 428 017f 97000000 		.4byte	0x97
+ 429 0183 02       		.byte	0x2
+ 430 0184 91       		.byte	0x91
+ 431 0185 64       		.sleb128 -28
+ 432 0186 08       		.uleb128 0x8
+ 433 0187 46010000 		.4byte	.LASF18
+ 434 018b 01       		.byte	0x1
+ 435 018c 5F       		.byte	0x5f
+ 436 018d 8B000000 		.4byte	0x8b
+ 437 0191 02       		.byte	0x2
+ 438 0192 91       		.byte	0x91
+ 439 0193 60       		.sleb128 -32
+ 440 0194 07       		.uleb128 0x7
+ 441 0195 6C656E00 		.ascii	"len\000"
+ 442 0199 01       		.byte	0x1
+ 443 019a 5F       		.byte	0x5f
+ 444 019b 5A000000 		.4byte	0x5a
+ 445 019f 02       		.byte	0x2
+ 446 01a0 91       		.byte	0x91
+ 447 01a1 5C       		.sleb128 -36
+ 448 01a2 0B       		.uleb128 0xb
+ 449 01a3 6900     		.ascii	"i\000"
+ 450 01a5 01       		.byte	0x1
+ 451 01a6 61       		.byte	0x61
+ 452 01a7 5A000000 		.4byte	0x5a
+ 453 01ab 02       		.byte	0x2
+ 454 01ac 91       		.byte	0x91
+ 455 01ad 6C       		.sleb128 -20
+ 456 01ae 00       		.byte	0
+ 457 01af 00       		.byte	0
+ 458              		.section	.debug_abbrev,"",%progbits
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 11
+
+
+ 459              	.Ldebug_abbrev0:
+ 460 0000 01       		.uleb128 0x1
+ 461 0001 11       		.uleb128 0x11
+ 462 0002 01       		.byte	0x1
+ 463 0003 25       		.uleb128 0x25
+ 464 0004 0E       		.uleb128 0xe
+ 465 0005 13       		.uleb128 0x13
+ 466 0006 0B       		.uleb128 0xb
+ 467 0007 03       		.uleb128 0x3
+ 468 0008 0E       		.uleb128 0xe
+ 469 0009 1B       		.uleb128 0x1b
+ 470 000a 0E       		.uleb128 0xe
+ 471 000b 55       		.uleb128 0x55
+ 472 000c 06       		.uleb128 0x6
+ 473 000d 11       		.uleb128 0x11
+ 474 000e 01       		.uleb128 0x1
+ 475 000f 52       		.uleb128 0x52
+ 476 0010 01       		.uleb128 0x1
+ 477 0011 10       		.uleb128 0x10
+ 478 0012 06       		.uleb128 0x6
+ 479 0013 00       		.byte	0
+ 480 0014 00       		.byte	0
+ 481 0015 02       		.uleb128 0x2
+ 482 0016 24       		.uleb128 0x24
+ 483 0017 00       		.byte	0
+ 484 0018 0B       		.uleb128 0xb
+ 485 0019 0B       		.uleb128 0xb
+ 486 001a 3E       		.uleb128 0x3e
+ 487 001b 0B       		.uleb128 0xb
+ 488 001c 03       		.uleb128 0x3
+ 489 001d 0E       		.uleb128 0xe
+ 490 001e 00       		.byte	0
+ 491 001f 00       		.byte	0
+ 492 0020 03       		.uleb128 0x3
+ 493 0021 24       		.uleb128 0x24
+ 494 0022 00       		.byte	0
+ 495 0023 0B       		.uleb128 0xb
+ 496 0024 0B       		.uleb128 0xb
+ 497 0025 3E       		.uleb128 0x3e
+ 498 0026 0B       		.uleb128 0xb
+ 499 0027 03       		.uleb128 0x3
+ 500 0028 08       		.uleb128 0x8
+ 501 0029 00       		.byte	0
+ 502 002a 00       		.byte	0
+ 503 002b 04       		.uleb128 0x4
+ 504 002c 0F       		.uleb128 0xf
+ 505 002d 00       		.byte	0
+ 506 002e 0B       		.uleb128 0xb
+ 507 002f 0B       		.uleb128 0xb
+ 508 0030 49       		.uleb128 0x49
+ 509 0031 13       		.uleb128 0x13
+ 510 0032 00       		.byte	0
+ 511 0033 00       		.byte	0
+ 512 0034 05       		.uleb128 0x5
+ 513 0035 16       		.uleb128 0x16
+ 514 0036 00       		.byte	0
+ 515 0037 03       		.uleb128 0x3
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 12
+
+
+ 516 0038 0E       		.uleb128 0xe
+ 517 0039 3A       		.uleb128 0x3a
+ 518 003a 0B       		.uleb128 0xb
+ 519 003b 3B       		.uleb128 0x3b
+ 520 003c 0B       		.uleb128 0xb
+ 521 003d 49       		.uleb128 0x49
+ 522 003e 13       		.uleb128 0x13
+ 523 003f 00       		.byte	0
+ 524 0040 00       		.byte	0
+ 525 0041 06       		.uleb128 0x6
+ 526 0042 2E       		.uleb128 0x2e
+ 527 0043 01       		.byte	0x1
+ 528 0044 3F       		.uleb128 0x3f
+ 529 0045 0C       		.uleb128 0xc
+ 530 0046 03       		.uleb128 0x3
+ 531 0047 0E       		.uleb128 0xe
+ 532 0048 3A       		.uleb128 0x3a
+ 533 0049 0B       		.uleb128 0xb
+ 534 004a 3B       		.uleb128 0x3b
+ 535 004b 0B       		.uleb128 0xb
+ 536 004c 27       		.uleb128 0x27
+ 537 004d 0C       		.uleb128 0xc
+ 538 004e 49       		.uleb128 0x49
+ 539 004f 13       		.uleb128 0x13
+ 540 0050 11       		.uleb128 0x11
+ 541 0051 01       		.uleb128 0x1
+ 542 0052 12       		.uleb128 0x12
+ 543 0053 01       		.uleb128 0x1
+ 544 0054 40       		.uleb128 0x40
+ 545 0055 06       		.uleb128 0x6
+ 546 0056 9642     		.uleb128 0x2116
+ 547 0058 0C       		.uleb128 0xc
+ 548 0059 01       		.uleb128 0x1
+ 549 005a 13       		.uleb128 0x13
+ 550 005b 00       		.byte	0
+ 551 005c 00       		.byte	0
+ 552 005d 07       		.uleb128 0x7
+ 553 005e 05       		.uleb128 0x5
+ 554 005f 00       		.byte	0
+ 555 0060 03       		.uleb128 0x3
+ 556 0061 08       		.uleb128 0x8
+ 557 0062 3A       		.uleb128 0x3a
+ 558 0063 0B       		.uleb128 0xb
+ 559 0064 3B       		.uleb128 0x3b
+ 560 0065 0B       		.uleb128 0xb
+ 561 0066 49       		.uleb128 0x49
+ 562 0067 13       		.uleb128 0x13
+ 563 0068 02       		.uleb128 0x2
+ 564 0069 0A       		.uleb128 0xa
+ 565 006a 00       		.byte	0
+ 566 006b 00       		.byte	0
+ 567 006c 08       		.uleb128 0x8
+ 568 006d 05       		.uleb128 0x5
+ 569 006e 00       		.byte	0
+ 570 006f 03       		.uleb128 0x3
+ 571 0070 0E       		.uleb128 0xe
+ 572 0071 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 13
+
+
+ 573 0072 0B       		.uleb128 0xb
+ 574 0073 3B       		.uleb128 0x3b
+ 575 0074 0B       		.uleb128 0xb
+ 576 0075 49       		.uleb128 0x49
+ 577 0076 13       		.uleb128 0x13
+ 578 0077 02       		.uleb128 0x2
+ 579 0078 0A       		.uleb128 0xa
+ 580 0079 00       		.byte	0
+ 581 007a 00       		.byte	0
+ 582 007b 09       		.uleb128 0x9
+ 583 007c 34       		.uleb128 0x34
+ 584 007d 00       		.byte	0
+ 585 007e 03       		.uleb128 0x3
+ 586 007f 0E       		.uleb128 0xe
+ 587 0080 3A       		.uleb128 0x3a
+ 588 0081 0B       		.uleb128 0xb
+ 589 0082 3B       		.uleb128 0x3b
+ 590 0083 0B       		.uleb128 0xb
+ 591 0084 49       		.uleb128 0x49
+ 592 0085 13       		.uleb128 0x13
+ 593 0086 02       		.uleb128 0x2
+ 594 0087 0A       		.uleb128 0xa
+ 595 0088 00       		.byte	0
+ 596 0089 00       		.byte	0
+ 597 008a 0A       		.uleb128 0xa
+ 598 008b 2E       		.uleb128 0x2e
+ 599 008c 01       		.byte	0x1
+ 600 008d 3F       		.uleb128 0x3f
+ 601 008e 0C       		.uleb128 0xc
+ 602 008f 03       		.uleb128 0x3
+ 603 0090 0E       		.uleb128 0xe
+ 604 0091 3A       		.uleb128 0x3a
+ 605 0092 0B       		.uleb128 0xb
+ 606 0093 3B       		.uleb128 0x3b
+ 607 0094 0B       		.uleb128 0xb
+ 608 0095 27       		.uleb128 0x27
+ 609 0096 0C       		.uleb128 0xc
+ 610 0097 49       		.uleb128 0x49
+ 611 0098 13       		.uleb128 0x13
+ 612 0099 11       		.uleb128 0x11
+ 613 009a 01       		.uleb128 0x1
+ 614 009b 12       		.uleb128 0x12
+ 615 009c 01       		.uleb128 0x1
+ 616 009d 40       		.uleb128 0x40
+ 617 009e 06       		.uleb128 0x6
+ 618 009f 9642     		.uleb128 0x2116
+ 619 00a1 0C       		.uleb128 0xc
+ 620 00a2 00       		.byte	0
+ 621 00a3 00       		.byte	0
+ 622 00a4 0B       		.uleb128 0xb
+ 623 00a5 34       		.uleb128 0x34
+ 624 00a6 00       		.byte	0
+ 625 00a7 03       		.uleb128 0x3
+ 626 00a8 08       		.uleb128 0x8
+ 627 00a9 3A       		.uleb128 0x3a
+ 628 00aa 0B       		.uleb128 0xb
+ 629 00ab 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 14
+
+
+ 630 00ac 0B       		.uleb128 0xb
+ 631 00ad 49       		.uleb128 0x49
+ 632 00ae 13       		.uleb128 0x13
+ 633 00af 02       		.uleb128 0x2
+ 634 00b0 0A       		.uleb128 0xa
+ 635 00b1 00       		.byte	0
+ 636 00b2 00       		.byte	0
+ 637 00b3 00       		.byte	0
+ 638              		.section	.debug_loc,"",%progbits
+ 639              	.Ldebug_loc0:
+ 640              	.LLST0:
+ 641 0000 00000000 		.4byte	.LFB0
+ 642 0004 02000000 		.4byte	.LCFI0
+ 643 0008 0200     		.2byte	0x2
+ 644 000a 7D       		.byte	0x7d
+ 645 000b 00       		.sleb128 0
+ 646 000c 02000000 		.4byte	.LCFI0
+ 647 0010 04000000 		.4byte	.LCFI1
+ 648 0014 0200     		.2byte	0x2
+ 649 0016 7D       		.byte	0x7d
+ 650 0017 08       		.sleb128 8
+ 651 0018 04000000 		.4byte	.LCFI1
+ 652 001c 06000000 		.4byte	.LCFI2
+ 653 0020 0200     		.2byte	0x2
+ 654 0022 7D       		.byte	0x7d
+ 655 0023 10       		.sleb128 16
+ 656 0024 06000000 		.4byte	.LCFI2
+ 657 0028 1A000000 		.4byte	.LFE0
+ 658 002c 0200     		.2byte	0x2
+ 659 002e 77       		.byte	0x77
+ 660 002f 10       		.sleb128 16
+ 661 0030 00000000 		.4byte	0
+ 662 0034 00000000 		.4byte	0
+ 663              	.LLST1:
+ 664 0038 00000000 		.4byte	.LFB1
+ 665 003c 02000000 		.4byte	.LCFI3
+ 666 0040 0200     		.2byte	0x2
+ 667 0042 7D       		.byte	0x7d
+ 668 0043 00       		.sleb128 0
+ 669 0044 02000000 		.4byte	.LCFI3
+ 670 0048 04000000 		.4byte	.LCFI4
+ 671 004c 0200     		.2byte	0x2
+ 672 004e 7D       		.byte	0x7d
+ 673 004f 08       		.sleb128 8
+ 674 0050 04000000 		.4byte	.LCFI4
+ 675 0054 06000000 		.4byte	.LCFI5
+ 676 0058 0200     		.2byte	0x2
+ 677 005a 7D       		.byte	0x7d
+ 678 005b 10       		.sleb128 16
+ 679 005c 06000000 		.4byte	.LCFI5
+ 680 0060 22000000 		.4byte	.LFE1
+ 681 0064 0200     		.2byte	0x2
+ 682 0066 77       		.byte	0x77
+ 683 0067 10       		.sleb128 16
+ 684 0068 00000000 		.4byte	0
+ 685 006c 00000000 		.4byte	0
+ 686              	.LLST2:
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 15
+
+
+ 687 0070 00000000 		.4byte	.LFB2
+ 688 0074 02000000 		.4byte	.LCFI6
+ 689 0078 0200     		.2byte	0x2
+ 690 007a 7D       		.byte	0x7d
+ 691 007b 00       		.sleb128 0
+ 692 007c 02000000 		.4byte	.LCFI6
+ 693 0080 04000000 		.4byte	.LCFI7
+ 694 0084 0200     		.2byte	0x2
+ 695 0086 7D       		.byte	0x7d
+ 696 0087 08       		.sleb128 8
+ 697 0088 04000000 		.4byte	.LCFI7
+ 698 008c 06000000 		.4byte	.LCFI8
+ 699 0090 0200     		.2byte	0x2
+ 700 0092 7D       		.byte	0x7d
+ 701 0093 20       		.sleb128 32
+ 702 0094 06000000 		.4byte	.LCFI8
+ 703 0098 48000000 		.4byte	.LFE2
+ 704 009c 0200     		.2byte	0x2
+ 705 009e 77       		.byte	0x77
+ 706 009f 20       		.sleb128 32
+ 707 00a0 00000000 		.4byte	0
+ 708 00a4 00000000 		.4byte	0
+ 709              	.LLST3:
+ 710 00a8 00000000 		.4byte	.LFB3
+ 711 00ac 02000000 		.4byte	.LCFI9
+ 712 00b0 0200     		.2byte	0x2
+ 713 00b2 7D       		.byte	0x7d
+ 714 00b3 00       		.sleb128 0
+ 715 00b4 02000000 		.4byte	.LCFI9
+ 716 00b8 04000000 		.4byte	.LCFI10
+ 717 00bc 0200     		.2byte	0x2
+ 718 00be 7D       		.byte	0x7d
+ 719 00bf 0C       		.sleb128 12
+ 720 00c0 04000000 		.4byte	.LCFI10
+ 721 00c4 06000000 		.4byte	.LCFI11
+ 722 00c8 0200     		.2byte	0x2
+ 723 00ca 7D       		.byte	0x7d
+ 724 00cb 28       		.sleb128 40
+ 725 00cc 06000000 		.4byte	.LCFI11
+ 726 00d0 4E000000 		.4byte	.LFE3
+ 727 00d4 0200     		.2byte	0x2
+ 728 00d6 77       		.byte	0x77
+ 729 00d7 28       		.sleb128 40
+ 730 00d8 00000000 		.4byte	0
+ 731 00dc 00000000 		.4byte	0
+ 732              		.section	.debug_aranges,"",%progbits
+ 733 0000 34000000 		.4byte	0x34
+ 734 0004 0200     		.2byte	0x2
+ 735 0006 00000000 		.4byte	.Ldebug_info0
+ 736 000a 04       		.byte	0x4
+ 737 000b 00       		.byte	0
+ 738 000c 0000     		.2byte	0
+ 739 000e 0000     		.2byte	0
+ 740 0010 00000000 		.4byte	.LFB0
+ 741 0014 1A000000 		.4byte	.LFE0-.LFB0
+ 742 0018 00000000 		.4byte	.LFB1
+ 743 001c 22000000 		.4byte	.LFE1-.LFB1
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 16
+
+
+ 744 0020 00000000 		.4byte	.LFB2
+ 745 0024 48000000 		.4byte	.LFE2-.LFB2
+ 746 0028 00000000 		.4byte	.LFB3
+ 747 002c 4E000000 		.4byte	.LFE3-.LFB3
+ 748 0030 00000000 		.4byte	0
+ 749 0034 00000000 		.4byte	0
+ 750              		.section	.debug_ranges,"",%progbits
+ 751              	.Ldebug_ranges0:
+ 752 0000 00000000 		.4byte	.LFB0
+ 753 0004 1A000000 		.4byte	.LFE0
+ 754 0008 00000000 		.4byte	.LFB1
+ 755 000c 22000000 		.4byte	.LFE1
+ 756 0010 00000000 		.4byte	.LFB2
+ 757 0014 48000000 		.4byte	.LFE2
+ 758 0018 00000000 		.4byte	.LFB3
+ 759 001c 4E000000 		.4byte	.LFE3
+ 760 0020 00000000 		.4byte	0
+ 761 0024 00000000 		.4byte	0
+ 762              		.section	.debug_line,"",%progbits
+ 763              	.Ldebug_line0:
+ 764 0000 A8000000 		.section	.debug_str,"MS",%progbits,1
+ 764      02002E00 
+ 764      00000201 
+ 764      FB0E0D00 
+ 764      01010101 
+ 765              	.LASF24:
+ 766 0000 7370695F 		.ascii	"spi_Read\000"
+ 766      52656164 
+ 766      00
+ 767              	.LASF22:
+ 768 0009 433A5C55 		.ascii	"C:\\Users\\X0217454\\Desktop\\CC31xx\\CC3100 - 0.5\\"
+ 768      73657273 
+ 768      5C583032 
+ 768      31373435 
+ 768      345C4465 
+ 769 0037 43433331 		.ascii	"CC3100 SDK 0.5\\cc3100-sdk\\platform\\cypress_SDK.5"
+ 769      30302053 
+ 769      444B2030 
+ 769      2E355C63 
+ 769      63333130 
+ 770 0067 5C657861 		.ascii	"\\example\\spi_debug_tool\\spi_debug_tool.cydsn\000"
+ 770      6D706C65 
+ 770      5C737069 
+ 770      5F646562 
+ 770      75675F74 
+ 771              	.LASF13:
+ 772 0094 7370695F 		.ascii	"spi_Close\000"
+ 772      436C6F73 
+ 772      6500
+ 773              	.LASF10:
+ 774 009e 756E7369 		.ascii	"unsigned int\000"
+ 774      676E6564 
+ 774      20696E74 
+ 774      00
+ 775              	.LASF16:
+ 776 00ab 666C6167 		.ascii	"flags\000"
+ 776      7300
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 17
+
+
+ 777              	.LASF19:
+ 778 00b1 6C656E5F 		.ascii	"len_to_return\000"
+ 778      746F5F72 
+ 778      65747572 
+ 778      6E00
+ 779              	.LASF20:
+ 780 00bf 474E5520 		.ascii	"GNU C 4.7.3 20130312 (release) [ARM/embedded-4_7-br"
+ 780      4320342E 
+ 780      372E3320 
+ 780      32303133 
+ 780      30333132 
+ 781 00f2 616E6368 		.ascii	"anch revision 196615]\000"
+ 781      20726576 
+ 781      6973696F 
+ 781      6E203139 
+ 781      36363135 
+ 782              	.LASF5:
+ 783 0108 6C6F6E67 		.ascii	"long unsigned int\000"
+ 783      20756E73 
+ 783      69676E65 
+ 783      6420696E 
+ 783      7400
+ 784              	.LASF11:
+ 785 011a 6C6F6E67 		.ascii	"long long int\000"
+ 785      206C6F6E 
+ 785      6720696E 
+ 785      7400
+ 786              	.LASF6:
+ 787 0128 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 787      206C6F6E 
+ 787      6720756E 
+ 787      7369676E 
+ 787      65642069 
+ 788              	.LASF15:
+ 789 013f 69664E61 		.ascii	"ifName\000"
+ 789      6D6500
+ 790              	.LASF18:
+ 791 0146 70427566 		.ascii	"pBuff\000"
+ 791      6600
+ 792              	.LASF14:
+ 793 014c 7370695F 		.ascii	"spi_Open\000"
+ 793      4F70656E 
+ 793      00
+ 794              	.LASF1:
+ 795 0155 756E7369 		.ascii	"unsigned char\000"
+ 795      676E6564 
+ 795      20636861 
+ 795      7200
+ 796              	.LASF17:
+ 797 0163 7370695F 		.ascii	"spi_Write\000"
+ 797      57726974 
+ 797      6500
+ 798              	.LASF7:
+ 799 016d 63686172 		.ascii	"char\000"
+ 799      00
+ 800              	.LASF23:
+ 801 0172 46645F74 		.ascii	"Fd_t\000"
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccoHoMkg.s 			page 18
+
+
+ 801      00
+ 802              	.LASF4:
+ 803 0177 6C6F6E67 		.ascii	"long int\000"
+ 803      20696E74 
+ 803      00
+ 804              	.LASF9:
+ 805 0180 646F7562 		.ascii	"double\000"
+ 805      6C6500
+ 806              	.LASF3:
+ 807 0187 73686F72 		.ascii	"short unsigned int\000"
+ 807      7420756E 
+ 807      7369676E 
+ 807      65642069 
+ 807      6E7400
+ 808              	.LASF0:
+ 809 019a 7369676E 		.ascii	"signed char\000"
+ 809      65642063 
+ 809      68617200 
+ 810              	.LASF8:
+ 811 01a6 666C6F61 		.ascii	"float\000"
+ 811      7400
+ 812              	.LASF2:
+ 813 01ac 73686F72 		.ascii	"short int\000"
+ 813      7420696E 
+ 813      7400
+ 814              	.LASF12:
+ 815 01b6 73697A65 		.ascii	"sizetype\000"
+ 815      74797065 
+ 815      00
+ 816              	.LASF21:
+ 817 01bf 2E2E5C2E 		.ascii	"..\\..\\..\\spi.c\000"
+ 817      2E5C2E2E 
+ 817      5C737069 
+ 817      2E6300
+ 818              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.7.3 20130312 (release) [ARM/embedded-4_7-br

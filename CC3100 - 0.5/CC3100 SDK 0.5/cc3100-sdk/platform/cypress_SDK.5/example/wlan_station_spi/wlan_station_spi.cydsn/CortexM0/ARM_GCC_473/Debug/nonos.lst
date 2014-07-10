@@ -1,0 +1,2423 @@
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"nonos.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.comm	g__SlNonOsCB,40,4
+  18              		.section	.text._SlNonOsSemSet,"ax",%progbits
+  19              		.align	2
+  20              		.global	_SlNonOsSemSet
+  21              		.code	16
+  22              		.thumb_func
+  23              		.type	_SlNonOsSemSet, %function
+  24              	_SlNonOsSemSet:
+  25              	.LFB0:
+  26              		.file 1 "..\\..\\..\\..\\..\\simplelink\\source\\nonos.c"
+   1:..\..\..\..\..\simplelink\source/nonos.c **** /*
+   2:..\..\..\..\..\simplelink\source/nonos.c ****  * nonos.c - CC31xx/CC32xx Host Driver Implementation
+   3:..\..\..\..\..\simplelink\source/nonos.c ****  *
+   4:..\..\..\..\..\simplelink\source/nonos.c ****  * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
+   5:..\..\..\..\..\simplelink\source/nonos.c ****  * 
+   6:..\..\..\..\..\simplelink\source/nonos.c ****  * 
+   7:..\..\..\..\..\simplelink\source/nonos.c ****  *  Redistribution and use in source and binary forms, with or without 
+   8:..\..\..\..\..\simplelink\source/nonos.c ****  *  modification, are permitted provided that the following conditions 
+   9:..\..\..\..\..\simplelink\source/nonos.c ****  *  are met:
+  10:..\..\..\..\..\simplelink\source/nonos.c ****  *
+  11:..\..\..\..\..\simplelink\source/nonos.c ****  *    Redistributions of source code must retain the above copyright 
+  12:..\..\..\..\..\simplelink\source/nonos.c ****  *    notice, this list of conditions and the following disclaimer.
+  13:..\..\..\..\..\simplelink\source/nonos.c ****  *
+  14:..\..\..\..\..\simplelink\source/nonos.c ****  *    Redistributions in binary form must reproduce the above copyright
+  15:..\..\..\..\..\simplelink\source/nonos.c ****  *    notice, this list of conditions and the following disclaimer in the 
+  16:..\..\..\..\..\simplelink\source/nonos.c ****  *    documentation and/or other materials provided with the   
+  17:..\..\..\..\..\simplelink\source/nonos.c ****  *    distribution.
+  18:..\..\..\..\..\simplelink\source/nonos.c ****  *
+  19:..\..\..\..\..\simplelink\source/nonos.c ****  *    Neither the name of Texas Instruments Incorporated nor the names of
+  20:..\..\..\..\..\simplelink\source/nonos.c ****  *    its contributors may be used to endorse or promote products derived
+  21:..\..\..\..\..\simplelink\source/nonos.c ****  *    from this software without specific prior written permission.
+  22:..\..\..\..\..\simplelink\source/nonos.c ****  *
+  23:..\..\..\..\..\simplelink\source/nonos.c ****  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+  24:..\..\..\..\..\simplelink\source/nonos.c ****  *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+  25:..\..\..\..\..\simplelink\source/nonos.c ****  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  26:..\..\..\..\..\simplelink\source/nonos.c ****  *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+  27:..\..\..\..\..\simplelink\source/nonos.c ****  *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  28:..\..\..\..\..\simplelink\source/nonos.c ****  *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+  29:..\..\..\..\..\simplelink\source/nonos.c ****  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  30:..\..\..\..\..\simplelink\source/nonos.c ****  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  31:..\..\..\..\..\simplelink\source/nonos.c ****  *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 2
+
+
+  32:..\..\..\..\..\simplelink\source/nonos.c ****  *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+  33:..\..\..\..\..\simplelink\source/nonos.c ****  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  34:..\..\..\..\..\simplelink\source/nonos.c ****  *
+  35:..\..\..\..\..\simplelink\source/nonos.c **** */
+  36:..\..\..\..\..\simplelink\source/nonos.c **** 
+  37:..\..\..\..\..\simplelink\source/nonos.c **** #include "datatypes.h"
+  38:..\..\..\..\..\simplelink\source/nonos.c **** #include "simplelink.h"
+  39:..\..\..\..\..\simplelink\source/nonos.c **** #include "protocol.h"
+  40:..\..\..\..\..\simplelink\source/nonos.c **** #include "driver.h"
+  41:..\..\..\..\..\simplelink\source/nonos.c **** 
+  42:..\..\..\..\..\simplelink\source/nonos.c **** #ifndef SL_PLATFORM_MULTI_THREADED
+  43:..\..\..\..\..\simplelink\source/nonos.c **** 
+  44:..\..\..\..\..\simplelink\source/nonos.c **** #include "nonos.h"
+  45:..\..\..\..\..\simplelink\source/nonos.c **** 
+  46:..\..\..\..\..\simplelink\source/nonos.c **** #define NONOS_MAX_SPAWN_ENTRIES		5
+  47:..\..\..\..\..\simplelink\source/nonos.c **** 
+  48:..\..\..\..\..\simplelink\source/nonos.c **** typedef struct
+  49:..\..\..\..\..\simplelink\source/nonos.c **** {
+  50:..\..\..\..\..\simplelink\source/nonos.c **** 	_SlSpawnEntryFunc_t 		pEntry;
+  51:..\..\..\..\..\simplelink\source/nonos.c **** 	void* 						pValue;
+  52:..\..\..\..\..\simplelink\source/nonos.c **** }_SlNonOsSpawnEntry_t;
+  53:..\..\..\..\..\simplelink\source/nonos.c **** 
+  54:..\..\..\..\..\simplelink\source/nonos.c **** typedef struct
+  55:..\..\..\..\..\simplelink\source/nonos.c **** {
+  56:..\..\..\..\..\simplelink\source/nonos.c **** 	_SlNonOsSpawnEntry_t	SpawnEntries[NONOS_MAX_SPAWN_ENTRIES];
+  57:..\..\..\..\..\simplelink\source/nonos.c **** }_SlNonOsCB_t;
+  58:..\..\..\..\..\simplelink\source/nonos.c **** 
+  59:..\..\..\..\..\simplelink\source/nonos.c **** _SlNonOsCB_t g__SlNonOsCB;
+  60:..\..\..\..\..\simplelink\source/nonos.c **** 
+  61:..\..\..\..\..\simplelink\source/nonos.c **** 
+  62:..\..\..\..\..\simplelink\source/nonos.c **** _SlNonOsRetVal_t _SlNonOsSemSet(_SlNonOsSemObj_t* pSemObj , _SlNonOsSemObj_t Value)
+  63:..\..\..\..\..\simplelink\source/nonos.c **** {
+  27              		.loc 1 63 0
+  28              		.cfi_startproc
+  29 0000 80B5     		push	{r7, lr}
+  30              	.LCFI0:
+  31              		.cfi_def_cfa_offset 8
+  32              		.cfi_offset 7, -8
+  33              		.cfi_offset 14, -4
+  34 0002 82B0     		sub	sp, sp, #8
+  35              	.LCFI1:
+  36              		.cfi_def_cfa_offset 16
+  37 0004 00AF     		add	r7, sp, #0
+  38              	.LCFI2:
+  39              		.cfi_def_cfa_register 7
+  40 0006 7860     		str	r0, [r7, #4]
+  41 0008 0A1C     		mov	r2, r1
+  42 000a FB1C     		add	r3, r7, #3
+  43 000c 1A70     		strb	r2, [r3]
+  64:..\..\..\..\..\simplelink\source/nonos.c **** 	*pSemObj = Value;
+  44              		.loc 1 64 0
+  45 000e 7B68     		ldr	r3, [r7, #4]
+  46 0010 FA1C     		add	r2, r7, #3
+  47 0012 1278     		ldrb	r2, [r2]
+  48 0014 1A70     		strb	r2, [r3]
+  65:..\..\..\..\..\simplelink\source/nonos.c **** 	return NONOS_RET_OK;
+  49              		.loc 1 65 0
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 3
+
+
+  50 0016 0023     		mov	r3, #0
+  66:..\..\..\..\..\simplelink\source/nonos.c **** }
+  51              		.loc 1 66 0
+  52 0018 181C     		mov	r0, r3
+  53 001a BD46     		mov	sp, r7
+  54 001c 02B0     		add	sp, sp, #8
+  55              		@ sp needed for prologue
+  56 001e 80BD     		pop	{r7, pc}
+  57              		.cfi_endproc
+  58              	.LFE0:
+  59              		.size	_SlNonOsSemSet, .-_SlNonOsSemSet
+  60              		.section	.text._SlNonOsSemGet,"ax",%progbits
+  61              		.align	2
+  62              		.global	_SlNonOsSemGet
+  63              		.code	16
+  64              		.thumb_func
+  65              		.type	_SlNonOsSemGet, %function
+  66              	_SlNonOsSemGet:
+  67              	.LFB1:
+  67:..\..\..\..\..\simplelink\source/nonos.c **** 
+  68:..\..\..\..\..\simplelink\source/nonos.c **** _SlNonOsRetVal_t _SlNonOsSemGet(_SlNonOsSemObj_t* pSyncObj, _SlNonOsSemObj_t WaitValue, _SlNonOsSem
+  69:..\..\..\..\..\simplelink\source/nonos.c **** {
+  68              		.loc 1 69 0
+  69              		.cfi_startproc
+  70 0000 80B5     		push	{r7, lr}
+  71              	.LCFI3:
+  72              		.cfi_def_cfa_offset 8
+  73              		.cfi_offset 7, -8
+  74              		.cfi_offset 14, -4
+  75 0002 82B0     		sub	sp, sp, #8
+  76              	.LCFI4:
+  77              		.cfi_def_cfa_offset 16
+  78 0004 00AF     		add	r7, sp, #0
+  79              	.LCFI5:
+  80              		.cfi_def_cfa_register 7
+  81 0006 7860     		str	r0, [r7, #4]
+  82 0008 081C     		mov	r0, r1
+  83 000a 111C     		mov	r1, r2
+  84 000c 1A1C     		mov	r2, r3
+  85 000e FB1C     		add	r3, r7, #3
+  86 0010 1870     		strb	r0, [r3]
+  87 0012 BB1C     		add	r3, r7, #2
+  88 0014 1970     		strb	r1, [r3]
+  89 0016 7B1C     		add	r3, r7, #1
+  90 0018 1A70     		strb	r2, [r3]
+  70:..\..\..\..\..\simplelink\source/nonos.c **** 	while (Timeout>0)
+  91              		.loc 1 70 0
+  92 001a 15E0     		b	.L4
+  93              	.L8:
+  71:..\..\..\..\..\simplelink\source/nonos.c **** 	{
+  72:..\..\..\..\..\simplelink\source/nonos.c **** 		if (WaitValue == *pSyncObj)
+  94              		.loc 1 72 0
+  95 001c 7B68     		ldr	r3, [r7, #4]
+  96 001e 1B78     		ldrb	r3, [r3]
+  97 0020 FA1C     		add	r2, r7, #3
+  98 0022 1278     		ldrb	r2, [r2]
+  99 0024 9A42     		cmp	r2, r3
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 4
+
+
+ 100 0026 04D1     		bne	.L5
+  73:..\..\..\..\..\simplelink\source/nonos.c **** 		{
+  74:..\..\..\..\..\simplelink\source/nonos.c **** 			*pSyncObj = SetValue;
+ 101              		.loc 1 74 0
+ 102 0028 7B68     		ldr	r3, [r7, #4]
+ 103 002a BA1C     		add	r2, r7, #2
+ 104 002c 1278     		ldrb	r2, [r2]
+ 105 002e 1A70     		strb	r2, [r3]
+  75:..\..\..\..\..\simplelink\source/nonos.c **** 			break;
+ 106              		.loc 1 75 0
+ 107 0030 0EE0     		b	.L6
+ 108              	.L5:
+  76:..\..\..\..\..\simplelink\source/nonos.c **** 		}
+  77:..\..\..\..\..\simplelink\source/nonos.c **** 		if (Timeout != NONOS_WAIT_FOREVER)
+ 109              		.loc 1 77 0
+ 110 0032 7B1C     		add	r3, r7, #1
+ 111 0034 1B78     		ldrb	r3, [r3]
+ 112 0036 FF2B     		cmp	r3, #255
+ 113 0038 04D0     		beq	.L7
+  78:..\..\..\..\..\simplelink\source/nonos.c **** 		{		
+  79:..\..\..\..\..\simplelink\source/nonos.c **** 			Timeout--;
+ 114              		.loc 1 79 0
+ 115 003a 7B1C     		add	r3, r7, #1
+ 116 003c 7A1C     		add	r2, r7, #1
+ 117 003e 1278     		ldrb	r2, [r2]
+ 118 0040 013A     		sub	r2, r2, #1
+ 119 0042 1A70     		strb	r2, [r3]
+ 120              	.L7:
+  80:..\..\..\..\..\simplelink\source/nonos.c **** 		}
+  81:..\..\..\..\..\simplelink\source/nonos.c **** 		_SlNonOsMainLoopTask();
+ 121              		.loc 1 81 0
+ 122 0044 FFF7FEFF 		bl	_SlNonOsMainLoopTask
+ 123              	.L4:
+  70:..\..\..\..\..\simplelink\source/nonos.c **** 	while (Timeout>0)
+ 124              		.loc 1 70 0 discriminator 1
+ 125 0048 7B1C     		add	r3, r7, #1
+ 126 004a 1B78     		ldrb	r3, [r3]
+ 127 004c 002B     		cmp	r3, #0
+ 128 004e E5D1     		bne	.L8
+ 129              	.L6:
+  82:..\..\..\..\..\simplelink\source/nonos.c **** 	}
+  83:..\..\..\..\..\simplelink\source/nonos.c **** 	
+  84:..\..\..\..\..\simplelink\source/nonos.c **** 	if (0 == Timeout)
+ 130              		.loc 1 84 0
+ 131 0050 7B1C     		add	r3, r7, #1
+ 132 0052 1B78     		ldrb	r3, [r3]
+ 133 0054 002B     		cmp	r3, #0
+ 134 0056 01D1     		bne	.L9
+  85:..\..\..\..\..\simplelink\source/nonos.c **** 	{
+  86:..\..\..\..\..\simplelink\source/nonos.c **** 		return NONOS_RET_ERR;
+ 135              		.loc 1 86 0
+ 136 0058 FF23     		mov	r3, #255
+ 137 005a 00E0     		b	.L10
+ 138              	.L9:
+  87:..\..\..\..\..\simplelink\source/nonos.c **** 	}
+  88:..\..\..\..\..\simplelink\source/nonos.c **** 	else
+  89:..\..\..\..\..\simplelink\source/nonos.c **** 	{
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 5
+
+
+  90:..\..\..\..\..\simplelink\source/nonos.c **** 		return NONOS_RET_OK;
+ 139              		.loc 1 90 0
+ 140 005c 0023     		mov	r3, #0
+ 141              	.L10:
+  91:..\..\..\..\..\simplelink\source/nonos.c **** 	}
+  92:..\..\..\..\..\simplelink\source/nonos.c **** }
+ 142              		.loc 1 92 0
+ 143 005e 181C     		mov	r0, r3
+ 144 0060 BD46     		mov	sp, r7
+ 145 0062 02B0     		add	sp, sp, #8
+ 146              		@ sp needed for prologue
+ 147 0064 80BD     		pop	{r7, pc}
+ 148              		.cfi_endproc
+ 149              	.LFE1:
+ 150              		.size	_SlNonOsSemGet, .-_SlNonOsSemGet
+ 151 0066 C046     		.section	.text._SlNonOsSpawn,"ax",%progbits
+ 152              		.align	2
+ 153              		.global	_SlNonOsSpawn
+ 154              		.code	16
+ 155              		.thumb_func
+ 156              		.type	_SlNonOsSpawn, %function
+ 157              	_SlNonOsSpawn:
+ 158              	.LFB2:
+  93:..\..\..\..\..\simplelink\source/nonos.c **** 
+  94:..\..\..\..\..\simplelink\source/nonos.c **** 
+  95:..\..\..\..\..\simplelink\source/nonos.c **** _SlNonOsRetVal_t _SlNonOsSpawn(_SlSpawnEntryFunc_t pEntry , void* pValue , unsigned long flags)
+  96:..\..\..\..\..\simplelink\source/nonos.c **** {
+ 159              		.loc 1 96 0
+ 160              		.cfi_startproc
+ 161 0000 80B5     		push	{r7, lr}
+ 162              	.LCFI6:
+ 163              		.cfi_def_cfa_offset 8
+ 164              		.cfi_offset 7, -8
+ 165              		.cfi_offset 14, -4
+ 166 0002 86B0     		sub	sp, sp, #24
+ 167              	.LCFI7:
+ 168              		.cfi_def_cfa_offset 32
+ 169 0004 00AF     		add	r7, sp, #0
+ 170              	.LCFI8:
+ 171              		.cfi_def_cfa_register 7
+ 172 0006 F860     		str	r0, [r7, #12]
+ 173 0008 B960     		str	r1, [r7, #8]
+ 174 000a 7A60     		str	r2, [r7, #4]
+  97:..\..\..\..\..\simplelink\source/nonos.c **** 	int i;
+  98:..\..\..\..\..\simplelink\source/nonos.c **** 	
+  99:..\..\..\..\..\simplelink\source/nonos.c **** 	for (i=0 ; i<NONOS_MAX_SPAWN_ENTRIES ; i++)
+ 175              		.loc 1 99 0
+ 176 000c 0023     		mov	r3, #0
+ 177 000e 7B61     		str	r3, [r7, #20]
+ 178 0010 12E0     		b	.L12
+ 179              	.L15:
+ 180              	.LBB2:
+ 100:..\..\..\..\..\simplelink\source/nonos.c **** 	{
+ 101:..\..\..\..\..\simplelink\source/nonos.c **** 		_SlNonOsSpawnEntry_t* pE = &g__SlNonOsCB.SpawnEntries[i];
+ 181              		.loc 1 101 0
+ 182 0012 7B69     		ldr	r3, [r7, #20]
+ 183 0014 DA00     		lsl	r2, r3, #3
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 6
+
+
+ 184 0016 0C4B     		ldr	r3, .L17
+ 185 0018 D318     		add	r3, r2, r3
+ 186 001a 3B61     		str	r3, [r7, #16]
+ 102:..\..\..\..\..\simplelink\source/nonos.c **** 	
+ 103:..\..\..\..\..\simplelink\source/nonos.c **** 		if (NULL == pE->pEntry)
+ 187              		.loc 1 103 0
+ 188 001c 3B69     		ldr	r3, [r7, #16]
+ 189 001e 1B68     		ldr	r3, [r3]
+ 190 0020 002B     		cmp	r3, #0
+ 191 0022 06D1     		bne	.L13
+ 104:..\..\..\..\..\simplelink\source/nonos.c **** 		{
+ 105:..\..\..\..\..\simplelink\source/nonos.c **** 			pE->pValue = pValue;
+ 192              		.loc 1 105 0
+ 193 0024 3B69     		ldr	r3, [r7, #16]
+ 194 0026 BA68     		ldr	r2, [r7, #8]
+ 195 0028 5A60     		str	r2, [r3, #4]
+ 106:..\..\..\..\..\simplelink\source/nonos.c **** 			pE->pEntry = pEntry;
+ 196              		.loc 1 106 0
+ 197 002a 3B69     		ldr	r3, [r7, #16]
+ 198 002c FA68     		ldr	r2, [r7, #12]
+ 199 002e 1A60     		str	r2, [r3]
+ 107:..\..\..\..\..\simplelink\source/nonos.c **** 			break;
+ 200              		.loc 1 107 0
+ 201 0030 05E0     		b	.L14
+ 202              	.L13:
+ 203              	.LBE2:
+  99:..\..\..\..\..\simplelink\source/nonos.c **** 	for (i=0 ; i<NONOS_MAX_SPAWN_ENTRIES ; i++)
+ 204              		.loc 1 99 0
+ 205 0032 7B69     		ldr	r3, [r7, #20]
+ 206 0034 0133     		add	r3, r3, #1
+ 207 0036 7B61     		str	r3, [r7, #20]
+ 208              	.L12:
+  99:..\..\..\..\..\simplelink\source/nonos.c **** 	for (i=0 ; i<NONOS_MAX_SPAWN_ENTRIES ; i++)
+ 209              		.loc 1 99 0 is_stmt 0 discriminator 1
+ 210 0038 7B69     		ldr	r3, [r7, #20]
+ 211 003a 042B     		cmp	r3, #4
+ 212 003c E9DD     		ble	.L15
+ 213              	.L14:
+ 108:..\..\..\..\..\simplelink\source/nonos.c **** 		}
+ 109:..\..\..\..\..\simplelink\source/nonos.c **** 	}
+ 110:..\..\..\..\..\simplelink\source/nonos.c ****         
+ 111:..\..\..\..\..\simplelink\source/nonos.c ****         
+ 112:..\..\..\..\..\simplelink\source/nonos.c ****         return NONOS_RET_OK;
+ 214              		.loc 1 112 0 is_stmt 1
+ 215 003e 0023     		mov	r3, #0
+ 113:..\..\..\..\..\simplelink\source/nonos.c **** }
+ 216              		.loc 1 113 0
+ 217 0040 181C     		mov	r0, r3
+ 218 0042 BD46     		mov	sp, r7
+ 219 0044 06B0     		add	sp, sp, #24
+ 220              		@ sp needed for prologue
+ 221 0046 80BD     		pop	{r7, pc}
+ 222              	.L18:
+ 223              		.align	2
+ 224              	.L17:
+ 225 0048 00000000 		.word	g__SlNonOsCB
+ 226              		.cfi_endproc
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 7
+
+
+ 227              	.LFE2:
+ 228              		.size	_SlNonOsSpawn, .-_SlNonOsSpawn
+ 229              		.section	.text._SlNonOsMainLoopTask,"ax",%progbits
+ 230              		.align	2
+ 231              		.global	_SlNonOsMainLoopTask
+ 232              		.code	16
+ 233              		.thumb_func
+ 234              		.type	_SlNonOsMainLoopTask, %function
+ 235              	_SlNonOsMainLoopTask:
+ 236              	.LFB3:
+ 114:..\..\..\..\..\simplelink\source/nonos.c **** 
+ 115:..\..\..\..\..\simplelink\source/nonos.c **** 
+ 116:..\..\..\..\..\simplelink\source/nonos.c **** _SlNonOsRetVal_t _SlNonOsMainLoopTask(void)
+ 117:..\..\..\..\..\simplelink\source/nonos.c **** {
+ 237              		.loc 1 117 0
+ 238              		.cfi_startproc
+ 239 0000 80B5     		push	{r7, lr}
+ 240              	.LCFI9:
+ 241              		.cfi_def_cfa_offset 8
+ 242              		.cfi_offset 7, -8
+ 243              		.cfi_offset 14, -4
+ 244 0002 84B0     		sub	sp, sp, #16
+ 245              	.LCFI10:
+ 246              		.cfi_def_cfa_offset 24
+ 247 0004 00AF     		add	r7, sp, #0
+ 248              	.LCFI11:
+ 249              		.cfi_def_cfa_register 7
+ 118:..\..\..\..\..\simplelink\source/nonos.c **** 	int i;
+ 119:..\..\..\..\..\simplelink\source/nonos.c **** 	
+ 120:..\..\..\..\..\simplelink\source/nonos.c **** 	for (i=0 ; i<NONOS_MAX_SPAWN_ENTRIES ; i++)
+ 250              		.loc 1 120 0
+ 251 0006 0023     		mov	r3, #0
+ 252 0008 FB60     		str	r3, [r7, #12]
+ 253 000a 20E0     		b	.L20
+ 254              	.L23:
+ 255              	.LBB3:
+ 121:..\..\..\..\..\simplelink\source/nonos.c **** 	{
+ 122:..\..\..\..\..\simplelink\source/nonos.c **** 		_SlNonOsSpawnEntry_t* pE = &g__SlNonOsCB.SpawnEntries[i];
+ 256              		.loc 1 122 0
+ 257 000c FB68     		ldr	r3, [r7, #12]
+ 258 000e DA00     		lsl	r2, r3, #3
+ 259 0010 134B     		ldr	r3, .L25
+ 260 0012 D318     		add	r3, r2, r3
+ 261 0014 BB60     		str	r3, [r7, #8]
+ 123:..\..\..\..\..\simplelink\source/nonos.c **** 		_SlSpawnEntryFunc_t 		pF = pE->pEntry;
+ 262              		.loc 1 123 0
+ 263 0016 BB68     		ldr	r3, [r7, #8]
+ 264 0018 1B68     		ldr	r3, [r3]
+ 265 001a 7B60     		str	r3, [r7, #4]
+ 124:..\..\..\..\..\simplelink\source/nonos.c **** 		
+ 125:..\..\..\..\..\simplelink\source/nonos.c **** 		if (NULL != pF)
+ 266              		.loc 1 125 0
+ 267 001c 7B68     		ldr	r3, [r7, #4]
+ 268 001e 002B     		cmp	r3, #0
+ 269 0020 12D0     		beq	.L21
+ 126:..\..\..\..\..\simplelink\source/nonos.c **** 		{
+ 127:..\..\..\..\..\simplelink\source/nonos.c ****                         if((g_pCB)->RxIrqCnt != (g_pCB)->RxDoneCnt)
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 8
+
+
+ 270              		.loc 1 127 0
+ 271 0022 104B     		ldr	r3, .L25+4
+ 272 0024 1A68     		ldr	r2, [r3]
+ 273 0026 9723     		mov	r3, #151
+ 274 0028 D25C     		ldrb	r2, [r2, r3]
+ 275 002a 0E4B     		ldr	r3, .L25+4
+ 276 002c 1968     		ldr	r1, [r3]
+ 277 002e 9823     		mov	r3, #152
+ 278 0030 CB5C     		ldrb	r3, [r1, r3]
+ 279 0032 9A42     		cmp	r2, r3
+ 280 0034 02D0     		beq	.L22
+ 128:..\..\..\..\..\simplelink\source/nonos.c ****             {
+ 129:..\..\..\..\..\simplelink\source/nonos.c **** 				pF(0);/*(pValue);*/
+ 281              		.loc 1 129 0
+ 282 0036 7B68     		ldr	r3, [r7, #4]
+ 283 0038 0020     		mov	r0, #0
+ 284 003a 9847     		blx	r3
+ 285              	.L22:
+ 130:..\..\..\..\..\simplelink\source/nonos.c **** 		}
+ 131:..\..\..\..\..\simplelink\source/nonos.c **** 			pE->pEntry = NULL;
+ 286              		.loc 1 131 0
+ 287 003c BB68     		ldr	r3, [r7, #8]
+ 288 003e 0022     		mov	r2, #0
+ 289 0040 1A60     		str	r2, [r3]
+ 132:..\..\..\..\..\simplelink\source/nonos.c **** 			pE->pValue = NULL;
+ 290              		.loc 1 132 0
+ 291 0042 BB68     		ldr	r3, [r7, #8]
+ 292 0044 0022     		mov	r2, #0
+ 293 0046 5A60     		str	r2, [r3, #4]
+ 294              	.L21:
+ 295              	.LBE3:
+ 120:..\..\..\..\..\simplelink\source/nonos.c **** 	for (i=0 ; i<NONOS_MAX_SPAWN_ENTRIES ; i++)
+ 296              		.loc 1 120 0
+ 297 0048 FB68     		ldr	r3, [r7, #12]
+ 298 004a 0133     		add	r3, r3, #1
+ 299 004c FB60     		str	r3, [r7, #12]
+ 300              	.L20:
+ 120:..\..\..\..\..\simplelink\source/nonos.c **** 	for (i=0 ; i<NONOS_MAX_SPAWN_ENTRIES ; i++)
+ 301              		.loc 1 120 0 is_stmt 0 discriminator 1
+ 302 004e FB68     		ldr	r3, [r7, #12]
+ 303 0050 042B     		cmp	r3, #4
+ 304 0052 DBDD     		ble	.L23
+ 133:..\..\..\..\..\simplelink\source/nonos.c **** 		}
+ 134:..\..\..\..\..\simplelink\source/nonos.c **** 	}
+ 135:..\..\..\..\..\simplelink\source/nonos.c ****         
+ 136:..\..\..\..\..\simplelink\source/nonos.c ****         return NONOS_RET_OK;
+ 305              		.loc 1 136 0 is_stmt 1
+ 306 0054 0023     		mov	r3, #0
+ 137:..\..\..\..\..\simplelink\source/nonos.c **** }
+ 307              		.loc 1 137 0
+ 308 0056 181C     		mov	r0, r3
+ 309 0058 BD46     		mov	sp, r7
+ 310 005a 04B0     		add	sp, sp, #16
+ 311              		@ sp needed for prologue
+ 312 005c 80BD     		pop	{r7, pc}
+ 313              	.L26:
+ 314 005e C046     		.align	2
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 9
+
+
+ 315              	.L25:
+ 316 0060 00000000 		.word	g__SlNonOsCB
+ 317 0064 00000000 		.word	g_pCB
+ 318              		.cfi_endproc
+ 319              	.LFE3:
+ 320              		.size	_SlNonOsMainLoopTask, .-_SlNonOsMainLoopTask
+ 321              		.text
+ 322              	.Letext0:
+ 323              		.file 2 "..\\..\\..\\..\\..\\simplelink\\source\\datatypes.h"
+ 324              		.file 3 "..\\..\\..\\..\\..\\simplelink\\include/simplelink.h"
+ 325              		.file 4 "..\\..\\..\\..\\..\\simplelink\\include/../source/nonos.h"
+ 326              		.file 5 "..\\..\\..\\..\\..\\simplelink\\include/device.h"
+ 327              		.file 6 "..\\..\\..\\..\\..\\simplelink\\source\\protocol.h"
+ 328              		.file 7 "..\\..\\..\\..\\..\\simplelink\\source\\driver.h"
+ 329              		.section	.debug_info,"",%progbits
+ 330              	.Ldebug_info0:
+ 331 0000 8C060000 		.4byte	0x68c
+ 332 0004 0200     		.2byte	0x2
+ 333 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 334 000a 04       		.byte	0x4
+ 335 000b 01       		.uleb128 0x1
+ 336 000c 03030000 		.4byte	.LASF98
+ 337 0010 01       		.byte	0x1
+ 338 0011 40010000 		.4byte	.LASF99
+ 339 0015 A7000000 		.4byte	.LASF100
+ 340 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 341 001d 00000000 		.4byte	0
+ 342 0021 00000000 		.4byte	0
+ 343 0025 00000000 		.4byte	.Ldebug_line0
+ 344 0029 02       		.uleb128 0x2
+ 345 002a 01       		.byte	0x1
+ 346 002b 06       		.byte	0x6
+ 347 002c 99030000 		.4byte	.LASF0
+ 348 0030 03       		.uleb128 0x3
+ 349 0031 69010000 		.4byte	.LASF3
+ 350 0035 02       		.byte	0x2
+ 351 0036 45       		.byte	0x45
+ 352 0037 3B000000 		.4byte	0x3b
+ 353 003b 02       		.uleb128 0x2
+ 354 003c 01       		.byte	0x1
+ 355 003d 08       		.byte	0x8
+ 356 003e 8B030000 		.4byte	.LASF1
+ 357 0042 02       		.uleb128 0x2
+ 358 0043 02       		.byte	0x2
+ 359 0044 05       		.byte	0x5
+ 360 0045 8A000000 		.4byte	.LASF2
+ 361 0049 03       		.uleb128 0x3
+ 362 004a 33040000 		.4byte	.LASF4
+ 363 004e 02       		.byte	0x2
+ 364 004f 4F       		.byte	0x4f
+ 365 0050 54000000 		.4byte	0x54
+ 366 0054 02       		.uleb128 0x2
+ 367 0055 02       		.byte	0x2
+ 368 0056 07       		.byte	0x7
+ 369 0057 18040000 		.4byte	.LASF5
+ 370 005b 02       		.uleb128 0x2
+ 371 005c 04       		.byte	0x4
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 10
+
+
+ 372 005d 05       		.byte	0x5
+ 373 005e 98020000 		.4byte	.LASF6
+ 374 0062 03       		.uleb128 0x3
+ 375 0063 9A010000 		.4byte	.LASF7
+ 376 0067 02       		.byte	0x2
+ 377 0068 63       		.byte	0x63
+ 378 0069 6D000000 		.4byte	0x6d
+ 379 006d 02       		.uleb128 0x2
+ 380 006e 04       		.byte	0x4
+ 381 006f 07       		.byte	0x7
+ 382 0070 A9040000 		.4byte	.LASF8
+ 383 0074 02       		.uleb128 0x2
+ 384 0075 08       		.byte	0x8
+ 385 0076 07       		.byte	0x7
+ 386 0077 AB030000 		.4byte	.LASF9
+ 387 007b 04       		.uleb128 0x4
+ 388 007c 04       		.byte	0x4
+ 389 007d 05       		.byte	0x5
+ 390 007e 696E7400 		.ascii	"int\000"
+ 391 0082 02       		.uleb128 0x2
+ 392 0083 01       		.byte	0x1
+ 393 0084 08       		.byte	0x8
+ 394 0085 6A000000 		.4byte	.LASF10
+ 395 0089 02       		.uleb128 0x2
+ 396 008a 04       		.byte	0x4
+ 397 008b 04       		.byte	0x4
+ 398 008c 32020000 		.4byte	.LASF11
+ 399 0090 02       		.uleb128 0x2
+ 400 0091 08       		.byte	0x8
+ 401 0092 04       		.byte	0x4
+ 402 0093 C5040000 		.4byte	.LASF12
+ 403 0097 03       		.uleb128 0x3
+ 404 0098 76050000 		.4byte	.LASF13
+ 405 009c 02       		.byte	0x2
+ 406 009d 73       		.byte	0x73
+ 407 009e 49000000 		.4byte	0x49
+ 408 00a2 03       		.uleb128 0x3
+ 409 00a3 05050000 		.4byte	.LASF14
+ 410 00a7 02       		.byte	0x2
+ 411 00a8 74       		.byte	0x74
+ 412 00a9 30000000 		.4byte	0x30
+ 413 00ad 02       		.uleb128 0x2
+ 414 00ae 04       		.byte	0x4
+ 415 00af 07       		.byte	0x7
+ 416 00b0 38020000 		.4byte	.LASF15
+ 417 00b4 02       		.uleb128 0x2
+ 418 00b5 08       		.byte	0x8
+ 419 00b6 05       		.byte	0x5
+ 420 00b7 51020000 		.4byte	.LASF16
+ 421 00bb 02       		.uleb128 0x2
+ 422 00bc 04       		.byte	0x4
+ 423 00bd 07       		.byte	0x7
+ 424 00be 9E000000 		.4byte	.LASF17
+ 425 00c2 05       		.uleb128 0x5
+ 426 00c3 04       		.byte	0x4
+ 427 00c4 06       		.uleb128 0x6
+ 428 00c5 04       		.byte	0x4
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 11
+
+
+ 429 00c6 CA000000 		.4byte	0xca
+ 430 00ca 07       		.uleb128 0x7
+ 431 00cb 01       		.byte	0x1
+ 432 00cc D6000000 		.4byte	0xd6
+ 433 00d0 08       		.uleb128 0x8
+ 434 00d1 C2000000 		.4byte	0xc2
+ 435 00d5 00       		.byte	0
+ 436 00d6 09       		.uleb128 0x9
+ 437 00d7 8E040000 		.4byte	.LASF18
+ 438 00db 03       		.byte	0x3
+ 439 00dc 2001     		.2byte	0x120
+ 440 00de C4000000 		.4byte	0xc4
+ 441 00e2 03       		.uleb128 0x3
+ 442 00e3 CB010000 		.4byte	.LASF19
+ 443 00e7 04       		.byte	0x4
+ 444 00e8 40       		.byte	0x40
+ 445 00e9 82000000 		.4byte	0x82
+ 446 00ed 03       		.uleb128 0x3
+ 447 00ee 36050000 		.4byte	.LASF20
+ 448 00f2 04       		.byte	0x4
+ 449 00f3 45       		.byte	0x45
+ 450 00f4 3B000000 		.4byte	0x3b
+ 451 00f8 03       		.uleb128 0x3
+ 452 00f9 AB010000 		.4byte	.LASF21
+ 453 00fd 04       		.byte	0x4
+ 454 00fe 50       		.byte	0x50
+ 455 00ff 3B000000 		.4byte	0x3b
+ 456 0103 03       		.uleb128 0x3
+ 457 0104 F5040000 		.4byte	.LASF22
+ 458 0108 05       		.byte	0x5
+ 459 0109 2E       		.byte	0x2e
+ 460 010a 0E010000 		.4byte	0x10e
+ 461 010e 06       		.uleb128 0x6
+ 462 010f 04       		.byte	0x4
+ 463 0110 14010000 		.4byte	0x114
+ 464 0114 07       		.uleb128 0x7
+ 465 0115 01       		.byte	0x1
+ 466 0116 20010000 		.4byte	0x120
+ 467 011a 08       		.uleb128 0x8
+ 468 011b 6D000000 		.4byte	0x6d
+ 469 011f 00       		.byte	0
+ 470 0120 0A       		.uleb128 0xa
+ 471 0121 04       		.byte	0x4
+ 472 0122 06       		.byte	0x6
+ 473 0123 4E       		.byte	0x4e
+ 474 0124 45010000 		.4byte	0x145
+ 475 0128 0B       		.uleb128 0xb
+ 476 0129 69030000 		.4byte	.LASF23
+ 477 012d 06       		.byte	0x6
+ 478 012e 50       		.byte	0x50
+ 479 012f 49000000 		.4byte	0x49
+ 480 0133 02       		.byte	0x2
+ 481 0134 23       		.byte	0x23
+ 482 0135 00       		.uleb128 0
+ 483 0136 0C       		.uleb128 0xc
+ 484 0137 4C656E00 		.ascii	"Len\000"
+ 485 013b 06       		.byte	0x6
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 12
+
+
+ 486 013c 51       		.byte	0x51
+ 487 013d 49000000 		.4byte	0x49
+ 488 0141 02       		.byte	0x2
+ 489 0142 23       		.byte	0x23
+ 490 0143 02       		.uleb128 0x2
+ 491 0144 00       		.byte	0
+ 492 0145 03       		.uleb128 0x3
+ 493 0146 05040000 		.4byte	.LASF24
+ 494 014a 06       		.byte	0x6
+ 495 014b 52       		.byte	0x52
+ 496 014c 20010000 		.4byte	0x120
+ 497 0150 03       		.uleb128 0x3
+ 498 0151 14020000 		.4byte	.LASF25
+ 499 0155 06       		.byte	0x6
+ 500 0156 5D       		.byte	0x5d
+ 501 0157 45010000 		.4byte	0x145
+ 502 015b 0A       		.uleb128 0xa
+ 503 015c 04       		.byte	0x4
+ 504 015d 07       		.byte	0x7
+ 505 015e 28       		.byte	0x28
+ 506 015f 8E010000 		.4byte	0x18e
+ 507 0163 0B       		.uleb128 0xb
+ 508 0164 69030000 		.4byte	.LASF23
+ 509 0168 07       		.byte	0x7
+ 510 0169 2A       		.byte	0x2a
+ 511 016a 97000000 		.4byte	0x97
+ 512 016e 02       		.byte	0x2
+ 513 016f 23       		.byte	0x23
+ 514 0170 00       		.uleb128 0
+ 515 0171 0B       		.uleb128 0xb
+ 516 0172 6F010000 		.4byte	.LASF26
+ 517 0176 07       		.byte	0x7
+ 518 0177 2B       		.byte	0x2b
+ 519 0178 A2000000 		.4byte	0xa2
+ 520 017c 02       		.byte	0x2
+ 521 017d 23       		.byte	0x23
+ 522 017e 02       		.uleb128 0x2
+ 523 017f 0B       		.uleb128 0xb
+ 524 0180 94000000 		.4byte	.LASF27
+ 525 0184 07       		.byte	0x7
+ 526 0185 2C       		.byte	0x2c
+ 527 0186 A2000000 		.4byte	0xa2
+ 528 018a 02       		.byte	0x2
+ 529 018b 23       		.byte	0x23
+ 530 018c 03       		.uleb128 0x3
+ 531 018d 00       		.byte	0
+ 532 018e 03       		.uleb128 0x3
+ 533 018f F0030000 		.4byte	.LASF28
+ 534 0193 07       		.byte	0x7
+ 535 0194 2D       		.byte	0x2d
+ 536 0195 5B010000 		.4byte	0x15b
+ 537 0199 0A       		.uleb128 0xa
+ 538 019a 10       		.byte	0x10
+ 539 019b 07       		.byte	0x7
+ 540 019c 2F       		.byte	0x2f
+ 541 019d E8010000 		.4byte	0x1e8
+ 542 01a1 0B       		.uleb128 0xb
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 13
+
+
+ 543 01a2 4E040000 		.4byte	.LASF29
+ 544 01a6 07       		.byte	0x7
+ 545 01a7 31       		.byte	0x31
+ 546 01a8 49000000 		.4byte	0x49
+ 547 01ac 02       		.byte	0x2
+ 548 01ad 23       		.byte	0x23
+ 549 01ae 00       		.uleb128 0
+ 550 01af 0B       		.uleb128 0xb
+ 551 01b0 7D000000 		.4byte	.LASF30
+ 552 01b4 07       		.byte	0x7
+ 553 01b5 32       		.byte	0x32
+ 554 01b6 49000000 		.4byte	0x49
+ 555 01ba 02       		.byte	0x2
+ 556 01bb 23       		.byte	0x23
+ 557 01bc 02       		.uleb128 0x2
+ 558 01bd 0B       		.uleb128 0xb
+ 559 01be 79010000 		.4byte	.LASF31
+ 560 01c2 07       		.byte	0x7
+ 561 01c3 33       		.byte	0x33
+ 562 01c4 49000000 		.4byte	0x49
+ 563 01c8 02       		.byte	0x2
+ 564 01c9 23       		.byte	0x23
+ 565 01ca 04       		.uleb128 0x4
+ 566 01cb 0B       		.uleb128 0xb
+ 567 01cc CE020000 		.4byte	.LASF32
+ 568 01d0 07       		.byte	0x7
+ 569 01d1 34       		.byte	0x34
+ 570 01d2 E8010000 		.4byte	0x1e8
+ 571 01d6 02       		.byte	0x2
+ 572 01d7 23       		.byte	0x23
+ 573 01d8 08       		.uleb128 0x8
+ 574 01d9 0B       		.uleb128 0xb
+ 575 01da 0A000000 		.4byte	.LASF33
+ 576 01de 07       		.byte	0x7
+ 577 01df 35       		.byte	0x35
+ 578 01e0 E8010000 		.4byte	0x1e8
+ 579 01e4 02       		.byte	0x2
+ 580 01e5 23       		.byte	0x23
+ 581 01e6 0C       		.uleb128 0xc
+ 582 01e7 00       		.byte	0
+ 583 01e8 06       		.uleb128 0x6
+ 584 01e9 04       		.byte	0x4
+ 585 01ea 30000000 		.4byte	0x30
+ 586 01ee 03       		.uleb128 0x3
+ 587 01ef 7E020000 		.4byte	.LASF34
+ 588 01f3 07       		.byte	0x7
+ 589 01f4 36       		.byte	0x36
+ 590 01f5 99010000 		.4byte	0x199
+ 591 01f9 0D       		.uleb128 0xd
+ 592 01fa 5D000000 		.4byte	.LASF40
+ 593 01fe 0C       		.byte	0xc
+ 594 01ff 07       		.byte	0x7
+ 595 0200 40       		.byte	0x40
+ 596 0201 4C020000 		.4byte	0x24c
+ 597 0205 0B       		.uleb128 0xb
+ 598 0206 6E050000 		.4byte	.LASF35
+ 599 020a 07       		.byte	0x7
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 14
+
+
+ 600 020b 42       		.byte	0x42
+ 601 020c F8000000 		.4byte	0xf8
+ 602 0210 02       		.byte	0x2
+ 603 0211 23       		.byte	0x23
+ 604 0212 00       		.uleb128 0
+ 605 0213 0B       		.uleb128 0xb
+ 606 0214 A1010000 		.4byte	.LASF36
+ 607 0218 07       		.byte	0x7
+ 608 0219 43       		.byte	0x43
+ 609 021a E8010000 		.4byte	0x1e8
+ 610 021e 02       		.byte	0x2
+ 611 021f 23       		.byte	0x23
+ 612 0220 04       		.uleb128 0x4
+ 613 0221 0B       		.uleb128 0xb
+ 614 0222 CB030000 		.4byte	.LASF37
+ 615 0226 07       		.byte	0x7
+ 616 0227 44       		.byte	0x44
+ 617 0228 30000000 		.4byte	0x30
+ 618 022c 02       		.byte	0x2
+ 619 022d 23       		.byte	0x23
+ 620 022e 08       		.uleb128 0x8
+ 621 022f 0B       		.uleb128 0xb
+ 622 0230 BC010000 		.4byte	.LASF38
+ 623 0234 07       		.byte	0x7
+ 624 0235 45       		.byte	0x45
+ 625 0236 30000000 		.4byte	0x30
+ 626 023a 02       		.byte	0x2
+ 627 023b 23       		.byte	0x23
+ 628 023c 09       		.uleb128 0x9
+ 629 023d 0B       		.uleb128 0xb
+ 630 023e 96050000 		.4byte	.LASF39
+ 631 0242 07       		.byte	0x7
+ 632 0243 46       		.byte	0x46
+ 633 0244 30000000 		.4byte	0x30
+ 634 0248 02       		.byte	0x2
+ 635 0249 23       		.byte	0x23
+ 636 024a 0A       		.uleb128 0xa
+ 637 024b 00       		.byte	0
+ 638 024c 03       		.uleb128 0x3
+ 639 024d 5D000000 		.4byte	.LASF40
+ 640 0251 07       		.byte	0x7
+ 641 0252 48       		.byte	0x48
+ 642 0253 F9010000 		.4byte	0x1f9
+ 643 0257 0A       		.uleb128 0xa
+ 644 0258 03       		.byte	0x3
+ 645 0259 07       		.byte	0x7
+ 646 025a 69       		.byte	0x69
+ 647 025b 8A020000 		.4byte	0x28a
+ 648 025f 0B       		.uleb128 0xb
+ 649 0260 00000000 		.4byte	.LASF41
+ 650 0264 07       		.byte	0x7
+ 651 0265 6B       		.byte	0x6b
+ 652 0266 30000000 		.4byte	0x30
+ 653 026a 02       		.byte	0x2
+ 654 026b 23       		.byte	0x23
+ 655 026c 00       		.uleb128 0
+ 656 026d 0B       		.uleb128 0xb
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 15
+
+
+ 657 026e 36010000 		.4byte	.LASF42
+ 658 0272 07       		.byte	0x7
+ 659 0273 6C       		.byte	0x6c
+ 660 0274 F8000000 		.4byte	0xf8
+ 661 0278 02       		.byte	0x2
+ 662 0279 23       		.byte	0x23
+ 663 027a 01       		.uleb128 0x1
+ 664 027b 0B       		.uleb128 0xb
+ 665 027c DC040000 		.4byte	.LASF43
+ 666 0280 07       		.byte	0x7
+ 667 0281 6D       		.byte	0x6d
+ 668 0282 F8000000 		.4byte	0xf8
+ 669 0286 02       		.byte	0x2
+ 670 0287 23       		.byte	0x23
+ 671 0288 02       		.uleb128 0x2
+ 672 0289 00       		.byte	0
+ 673 028a 03       		.uleb128 0x3
+ 674 028b CC040000 		.4byte	.LASF44
+ 675 028f 07       		.byte	0x7
+ 676 0290 6E       		.byte	0x6e
+ 677 0291 57020000 		.4byte	0x257
+ 678 0295 0E       		.uleb128 0xe
+ 679 0296 01       		.byte	0x1
+ 680 0297 07       		.byte	0x7
+ 681 0298 71       		.byte	0x71
+ 682 0299 B6020000 		.4byte	0x2b6
+ 683 029d 0F       		.uleb128 0xf
+ 684 029e 7E040000 		.4byte	.LASF45
+ 685 02a2 00       		.sleb128 0
+ 686 02a3 0F       		.uleb128 0xf
+ 687 02a4 BF020000 		.4byte	.LASF46
+ 688 02a8 01       		.sleb128 1
+ 689 02a9 0F       		.uleb128 0xf
+ 690 02aa A1020000 		.4byte	.LASF47
+ 691 02ae 02       		.sleb128 2
+ 692 02af 0F       		.uleb128 0xf
+ 693 02b0 12050000 		.4byte	.LASF48
+ 694 02b4 03       		.sleb128 3
+ 695 02b5 00       		.byte	0
+ 696 02b6 03       		.uleb128 0x3
+ 697 02b7 04020000 		.4byte	.LASF49
+ 698 02bb 07       		.byte	0x7
+ 699 02bc 76       		.byte	0x76
+ 700 02bd 95020000 		.4byte	0x295
+ 701 02c1 0A       		.uleb128 0xa
+ 702 02c2 10       		.byte	0x10
+ 703 02c3 07       		.byte	0x7
+ 704 02c4 78       		.byte	0x78
+ 705 02c5 02030000 		.4byte	0x302
+ 706 02c9 0B       		.uleb128 0xb
+ 707 02ca DC010000 		.4byte	.LASF50
+ 708 02ce 07       		.byte	0x7
+ 709 02cf 7A       		.byte	0x7a
+ 710 02d0 E8010000 		.4byte	0x1e8
+ 711 02d4 02       		.byte	0x2
+ 712 02d5 23       		.byte	0x23
+ 713 02d6 00       		.uleb128 0
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 16
+
+
+ 714 02d7 0B       		.uleb128 0xb
+ 715 02d8 45020000 		.4byte	.LASF51
+ 716 02dc 07       		.byte	0x7
+ 717 02dd 7B       		.byte	0x7b
+ 718 02de 30000000 		.4byte	0x30
+ 719 02e2 02       		.byte	0x2
+ 720 02e3 23       		.byte	0x23
+ 721 02e4 04       		.uleb128 0x4
+ 722 02e5 0B       		.uleb128 0xb
+ 723 02e6 6E040000 		.4byte	.LASF52
+ 724 02ea 07       		.byte	0x7
+ 725 02eb 7C       		.byte	0x7c
+ 726 02ec D6000000 		.4byte	0xd6
+ 727 02f0 02       		.byte	0x2
+ 728 02f1 23       		.byte	0x23
+ 729 02f2 08       		.uleb128 0x8
+ 730 02f3 0B       		.uleb128 0xb
+ 731 02f4 36000000 		.4byte	.LASF53
+ 732 02f8 07       		.byte	0x7
+ 733 02f9 7D       		.byte	0x7d
+ 734 02fa B6020000 		.4byte	0x2b6
+ 735 02fe 02       		.byte	0x2
+ 736 02ff 23       		.byte	0x23
+ 737 0300 0C       		.uleb128 0xc
+ 738 0301 00       		.byte	0
+ 739 0302 03       		.uleb128 0x3
+ 740 0303 1E000000 		.4byte	.LASF54
+ 741 0307 07       		.byte	0x7
+ 742 0308 7E       		.byte	0x7e
+ 743 0309 C1020000 		.4byte	0x2c1
+ 744 030d 0A       		.uleb128 0xa
+ 745 030e 1C       		.byte	0x1c
+ 746 030f 07       		.byte	0x7
+ 747 0310 82       		.byte	0x82
+ 748 0311 4E030000 		.4byte	0x34e
+ 749 0315 0B       		.uleb128 0xb
+ 750 0316 5B040000 		.4byte	.LASF55
+ 751 031a 07       		.byte	0x7
+ 752 031b 84       		.byte	0x84
+ 753 031c 4E030000 		.4byte	0x34e
+ 754 0320 02       		.byte	0x2
+ 755 0321 23       		.byte	0x23
+ 756 0322 00       		.uleb128 0
+ 757 0323 0B       		.uleb128 0xb
+ 758 0324 8A020000 		.4byte	.LASF56
+ 759 0328 07       		.byte	0x7
+ 760 0329 85       		.byte	0x85
+ 761 032a E8010000 		.4byte	0x1e8
+ 762 032e 02       		.byte	0x2
+ 763 032f 23       		.byte	0x23
+ 764 0330 04       		.uleb128 0x4
+ 765 0331 0B       		.uleb128 0xb
+ 766 0332 61030000 		.4byte	.LASF57
+ 767 0336 07       		.byte	0x7
+ 768 0337 86       		.byte	0x86
+ 769 0338 54030000 		.4byte	0x354
+ 770 033c 02       		.byte	0x2
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 17
+
+
+ 771 033d 23       		.byte	0x23
+ 772 033e 08       		.uleb128 0x8
+ 773 033f 0B       		.uleb128 0xb
+ 774 0340 15000000 		.4byte	.LASF58
+ 775 0344 07       		.byte	0x7
+ 776 0345 87       		.byte	0x87
+ 777 0346 02030000 		.4byte	0x302
+ 778 034a 02       		.byte	0x2
+ 779 034b 23       		.byte	0x23
+ 780 034c 0C       		.uleb128 0xc
+ 781 034d 00       		.byte	0
+ 782 034e 06       		.uleb128 0x6
+ 783 034f 04       		.byte	0x4
+ 784 0350 8E010000 		.4byte	0x18e
+ 785 0354 06       		.uleb128 0x6
+ 786 0355 04       		.byte	0x4
+ 787 0356 EE010000 		.4byte	0x1ee
+ 788 035a 03       		.uleb128 0x3
+ 789 035b 82050000 		.4byte	.LASF59
+ 790 035f 07       		.byte	0x7
+ 791 0360 88       		.byte	0x88
+ 792 0361 0D030000 		.4byte	0x30d
+ 793 0365 0A       		.uleb128 0xa
+ 794 0366 B8       		.byte	0xb8
+ 795 0367 07       		.byte	0x7
+ 796 0368 8B       		.byte	0x8b
+ 797 0369 94040000 		.4byte	0x494
+ 798 036d 0C       		.uleb128 0xc
+ 799 036e 464400   		.ascii	"FD\000"
+ 800 0371 07       		.byte	0x7
+ 801 0372 8D       		.byte	0x8d
+ 802 0373 7B000000 		.4byte	0x7b
+ 803 0377 02       		.byte	0x2
+ 804 0378 23       		.byte	0x23
+ 805 0379 00       		.uleb128 0
+ 806 037a 0B       		.uleb128 0xb
+ 807 037b B1020000 		.4byte	.LASF60
+ 808 037f 07       		.byte	0x7
+ 809 0380 8E       		.byte	0x8e
+ 810 0381 F8000000 		.4byte	0xf8
+ 811 0385 02       		.byte	0x2
+ 812 0386 23       		.byte	0x23
+ 813 0387 04       		.uleb128 0x4
+ 814 0388 0B       		.uleb128 0xb
+ 815 0389 4A000000 		.4byte	.LASF61
+ 816 038d 07       		.byte	0x7
+ 817 038e 8F       		.byte	0x8f
+ 818 038f 50010000 		.4byte	0x150
+ 819 0393 02       		.byte	0x2
+ 820 0394 23       		.byte	0x23
+ 821 0395 06       		.uleb128 0x6
+ 822 0396 0B       		.uleb128 0xb
+ 823 0397 D4030000 		.4byte	.LASF62
+ 824 039b 07       		.byte	0x7
+ 825 039c 90       		.byte	0x90
+ 826 039d 03010000 		.4byte	0x103
+ 827 03a1 02       		.byte	0x2
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 18
+
+
+ 828 03a2 23       		.byte	0x23
+ 829 03a3 0C       		.uleb128 0xc
+ 830 03a4 0B       		.uleb128 0xb
+ 831 03a5 5F020000 		.4byte	.LASF63
+ 832 03a9 07       		.byte	0x7
+ 833 03aa 92       		.byte	0x92
+ 834 03ab 94040000 		.4byte	0x494
+ 835 03af 02       		.byte	0x2
+ 836 03b0 23       		.byte	0x23
+ 837 03b1 10       		.uleb128 0x10
+ 838 03b2 0B       		.uleb128 0xb
+ 839 03b3 F8010000 		.4byte	.LASF64
+ 840 03b7 07       		.byte	0x7
+ 841 03b8 93       		.byte	0x93
+ 842 03b9 30000000 		.4byte	0x30
+ 843 03bd 03       		.byte	0x3
+ 844 03be 23       		.byte	0x23
+ 845 03bf 8801     		.uleb128 0x88
+ 846 03c1 0B       		.uleb128 0xb
+ 847 03c2 E6040000 		.4byte	.LASF65
+ 848 03c6 07       		.byte	0x7
+ 849 03c7 94       		.byte	0x94
+ 850 03c8 30000000 		.4byte	0x30
+ 851 03cc 03       		.byte	0x3
+ 852 03cd 23       		.byte	0x23
+ 853 03ce 8901     		.uleb128 0x89
+ 854 03d0 0B       		.uleb128 0xb
+ 855 03d1 6F000000 		.4byte	.LASF66
+ 856 03d5 07       		.byte	0x7
+ 857 03d6 95       		.byte	0x95
+ 858 03d7 30000000 		.4byte	0x30
+ 859 03db 03       		.byte	0x3
+ 860 03dc 23       		.byte	0x23
+ 861 03dd 8A01     		.uleb128 0x8a
+ 862 03df 0B       		.uleb128 0xb
+ 863 03e0 22050000 		.4byte	.LASF67
+ 864 03e4 07       		.byte	0x7
+ 865 03e5 96       		.byte	0x96
+ 866 03e6 62000000 		.4byte	0x62
+ 867 03ea 03       		.byte	0x3
+ 868 03eb 23       		.byte	0x23
+ 869 03ec 8C01     		.uleb128 0x8c
+ 870 03ee 0B       		.uleb128 0xb
+ 871 03ef E6010000 		.4byte	.LASF68
+ 872 03f3 07       		.byte	0x7
+ 873 03f4 97       		.byte	0x97
+ 874 03f5 F8000000 		.4byte	0xf8
+ 875 03f9 03       		.byte	0x3
+ 876 03fa 23       		.byte	0x23
+ 877 03fb 9001     		.uleb128 0x90
+ 878 03fd 0B       		.uleb128 0xb
+ 879 03fe 27020000 		.4byte	.LASF69
+ 880 0402 07       		.byte	0x7
+ 881 0403 99       		.byte	0x99
+ 882 0404 F8000000 		.4byte	0xf8
+ 883 0408 03       		.byte	0x3
+ 884 0409 23       		.byte	0x23
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 19
+
+
+ 885 040a 9101     		.uleb128 0x91
+ 886 040c 0B       		.uleb128 0xb
+ 887 040d CC050000 		.4byte	.LASF70
+ 888 0411 07       		.byte	0x7
+ 889 0412 9A       		.byte	0x9a
+ 890 0413 30000000 		.4byte	0x30
+ 891 0417 03       		.byte	0x3
+ 892 0418 23       		.byte	0x23
+ 893 0419 9201     		.uleb128 0x92
+ 894 041b 0B       		.uleb128 0xb
+ 895 041c 43040000 		.4byte	.LASF71
+ 896 0420 07       		.byte	0x7
+ 897 0421 9C       		.byte	0x9c
+ 898 0422 8A020000 		.4byte	0x28a
+ 899 0426 03       		.byte	0x3
+ 900 0427 23       		.byte	0x23
+ 901 0428 9301     		.uleb128 0x93
+ 902 042a 0B       		.uleb128 0xb
+ 903 042b D9020000 		.4byte	.LASF72
+ 904 042f 07       		.byte	0x7
+ 905 0430 9E       		.byte	0x9e
+ 906 0431 30000000 		.4byte	0x30
+ 907 0435 03       		.byte	0x3
+ 908 0436 23       		.byte	0x23
+ 909 0437 9601     		.uleb128 0x96
+ 910 0439 0B       		.uleb128 0xb
+ 911 043a 41000000 		.4byte	.LASF73
+ 912 043e 07       		.byte	0x7
+ 913 043f 9F       		.byte	0x9f
+ 914 0440 30000000 		.4byte	0x30
+ 915 0444 03       		.byte	0x3
+ 916 0445 23       		.byte	0x23
+ 917 0446 9701     		.uleb128 0x97
+ 918 0448 0B       		.uleb128 0xb
+ 919 0449 BB040000 		.4byte	.LASF74
+ 920 044d 07       		.byte	0x7
+ 921 044e A0       		.byte	0xa0
+ 922 044f 30000000 		.4byte	0x30
+ 923 0453 03       		.byte	0x3
+ 924 0454 23       		.byte	0x23
+ 925 0455 9801     		.uleb128 0x98
+ 926 0457 0B       		.uleb128 0xb
+ 927 0458 E2020000 		.4byte	.LASF75
+ 928 045c 07       		.byte	0x7
+ 929 045d A1       		.byte	0xa1
+ 930 045e 30000000 		.4byte	0x30
+ 931 0462 03       		.byte	0x3
+ 932 0463 23       		.byte	0x23
+ 933 0464 9901     		.uleb128 0x99
+ 934 0466 0B       		.uleb128 0xb
+ 935 0467 AF050000 		.4byte	.LASF76
+ 936 046b 07       		.byte	0x7
+ 937 046c A2       		.byte	0xa2
+ 938 046d 30000000 		.4byte	0x30
+ 939 0471 03       		.byte	0x3
+ 940 0472 23       		.byte	0x23
+ 941 0473 9A01     		.uleb128 0x9a
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 20
+
+
+ 942 0475 0B       		.uleb128 0xb
+ 943 0476 67020000 		.4byte	.LASF77
+ 944 047a 07       		.byte	0x7
+ 945 047b A3       		.byte	0xa3
+ 946 047c 30000000 		.4byte	0x30
+ 947 0480 03       		.byte	0x3
+ 948 0481 23       		.byte	0x23
+ 949 0482 9B01     		.uleb128 0x9b
+ 950 0484 0B       		.uleb128 0xb
+ 951 0485 A0050000 		.4byte	.LASF78
+ 952 0489 07       		.byte	0x7
+ 953 048a A5       		.byte	0xa5
+ 954 048b 5A030000 		.4byte	0x35a
+ 955 048f 03       		.byte	0x3
+ 956 0490 23       		.byte	0x23
+ 957 0491 9C01     		.uleb128 0x9c
+ 958 0493 00       		.byte	0
+ 959 0494 10       		.uleb128 0x10
+ 960 0495 4C020000 		.4byte	0x24c
+ 961 0499 A4040000 		.4byte	0x4a4
+ 962 049d 11       		.uleb128 0x11
+ 963 049e BB000000 		.4byte	0xbb
+ 964 04a2 09       		.byte	0x9
+ 965 04a3 00       		.byte	0
+ 966 04a4 03       		.uleb128 0x3
+ 967 04a5 E2030000 		.4byte	.LASF79
+ 968 04a9 07       		.byte	0x7
+ 969 04aa A7       		.byte	0xa7
+ 970 04ab 65030000 		.4byte	0x365
+ 971 04af 0A       		.uleb128 0xa
+ 972 04b0 08       		.byte	0x8
+ 973 04b1 01       		.byte	0x1
+ 974 04b2 30       		.byte	0x30
+ 975 04b3 D4040000 		.4byte	0x4d4
+ 976 04b7 0B       		.uleb128 0xb
+ 977 04b8 A2040000 		.4byte	.LASF80
+ 978 04bc 01       		.byte	0x1
+ 979 04bd 32       		.byte	0x32
+ 980 04be D6000000 		.4byte	0xd6
+ 981 04c2 02       		.byte	0x2
+ 982 04c3 23       		.byte	0x23
+ 983 04c4 00       		.uleb128 0
+ 984 04c5 0B       		.uleb128 0xb
+ 985 04c6 C5050000 		.4byte	.LASF81
+ 986 04ca 01       		.byte	0x1
+ 987 04cb 33       		.byte	0x33
+ 988 04cc C2000000 		.4byte	0xc2
+ 989 04d0 02       		.byte	0x2
+ 990 04d1 23       		.byte	0x23
+ 991 04d2 04       		.uleb128 0x4
+ 992 04d3 00       		.byte	0
+ 993 04d4 03       		.uleb128 0x3
+ 994 04d5 4C030000 		.4byte	.LASF82
+ 995 04d9 01       		.byte	0x1
+ 996 04da 34       		.byte	0x34
+ 997 04db AF040000 		.4byte	0x4af
+ 998 04df 0A       		.uleb128 0xa
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 21
+
+
+ 999 04e0 28       		.byte	0x28
+ 1000 04e1 01       		.byte	0x1
+ 1001 04e2 36       		.byte	0x36
+ 1002 04e3 F6040000 		.4byte	0x4f6
+ 1003 04e7 0B       		.uleb128 0xb
+ 1004 04e8 29000000 		.4byte	.LASF83
+ 1005 04ec 01       		.byte	0x1
+ 1006 04ed 38       		.byte	0x38
+ 1007 04ee F6040000 		.4byte	0x4f6
+ 1008 04f2 02       		.byte	0x2
+ 1009 04f3 23       		.byte	0x23
+ 1010 04f4 00       		.uleb128 0
+ 1011 04f5 00       		.byte	0
+ 1012 04f6 10       		.uleb128 0x10
+ 1013 04f7 D4040000 		.4byte	0x4d4
+ 1014 04fb 06050000 		.4byte	0x506
+ 1015 04ff 11       		.uleb128 0x11
+ 1016 0500 BB000000 		.4byte	0xbb
+ 1017 0504 04       		.byte	0x4
+ 1018 0505 00       		.byte	0
+ 1019 0506 03       		.uleb128 0x3
+ 1020 0507 52050000 		.4byte	.LASF84
+ 1021 050b 01       		.byte	0x1
+ 1022 050c 39       		.byte	0x39
+ 1023 050d DF040000 		.4byte	0x4df
+ 1024 0511 12       		.uleb128 0x12
+ 1025 0512 01       		.byte	0x1
+ 1026 0513 5F050000 		.4byte	.LASF87
+ 1027 0517 01       		.byte	0x1
+ 1028 0518 3E       		.byte	0x3e
+ 1029 0519 01       		.byte	0x1
+ 1030 051a E2000000 		.4byte	0xe2
+ 1031 051e 00000000 		.4byte	.LFB0
+ 1032 0522 20000000 		.4byte	.LFE0
+ 1033 0526 00000000 		.4byte	.LLST0
+ 1034 052a 01       		.byte	0x1
+ 1035 052b 4C050000 		.4byte	0x54c
+ 1036 052f 13       		.uleb128 0x13
+ 1037 0530 FD030000 		.4byte	.LASF85
+ 1038 0534 01       		.byte	0x1
+ 1039 0535 3E       		.byte	0x3e
+ 1040 0536 4C050000 		.4byte	0x54c
+ 1041 053a 02       		.byte	0x2
+ 1042 053b 91       		.byte	0x91
+ 1043 053c 74       		.sleb128 -12
+ 1044 053d 13       		.uleb128 0x13
+ 1045 053e 70030000 		.4byte	.LASF86
+ 1046 0542 01       		.byte	0x1
+ 1047 0543 3E       		.byte	0x3e
+ 1048 0544 F8000000 		.4byte	0xf8
+ 1049 0548 02       		.byte	0x2
+ 1050 0549 91       		.byte	0x91
+ 1051 054a 73       		.sleb128 -13
+ 1052 054b 00       		.byte	0
+ 1053 054c 06       		.uleb128 0x6
+ 1054 054d 04       		.byte	0x4
+ 1055 054e F8000000 		.4byte	0xf8
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 22
+
+
+ 1056 0552 14       		.uleb128 0x14
+ 1057 0553 01       		.byte	0x1
+ 1058 0554 F4020000 		.4byte	.LASF88
+ 1059 0558 01       		.byte	0x1
+ 1060 0559 44       		.byte	0x44
+ 1061 055a 01       		.byte	0x1
+ 1062 055b E2000000 		.4byte	0xe2
+ 1063 055f 00000000 		.4byte	.LFB1
+ 1064 0563 66000000 		.4byte	.LFE1
+ 1065 0567 38000000 		.4byte	.LLST1
+ 1066 056b 01       		.byte	0x1
+ 1067 056c A9050000 		.4byte	0x5a9
+ 1068 0570 13       		.uleb128 0x13
+ 1069 0571 C2030000 		.4byte	.LASF89
+ 1070 0575 01       		.byte	0x1
+ 1071 0576 44       		.byte	0x44
+ 1072 0577 4C050000 		.4byte	0x54c
+ 1073 057b 02       		.byte	0x2
+ 1074 057c 91       		.byte	0x91
+ 1075 057d 74       		.sleb128 -12
+ 1076 057e 13       		.uleb128 0x13
+ 1077 057f 64040000 		.4byte	.LASF90
+ 1078 0583 01       		.byte	0x1
+ 1079 0584 44       		.byte	0x44
+ 1080 0585 F8000000 		.4byte	0xf8
+ 1081 0589 02       		.byte	0x2
+ 1082 058a 91       		.byte	0x91
+ 1083 058b 73       		.sleb128 -13
+ 1084 058c 13       		.uleb128 0x13
+ 1085 058d 3A040000 		.4byte	.LASF91
+ 1086 0591 01       		.byte	0x1
+ 1087 0592 44       		.byte	0x44
+ 1088 0593 F8000000 		.4byte	0xf8
+ 1089 0597 02       		.byte	0x2
+ 1090 0598 91       		.byte	0x91
+ 1091 0599 72       		.sleb128 -14
+ 1092 059a 13       		.uleb128 0x13
+ 1093 059b 2B040000 		.4byte	.LASF92
+ 1094 059f 01       		.byte	0x1
+ 1095 05a0 44       		.byte	0x44
+ 1096 05a1 ED000000 		.4byte	0xed
+ 1097 05a5 02       		.byte	0x2
+ 1098 05a6 91       		.byte	0x91
+ 1099 05a7 71       		.sleb128 -15
+ 1100 05a8 00       		.byte	0
+ 1101 05a9 12       		.uleb128 0x12
+ 1102 05aa 01       		.byte	0x1
+ 1103 05ab 8C010000 		.4byte	.LASF93
+ 1104 05af 01       		.byte	0x1
+ 1105 05b0 5F       		.byte	0x5f
+ 1106 05b1 01       		.byte	0x1
+ 1107 05b2 E2000000 		.4byte	0xe2
+ 1108 05b6 00000000 		.4byte	.LFB2
+ 1109 05ba 4C000000 		.4byte	.LFE2
+ 1110 05be 70000000 		.4byte	.LLST2
+ 1111 05c2 01       		.byte	0x1
+ 1112 05c3 15060000 		.4byte	0x615
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 23
+
+
+ 1113 05c7 13       		.uleb128 0x13
+ 1114 05c8 A2040000 		.4byte	.LASF80
+ 1115 05cc 01       		.byte	0x1
+ 1116 05cd 5F       		.byte	0x5f
+ 1117 05ce D6000000 		.4byte	0xd6
+ 1118 05d2 02       		.byte	0x2
+ 1119 05d3 91       		.byte	0x91
+ 1120 05d4 6C       		.sleb128 -20
+ 1121 05d5 13       		.uleb128 0x13
+ 1122 05d6 C5050000 		.4byte	.LASF81
+ 1123 05da 01       		.byte	0x1
+ 1124 05db 5F       		.byte	0x5f
+ 1125 05dc C2000000 		.4byte	0xc2
+ 1126 05e0 02       		.byte	0x2
+ 1127 05e1 91       		.byte	0x91
+ 1128 05e2 68       		.sleb128 -24
+ 1129 05e3 13       		.uleb128 0x13
+ 1130 05e4 A5030000 		.4byte	.LASF94
+ 1131 05e8 01       		.byte	0x1
+ 1132 05e9 5F       		.byte	0x5f
+ 1133 05ea 6D000000 		.4byte	0x6d
+ 1134 05ee 02       		.byte	0x2
+ 1135 05ef 91       		.byte	0x91
+ 1136 05f0 64       		.sleb128 -28
+ 1137 05f1 15       		.uleb128 0x15
+ 1138 05f2 6900     		.ascii	"i\000"
+ 1139 05f4 01       		.byte	0x1
+ 1140 05f5 61       		.byte	0x61
+ 1141 05f6 7B000000 		.4byte	0x7b
+ 1142 05fa 02       		.byte	0x2
+ 1143 05fb 91       		.byte	0x91
+ 1144 05fc 74       		.sleb128 -12
+ 1145 05fd 16       		.uleb128 0x16
+ 1146 05fe 12000000 		.4byte	.LBB2
+ 1147 0602 32000000 		.4byte	.LBE2
+ 1148 0606 15       		.uleb128 0x15
+ 1149 0607 704500   		.ascii	"pE\000"
+ 1150 060a 01       		.byte	0x1
+ 1151 060b 65       		.byte	0x65
+ 1152 060c 15060000 		.4byte	0x615
+ 1153 0610 02       		.byte	0x2
+ 1154 0611 91       		.byte	0x91
+ 1155 0612 70       		.sleb128 -16
+ 1156 0613 00       		.byte	0
+ 1157 0614 00       		.byte	0
+ 1158 0615 06       		.uleb128 0x6
+ 1159 0616 04       		.byte	0x4
+ 1160 0617 D4040000 		.4byte	0x4d4
+ 1161 061b 14       		.uleb128 0x14
+ 1162 061c 01       		.byte	0x1
+ 1163 061d 76030000 		.4byte	.LASF95
+ 1164 0621 01       		.byte	0x1
+ 1165 0622 74       		.byte	0x74
+ 1166 0623 01       		.byte	0x1
+ 1167 0624 E2000000 		.4byte	0xe2
+ 1168 0628 00000000 		.4byte	.LFB3
+ 1169 062c 68000000 		.4byte	.LFE3
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 24
+
+
+ 1170 0630 A8000000 		.4byte	.LLST3
+ 1171 0634 01       		.byte	0x1
+ 1172 0635 6A060000 		.4byte	0x66a
+ 1173 0639 15       		.uleb128 0x15
+ 1174 063a 6900     		.ascii	"i\000"
+ 1175 063c 01       		.byte	0x1
+ 1176 063d 76       		.byte	0x76
+ 1177 063e 7B000000 		.4byte	0x7b
+ 1178 0642 02       		.byte	0x2
+ 1179 0643 91       		.byte	0x91
+ 1180 0644 74       		.sleb128 -12
+ 1181 0645 16       		.uleb128 0x16
+ 1182 0646 0C000000 		.4byte	.LBB3
+ 1183 064a 48000000 		.4byte	.LBE3
+ 1184 064e 15       		.uleb128 0x15
+ 1185 064f 704500   		.ascii	"pE\000"
+ 1186 0652 01       		.byte	0x1
+ 1187 0653 7A       		.byte	0x7a
+ 1188 0654 15060000 		.4byte	0x615
+ 1189 0658 02       		.byte	0x2
+ 1190 0659 91       		.byte	0x91
+ 1191 065a 70       		.sleb128 -16
+ 1192 065b 15       		.uleb128 0x15
+ 1193 065c 704600   		.ascii	"pF\000"
+ 1194 065f 01       		.byte	0x1
+ 1195 0660 7B       		.byte	0x7b
+ 1196 0661 D6000000 		.4byte	0xd6
+ 1197 0665 02       		.byte	0x2
+ 1198 0666 91       		.byte	0x91
+ 1199 0667 6C       		.sleb128 -20
+ 1200 0668 00       		.byte	0
+ 1201 0669 00       		.byte	0
+ 1202 066a 17       		.uleb128 0x17
+ 1203 066b BF050000 		.4byte	.LASF96
+ 1204 066f 07       		.byte	0x7
+ 1205 0670 A9       		.byte	0xa9
+ 1206 0671 77060000 		.4byte	0x677
+ 1207 0675 01       		.byte	0x1
+ 1208 0676 01       		.byte	0x1
+ 1209 0677 06       		.uleb128 0x6
+ 1210 0678 04       		.byte	0x4
+ 1211 0679 A4040000 		.4byte	0x4a4
+ 1212 067d 18       		.uleb128 0x18
+ 1213 067e 45050000 		.4byte	.LASF97
+ 1214 0682 01       		.byte	0x1
+ 1215 0683 3B       		.byte	0x3b
+ 1216 0684 06050000 		.4byte	0x506
+ 1217 0688 01       		.byte	0x1
+ 1218 0689 05       		.byte	0x5
+ 1219 068a 03       		.byte	0x3
+ 1220 068b 00000000 		.4byte	g__SlNonOsCB
+ 1221 068f 00       		.byte	0
+ 1222              		.section	.debug_abbrev,"",%progbits
+ 1223              	.Ldebug_abbrev0:
+ 1224 0000 01       		.uleb128 0x1
+ 1225 0001 11       		.uleb128 0x11
+ 1226 0002 01       		.byte	0x1
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 25
+
+
+ 1227 0003 25       		.uleb128 0x25
+ 1228 0004 0E       		.uleb128 0xe
+ 1229 0005 13       		.uleb128 0x13
+ 1230 0006 0B       		.uleb128 0xb
+ 1231 0007 03       		.uleb128 0x3
+ 1232 0008 0E       		.uleb128 0xe
+ 1233 0009 1B       		.uleb128 0x1b
+ 1234 000a 0E       		.uleb128 0xe
+ 1235 000b 55       		.uleb128 0x55
+ 1236 000c 06       		.uleb128 0x6
+ 1237 000d 11       		.uleb128 0x11
+ 1238 000e 01       		.uleb128 0x1
+ 1239 000f 52       		.uleb128 0x52
+ 1240 0010 01       		.uleb128 0x1
+ 1241 0011 10       		.uleb128 0x10
+ 1242 0012 06       		.uleb128 0x6
+ 1243 0013 00       		.byte	0
+ 1244 0014 00       		.byte	0
+ 1245 0015 02       		.uleb128 0x2
+ 1246 0016 24       		.uleb128 0x24
+ 1247 0017 00       		.byte	0
+ 1248 0018 0B       		.uleb128 0xb
+ 1249 0019 0B       		.uleb128 0xb
+ 1250 001a 3E       		.uleb128 0x3e
+ 1251 001b 0B       		.uleb128 0xb
+ 1252 001c 03       		.uleb128 0x3
+ 1253 001d 0E       		.uleb128 0xe
+ 1254 001e 00       		.byte	0
+ 1255 001f 00       		.byte	0
+ 1256 0020 03       		.uleb128 0x3
+ 1257 0021 16       		.uleb128 0x16
+ 1258 0022 00       		.byte	0
+ 1259 0023 03       		.uleb128 0x3
+ 1260 0024 0E       		.uleb128 0xe
+ 1261 0025 3A       		.uleb128 0x3a
+ 1262 0026 0B       		.uleb128 0xb
+ 1263 0027 3B       		.uleb128 0x3b
+ 1264 0028 0B       		.uleb128 0xb
+ 1265 0029 49       		.uleb128 0x49
+ 1266 002a 13       		.uleb128 0x13
+ 1267 002b 00       		.byte	0
+ 1268 002c 00       		.byte	0
+ 1269 002d 04       		.uleb128 0x4
+ 1270 002e 24       		.uleb128 0x24
+ 1271 002f 00       		.byte	0
+ 1272 0030 0B       		.uleb128 0xb
+ 1273 0031 0B       		.uleb128 0xb
+ 1274 0032 3E       		.uleb128 0x3e
+ 1275 0033 0B       		.uleb128 0xb
+ 1276 0034 03       		.uleb128 0x3
+ 1277 0035 08       		.uleb128 0x8
+ 1278 0036 00       		.byte	0
+ 1279 0037 00       		.byte	0
+ 1280 0038 05       		.uleb128 0x5
+ 1281 0039 0F       		.uleb128 0xf
+ 1282 003a 00       		.byte	0
+ 1283 003b 0B       		.uleb128 0xb
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 26
+
+
+ 1284 003c 0B       		.uleb128 0xb
+ 1285 003d 00       		.byte	0
+ 1286 003e 00       		.byte	0
+ 1287 003f 06       		.uleb128 0x6
+ 1288 0040 0F       		.uleb128 0xf
+ 1289 0041 00       		.byte	0
+ 1290 0042 0B       		.uleb128 0xb
+ 1291 0043 0B       		.uleb128 0xb
+ 1292 0044 49       		.uleb128 0x49
+ 1293 0045 13       		.uleb128 0x13
+ 1294 0046 00       		.byte	0
+ 1295 0047 00       		.byte	0
+ 1296 0048 07       		.uleb128 0x7
+ 1297 0049 15       		.uleb128 0x15
+ 1298 004a 01       		.byte	0x1
+ 1299 004b 27       		.uleb128 0x27
+ 1300 004c 0C       		.uleb128 0xc
+ 1301 004d 01       		.uleb128 0x1
+ 1302 004e 13       		.uleb128 0x13
+ 1303 004f 00       		.byte	0
+ 1304 0050 00       		.byte	0
+ 1305 0051 08       		.uleb128 0x8
+ 1306 0052 05       		.uleb128 0x5
+ 1307 0053 00       		.byte	0
+ 1308 0054 49       		.uleb128 0x49
+ 1309 0055 13       		.uleb128 0x13
+ 1310 0056 00       		.byte	0
+ 1311 0057 00       		.byte	0
+ 1312 0058 09       		.uleb128 0x9
+ 1313 0059 16       		.uleb128 0x16
+ 1314 005a 00       		.byte	0
+ 1315 005b 03       		.uleb128 0x3
+ 1316 005c 0E       		.uleb128 0xe
+ 1317 005d 3A       		.uleb128 0x3a
+ 1318 005e 0B       		.uleb128 0xb
+ 1319 005f 3B       		.uleb128 0x3b
+ 1320 0060 05       		.uleb128 0x5
+ 1321 0061 49       		.uleb128 0x49
+ 1322 0062 13       		.uleb128 0x13
+ 1323 0063 00       		.byte	0
+ 1324 0064 00       		.byte	0
+ 1325 0065 0A       		.uleb128 0xa
+ 1326 0066 13       		.uleb128 0x13
+ 1327 0067 01       		.byte	0x1
+ 1328 0068 0B       		.uleb128 0xb
+ 1329 0069 0B       		.uleb128 0xb
+ 1330 006a 3A       		.uleb128 0x3a
+ 1331 006b 0B       		.uleb128 0xb
+ 1332 006c 3B       		.uleb128 0x3b
+ 1333 006d 0B       		.uleb128 0xb
+ 1334 006e 01       		.uleb128 0x1
+ 1335 006f 13       		.uleb128 0x13
+ 1336 0070 00       		.byte	0
+ 1337 0071 00       		.byte	0
+ 1338 0072 0B       		.uleb128 0xb
+ 1339 0073 0D       		.uleb128 0xd
+ 1340 0074 00       		.byte	0
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 27
+
+
+ 1341 0075 03       		.uleb128 0x3
+ 1342 0076 0E       		.uleb128 0xe
+ 1343 0077 3A       		.uleb128 0x3a
+ 1344 0078 0B       		.uleb128 0xb
+ 1345 0079 3B       		.uleb128 0x3b
+ 1346 007a 0B       		.uleb128 0xb
+ 1347 007b 49       		.uleb128 0x49
+ 1348 007c 13       		.uleb128 0x13
+ 1349 007d 38       		.uleb128 0x38
+ 1350 007e 0A       		.uleb128 0xa
+ 1351 007f 00       		.byte	0
+ 1352 0080 00       		.byte	0
+ 1353 0081 0C       		.uleb128 0xc
+ 1354 0082 0D       		.uleb128 0xd
+ 1355 0083 00       		.byte	0
+ 1356 0084 03       		.uleb128 0x3
+ 1357 0085 08       		.uleb128 0x8
+ 1358 0086 3A       		.uleb128 0x3a
+ 1359 0087 0B       		.uleb128 0xb
+ 1360 0088 3B       		.uleb128 0x3b
+ 1361 0089 0B       		.uleb128 0xb
+ 1362 008a 49       		.uleb128 0x49
+ 1363 008b 13       		.uleb128 0x13
+ 1364 008c 38       		.uleb128 0x38
+ 1365 008d 0A       		.uleb128 0xa
+ 1366 008e 00       		.byte	0
+ 1367 008f 00       		.byte	0
+ 1368 0090 0D       		.uleb128 0xd
+ 1369 0091 13       		.uleb128 0x13
+ 1370 0092 01       		.byte	0x1
+ 1371 0093 03       		.uleb128 0x3
+ 1372 0094 0E       		.uleb128 0xe
+ 1373 0095 0B       		.uleb128 0xb
+ 1374 0096 0B       		.uleb128 0xb
+ 1375 0097 3A       		.uleb128 0x3a
+ 1376 0098 0B       		.uleb128 0xb
+ 1377 0099 3B       		.uleb128 0x3b
+ 1378 009a 0B       		.uleb128 0xb
+ 1379 009b 01       		.uleb128 0x1
+ 1380 009c 13       		.uleb128 0x13
+ 1381 009d 00       		.byte	0
+ 1382 009e 00       		.byte	0
+ 1383 009f 0E       		.uleb128 0xe
+ 1384 00a0 04       		.uleb128 0x4
+ 1385 00a1 01       		.byte	0x1
+ 1386 00a2 0B       		.uleb128 0xb
+ 1387 00a3 0B       		.uleb128 0xb
+ 1388 00a4 3A       		.uleb128 0x3a
+ 1389 00a5 0B       		.uleb128 0xb
+ 1390 00a6 3B       		.uleb128 0x3b
+ 1391 00a7 0B       		.uleb128 0xb
+ 1392 00a8 01       		.uleb128 0x1
+ 1393 00a9 13       		.uleb128 0x13
+ 1394 00aa 00       		.byte	0
+ 1395 00ab 00       		.byte	0
+ 1396 00ac 0F       		.uleb128 0xf
+ 1397 00ad 28       		.uleb128 0x28
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 28
+
+
+ 1398 00ae 00       		.byte	0
+ 1399 00af 03       		.uleb128 0x3
+ 1400 00b0 0E       		.uleb128 0xe
+ 1401 00b1 1C       		.uleb128 0x1c
+ 1402 00b2 0D       		.uleb128 0xd
+ 1403 00b3 00       		.byte	0
+ 1404 00b4 00       		.byte	0
+ 1405 00b5 10       		.uleb128 0x10
+ 1406 00b6 01       		.uleb128 0x1
+ 1407 00b7 01       		.byte	0x1
+ 1408 00b8 49       		.uleb128 0x49
+ 1409 00b9 13       		.uleb128 0x13
+ 1410 00ba 01       		.uleb128 0x1
+ 1411 00bb 13       		.uleb128 0x13
+ 1412 00bc 00       		.byte	0
+ 1413 00bd 00       		.byte	0
+ 1414 00be 11       		.uleb128 0x11
+ 1415 00bf 21       		.uleb128 0x21
+ 1416 00c0 00       		.byte	0
+ 1417 00c1 49       		.uleb128 0x49
+ 1418 00c2 13       		.uleb128 0x13
+ 1419 00c3 2F       		.uleb128 0x2f
+ 1420 00c4 0B       		.uleb128 0xb
+ 1421 00c5 00       		.byte	0
+ 1422 00c6 00       		.byte	0
+ 1423 00c7 12       		.uleb128 0x12
+ 1424 00c8 2E       		.uleb128 0x2e
+ 1425 00c9 01       		.byte	0x1
+ 1426 00ca 3F       		.uleb128 0x3f
+ 1427 00cb 0C       		.uleb128 0xc
+ 1428 00cc 03       		.uleb128 0x3
+ 1429 00cd 0E       		.uleb128 0xe
+ 1430 00ce 3A       		.uleb128 0x3a
+ 1431 00cf 0B       		.uleb128 0xb
+ 1432 00d0 3B       		.uleb128 0x3b
+ 1433 00d1 0B       		.uleb128 0xb
+ 1434 00d2 27       		.uleb128 0x27
+ 1435 00d3 0C       		.uleb128 0xc
+ 1436 00d4 49       		.uleb128 0x49
+ 1437 00d5 13       		.uleb128 0x13
+ 1438 00d6 11       		.uleb128 0x11
+ 1439 00d7 01       		.uleb128 0x1
+ 1440 00d8 12       		.uleb128 0x12
+ 1441 00d9 01       		.uleb128 0x1
+ 1442 00da 40       		.uleb128 0x40
+ 1443 00db 06       		.uleb128 0x6
+ 1444 00dc 9742     		.uleb128 0x2117
+ 1445 00de 0C       		.uleb128 0xc
+ 1446 00df 01       		.uleb128 0x1
+ 1447 00e0 13       		.uleb128 0x13
+ 1448 00e1 00       		.byte	0
+ 1449 00e2 00       		.byte	0
+ 1450 00e3 13       		.uleb128 0x13
+ 1451 00e4 05       		.uleb128 0x5
+ 1452 00e5 00       		.byte	0
+ 1453 00e6 03       		.uleb128 0x3
+ 1454 00e7 0E       		.uleb128 0xe
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 29
+
+
+ 1455 00e8 3A       		.uleb128 0x3a
+ 1456 00e9 0B       		.uleb128 0xb
+ 1457 00ea 3B       		.uleb128 0x3b
+ 1458 00eb 0B       		.uleb128 0xb
+ 1459 00ec 49       		.uleb128 0x49
+ 1460 00ed 13       		.uleb128 0x13
+ 1461 00ee 02       		.uleb128 0x2
+ 1462 00ef 0A       		.uleb128 0xa
+ 1463 00f0 00       		.byte	0
+ 1464 00f1 00       		.byte	0
+ 1465 00f2 14       		.uleb128 0x14
+ 1466 00f3 2E       		.uleb128 0x2e
+ 1467 00f4 01       		.byte	0x1
+ 1468 00f5 3F       		.uleb128 0x3f
+ 1469 00f6 0C       		.uleb128 0xc
+ 1470 00f7 03       		.uleb128 0x3
+ 1471 00f8 0E       		.uleb128 0xe
+ 1472 00f9 3A       		.uleb128 0x3a
+ 1473 00fa 0B       		.uleb128 0xb
+ 1474 00fb 3B       		.uleb128 0x3b
+ 1475 00fc 0B       		.uleb128 0xb
+ 1476 00fd 27       		.uleb128 0x27
+ 1477 00fe 0C       		.uleb128 0xc
+ 1478 00ff 49       		.uleb128 0x49
+ 1479 0100 13       		.uleb128 0x13
+ 1480 0101 11       		.uleb128 0x11
+ 1481 0102 01       		.uleb128 0x1
+ 1482 0103 12       		.uleb128 0x12
+ 1483 0104 01       		.uleb128 0x1
+ 1484 0105 40       		.uleb128 0x40
+ 1485 0106 06       		.uleb128 0x6
+ 1486 0107 9642     		.uleb128 0x2116
+ 1487 0109 0C       		.uleb128 0xc
+ 1488 010a 01       		.uleb128 0x1
+ 1489 010b 13       		.uleb128 0x13
+ 1490 010c 00       		.byte	0
+ 1491 010d 00       		.byte	0
+ 1492 010e 15       		.uleb128 0x15
+ 1493 010f 34       		.uleb128 0x34
+ 1494 0110 00       		.byte	0
+ 1495 0111 03       		.uleb128 0x3
+ 1496 0112 08       		.uleb128 0x8
+ 1497 0113 3A       		.uleb128 0x3a
+ 1498 0114 0B       		.uleb128 0xb
+ 1499 0115 3B       		.uleb128 0x3b
+ 1500 0116 0B       		.uleb128 0xb
+ 1501 0117 49       		.uleb128 0x49
+ 1502 0118 13       		.uleb128 0x13
+ 1503 0119 02       		.uleb128 0x2
+ 1504 011a 0A       		.uleb128 0xa
+ 1505 011b 00       		.byte	0
+ 1506 011c 00       		.byte	0
+ 1507 011d 16       		.uleb128 0x16
+ 1508 011e 0B       		.uleb128 0xb
+ 1509 011f 01       		.byte	0x1
+ 1510 0120 11       		.uleb128 0x11
+ 1511 0121 01       		.uleb128 0x1
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 30
+
+
+ 1512 0122 12       		.uleb128 0x12
+ 1513 0123 01       		.uleb128 0x1
+ 1514 0124 00       		.byte	0
+ 1515 0125 00       		.byte	0
+ 1516 0126 17       		.uleb128 0x17
+ 1517 0127 34       		.uleb128 0x34
+ 1518 0128 00       		.byte	0
+ 1519 0129 03       		.uleb128 0x3
+ 1520 012a 0E       		.uleb128 0xe
+ 1521 012b 3A       		.uleb128 0x3a
+ 1522 012c 0B       		.uleb128 0xb
+ 1523 012d 3B       		.uleb128 0x3b
+ 1524 012e 0B       		.uleb128 0xb
+ 1525 012f 49       		.uleb128 0x49
+ 1526 0130 13       		.uleb128 0x13
+ 1527 0131 3F       		.uleb128 0x3f
+ 1528 0132 0C       		.uleb128 0xc
+ 1529 0133 3C       		.uleb128 0x3c
+ 1530 0134 0C       		.uleb128 0xc
+ 1531 0135 00       		.byte	0
+ 1532 0136 00       		.byte	0
+ 1533 0137 18       		.uleb128 0x18
+ 1534 0138 34       		.uleb128 0x34
+ 1535 0139 00       		.byte	0
+ 1536 013a 03       		.uleb128 0x3
+ 1537 013b 0E       		.uleb128 0xe
+ 1538 013c 3A       		.uleb128 0x3a
+ 1539 013d 0B       		.uleb128 0xb
+ 1540 013e 3B       		.uleb128 0x3b
+ 1541 013f 0B       		.uleb128 0xb
+ 1542 0140 49       		.uleb128 0x49
+ 1543 0141 13       		.uleb128 0x13
+ 1544 0142 3F       		.uleb128 0x3f
+ 1545 0143 0C       		.uleb128 0xc
+ 1546 0144 02       		.uleb128 0x2
+ 1547 0145 0A       		.uleb128 0xa
+ 1548 0146 00       		.byte	0
+ 1549 0147 00       		.byte	0
+ 1550 0148 00       		.byte	0
+ 1551              		.section	.debug_loc,"",%progbits
+ 1552              	.Ldebug_loc0:
+ 1553              	.LLST0:
+ 1554 0000 00000000 		.4byte	.LFB0
+ 1555 0004 02000000 		.4byte	.LCFI0
+ 1556 0008 0200     		.2byte	0x2
+ 1557 000a 7D       		.byte	0x7d
+ 1558 000b 00       		.sleb128 0
+ 1559 000c 02000000 		.4byte	.LCFI0
+ 1560 0010 04000000 		.4byte	.LCFI1
+ 1561 0014 0200     		.2byte	0x2
+ 1562 0016 7D       		.byte	0x7d
+ 1563 0017 08       		.sleb128 8
+ 1564 0018 04000000 		.4byte	.LCFI1
+ 1565 001c 06000000 		.4byte	.LCFI2
+ 1566 0020 0200     		.2byte	0x2
+ 1567 0022 7D       		.byte	0x7d
+ 1568 0023 10       		.sleb128 16
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 31
+
+
+ 1569 0024 06000000 		.4byte	.LCFI2
+ 1570 0028 20000000 		.4byte	.LFE0
+ 1571 002c 0200     		.2byte	0x2
+ 1572 002e 77       		.byte	0x77
+ 1573 002f 10       		.sleb128 16
+ 1574 0030 00000000 		.4byte	0
+ 1575 0034 00000000 		.4byte	0
+ 1576              	.LLST1:
+ 1577 0038 00000000 		.4byte	.LFB1
+ 1578 003c 02000000 		.4byte	.LCFI3
+ 1579 0040 0200     		.2byte	0x2
+ 1580 0042 7D       		.byte	0x7d
+ 1581 0043 00       		.sleb128 0
+ 1582 0044 02000000 		.4byte	.LCFI3
+ 1583 0048 04000000 		.4byte	.LCFI4
+ 1584 004c 0200     		.2byte	0x2
+ 1585 004e 7D       		.byte	0x7d
+ 1586 004f 08       		.sleb128 8
+ 1587 0050 04000000 		.4byte	.LCFI4
+ 1588 0054 06000000 		.4byte	.LCFI5
+ 1589 0058 0200     		.2byte	0x2
+ 1590 005a 7D       		.byte	0x7d
+ 1591 005b 10       		.sleb128 16
+ 1592 005c 06000000 		.4byte	.LCFI5
+ 1593 0060 66000000 		.4byte	.LFE1
+ 1594 0064 0200     		.2byte	0x2
+ 1595 0066 77       		.byte	0x77
+ 1596 0067 10       		.sleb128 16
+ 1597 0068 00000000 		.4byte	0
+ 1598 006c 00000000 		.4byte	0
+ 1599              	.LLST2:
+ 1600 0070 00000000 		.4byte	.LFB2
+ 1601 0074 02000000 		.4byte	.LCFI6
+ 1602 0078 0200     		.2byte	0x2
+ 1603 007a 7D       		.byte	0x7d
+ 1604 007b 00       		.sleb128 0
+ 1605 007c 02000000 		.4byte	.LCFI6
+ 1606 0080 04000000 		.4byte	.LCFI7
+ 1607 0084 0200     		.2byte	0x2
+ 1608 0086 7D       		.byte	0x7d
+ 1609 0087 08       		.sleb128 8
+ 1610 0088 04000000 		.4byte	.LCFI7
+ 1611 008c 06000000 		.4byte	.LCFI8
+ 1612 0090 0200     		.2byte	0x2
+ 1613 0092 7D       		.byte	0x7d
+ 1614 0093 20       		.sleb128 32
+ 1615 0094 06000000 		.4byte	.LCFI8
+ 1616 0098 4C000000 		.4byte	.LFE2
+ 1617 009c 0200     		.2byte	0x2
+ 1618 009e 77       		.byte	0x77
+ 1619 009f 20       		.sleb128 32
+ 1620 00a0 00000000 		.4byte	0
+ 1621 00a4 00000000 		.4byte	0
+ 1622              	.LLST3:
+ 1623 00a8 00000000 		.4byte	.LFB3
+ 1624 00ac 02000000 		.4byte	.LCFI9
+ 1625 00b0 0200     		.2byte	0x2
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 32
+
+
+ 1626 00b2 7D       		.byte	0x7d
+ 1627 00b3 00       		.sleb128 0
+ 1628 00b4 02000000 		.4byte	.LCFI9
+ 1629 00b8 04000000 		.4byte	.LCFI10
+ 1630 00bc 0200     		.2byte	0x2
+ 1631 00be 7D       		.byte	0x7d
+ 1632 00bf 08       		.sleb128 8
+ 1633 00c0 04000000 		.4byte	.LCFI10
+ 1634 00c4 06000000 		.4byte	.LCFI11
+ 1635 00c8 0200     		.2byte	0x2
+ 1636 00ca 7D       		.byte	0x7d
+ 1637 00cb 18       		.sleb128 24
+ 1638 00cc 06000000 		.4byte	.LCFI11
+ 1639 00d0 68000000 		.4byte	.LFE3
+ 1640 00d4 0200     		.2byte	0x2
+ 1641 00d6 77       		.byte	0x77
+ 1642 00d7 18       		.sleb128 24
+ 1643 00d8 00000000 		.4byte	0
+ 1644 00dc 00000000 		.4byte	0
+ 1645              		.section	.debug_aranges,"",%progbits
+ 1646 0000 34000000 		.4byte	0x34
+ 1647 0004 0200     		.2byte	0x2
+ 1648 0006 00000000 		.4byte	.Ldebug_info0
+ 1649 000a 04       		.byte	0x4
+ 1650 000b 00       		.byte	0
+ 1651 000c 0000     		.2byte	0
+ 1652 000e 0000     		.2byte	0
+ 1653 0010 00000000 		.4byte	.LFB0
+ 1654 0014 20000000 		.4byte	.LFE0-.LFB0
+ 1655 0018 00000000 		.4byte	.LFB1
+ 1656 001c 66000000 		.4byte	.LFE1-.LFB1
+ 1657 0020 00000000 		.4byte	.LFB2
+ 1658 0024 4C000000 		.4byte	.LFE2-.LFB2
+ 1659 0028 00000000 		.4byte	.LFB3
+ 1660 002c 68000000 		.4byte	.LFE3-.LFB3
+ 1661 0030 00000000 		.4byte	0
+ 1662 0034 00000000 		.4byte	0
+ 1663              		.section	.debug_ranges,"",%progbits
+ 1664              	.Ldebug_ranges0:
+ 1665 0000 00000000 		.4byte	.LFB0
+ 1666 0004 20000000 		.4byte	.LFE0
+ 1667 0008 00000000 		.4byte	.LFB1
+ 1668 000c 66000000 		.4byte	.LFE1
+ 1669 0010 00000000 		.4byte	.LFB2
+ 1670 0014 4C000000 		.4byte	.LFE2
+ 1671 0018 00000000 		.4byte	.LFB3
+ 1672 001c 68000000 		.4byte	.LFE3
+ 1673 0020 00000000 		.4byte	0
+ 1674 0024 00000000 		.4byte	0
+ 1675              		.section	.debug_line,"",%progbits
+ 1676              	.Ldebug_line0:
+ 1677 0000 63010000 		.section	.debug_str,"MS",%progbits,1
+ 1677      0200DD00 
+ 1677      00000201 
+ 1677      FB0E0D00 
+ 1677      01010101 
+ 1678              	.LASF41:
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 33
+
+
+ 1679 0000 5478506F 		.ascii	"TxPoolCnt\000"
+ 1679      6F6C436E 
+ 1679      7400
+ 1680              	.LASF33:
+ 1681 000a 70527850 		.ascii	"pRxPayload\000"
+ 1681      61796C6F 
+ 1681      616400
+ 1682              	.LASF58:
+ 1683 0015 4173796E 		.ascii	"AsyncExt\000"
+ 1683      63457874 
+ 1683      00
+ 1684              	.LASF54:
+ 1685 001e 4173796E 		.ascii	"AsyncExt_t\000"
+ 1685      63457874 
+ 1685      5F7400
+ 1686              	.LASF83:
+ 1687 0029 53706177 		.ascii	"SpawnEntries\000"
+ 1687      6E456E74 
+ 1687      72696573 
+ 1687      00
+ 1688              	.LASF53:
+ 1689 0036 52784D73 		.ascii	"RxMsgClass\000"
+ 1689      67436C61 
+ 1689      737300
+ 1690              	.LASF73:
+ 1691 0041 52784972 		.ascii	"RxIrqCnt\000"
+ 1691      71436E74 
+ 1691      00
+ 1692              	.LASF61:
+ 1693 004a 54656D70 		.ascii	"TempProtocolHeader\000"
+ 1693      50726F74 
+ 1693      6F636F6C 
+ 1693      48656164 
+ 1693      657200
+ 1694              	.LASF40:
+ 1695 005d 5F536C50 		.ascii	"_SlPoolObj_t\000"
+ 1695      6F6F6C4F 
+ 1695      626A5F74 
+ 1695      00
+ 1696              	.LASF10:
+ 1697 006a 63686172 		.ascii	"char\000"
+ 1697      00
+ 1698              	.LASF66:
+ 1699 006f 41637469 		.ascii	"ActivePoolIdx\000"
+ 1699      7665506F 
+ 1699      6F6C4964 
+ 1699      7800
+ 1700              	.LASF30:
+ 1701 007d 52785061 		.ascii	"RxPayloadLen\000"
+ 1701      796C6F61 
+ 1701      644C656E 
+ 1701      00
+ 1702              	.LASF2:
+ 1703 008a 73686F72 		.ascii	"short int\000"
+ 1703      7420696E 
+ 1703      7400
+ 1704              	.LASF27:
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 34
+
+
+ 1705 0094 52784465 		.ascii	"RxDescLen\000"
+ 1705      73634C65 
+ 1705      6E00
+ 1706              	.LASF17:
+ 1707 009e 73697A65 		.ascii	"sizetype\000"
+ 1707      74797065 
+ 1707      00
+ 1708              	.LASF100:
+ 1709 00a7 433A5C55 		.ascii	"C:\\Users\\X0217454\\Desktop\\CC31xx\\CC3100 - 0.5\\"
+ 1709      73657273 
+ 1709      5C583032 
+ 1709      31373435 
+ 1709      345C4465 
+ 1710 00d5 43433331 		.ascii	"CC3100 SDK 0.5\\cc3100-sdk\\platform\\cypress_SDK.5"
+ 1710      30302053 
+ 1710      444B2030 
+ 1710      2E355C63 
+ 1710      63333130 
+ 1711 0105 5C657861 		.ascii	"\\example\\wlan_station_spi\\wlan_station_spi.cydsn"
+ 1711      6D706C65 
+ 1711      5C776C61 
+ 1711      6E5F7374 
+ 1711      6174696F 
+ 1712 0135 00       		.ascii	"\000"
+ 1713              	.LASF42:
+ 1714 0136 54784C6F 		.ascii	"TxLockObj\000"
+ 1714      636B4F62 
+ 1714      6A00
+ 1715              	.LASF99:
+ 1716 0140 2E2E5C2E 		.ascii	"..\\..\\..\\..\\..\\simplelink\\source\\nonos.c\000"
+ 1716      2E5C2E2E 
+ 1716      5C2E2E5C 
+ 1716      2E2E5C73 
+ 1716      696D706C 
+ 1717              	.LASF3:
+ 1718 0169 55494E54 		.ascii	"UINT8\000"
+ 1718      3800
+ 1719              	.LASF26:
+ 1720 016f 54784465 		.ascii	"TxDescLen\000"
+ 1720      73634C65 
+ 1720      6E00
+ 1721              	.LASF31:
+ 1722 0179 41637475 		.ascii	"ActualRxPayloadLen\000"
+ 1722      616C5278 
+ 1722      5061796C 
+ 1722      6F61644C 
+ 1722      656E00
+ 1723              	.LASF93:
+ 1724 018c 5F536C4E 		.ascii	"_SlNonOsSpawn\000"
+ 1724      6F6E4F73 
+ 1724      53706177 
+ 1724      6E00
+ 1725              	.LASF7:
+ 1726 019a 55494E54 		.ascii	"UINT32\000"
+ 1726      333200
+ 1727              	.LASF36:
+ 1728 01a1 70526573 		.ascii	"pRespArgs\000"
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 35
+
+
+ 1728      70417267 
+ 1728      7300
+ 1729              	.LASF21:
+ 1730 01ab 5F536C4E 		.ascii	"_SlNonOsSemObj_t\000"
+ 1730      6F6E4F73 
+ 1730      53656D4F 
+ 1730      626A5F74 
+ 1730      00
+ 1731              	.LASF38:
+ 1732 01bc 41646469 		.ascii	"AdditionalData\000"
+ 1732      74696F6E 
+ 1732      616C4461 
+ 1732      746100
+ 1733              	.LASF19:
+ 1734 01cb 5F536C4E 		.ascii	"_SlNonOsRetVal_t\000"
+ 1734      6F6E4F73 
+ 1734      52657456 
+ 1734      616C5F74 
+ 1734      00
+ 1735              	.LASF50:
+ 1736 01dc 70417379 		.ascii	"pAsyncBuf\000"
+ 1736      6E634275 
+ 1736      6600
+ 1737              	.LASF68:
+ 1738 01e6 50726F74 		.ascii	"ProtectionLockObj\000"
+ 1738      65637469 
+ 1738      6F6E4C6F 
+ 1738      636B4F62 
+ 1738      6A00
+ 1739              	.LASF64:
+ 1740 01f8 46726565 		.ascii	"FreePoolIdx\000"
+ 1740      506F6F6C 
+ 1740      49647800 
+ 1741              	.LASF49:
+ 1742 0204 5F536C52 		.ascii	"_SlRxMsgClass_e\000"
+ 1742      784D7367 
+ 1742      436C6173 
+ 1742      735F6500 
+ 1743              	.LASF25:
+ 1744 0214 5F536C43 		.ascii	"_SlCommandHeader_t\000"
+ 1744      6F6D6D61 
+ 1744      6E644865 
+ 1744      61646572 
+ 1744      5F7400
+ 1745              	.LASF69:
+ 1746 0227 436D6453 		.ascii	"CmdSyncObj\000"
+ 1746      796E634F 
+ 1746      626A00
+ 1747              	.LASF11:
+ 1748 0232 666C6F61 		.ascii	"float\000"
+ 1748      7400
+ 1749              	.LASF15:
+ 1750 0238 756E7369 		.ascii	"unsigned int\000"
+ 1750      676E6564 
+ 1750      20696E74 
+ 1750      00
+ 1751              	.LASF51:
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 36
+
+
+ 1752 0245 41637469 		.ascii	"ActionIndex\000"
+ 1752      6F6E496E 
+ 1752      64657800 
+ 1753              	.LASF16:
+ 1754 0251 6C6F6E67 		.ascii	"long long int\000"
+ 1754      206C6F6E 
+ 1754      6720696E 
+ 1754      7400
+ 1755              	.LASF63:
+ 1756 025f 4F626A50 		.ascii	"ObjPool\000"
+ 1756      6F6F6C00 
+ 1757              	.LASF77:
+ 1758 0267 52656C61 		.ascii	"RelayFlagsViaRxPayload\000"
+ 1758      79466C61 
+ 1758      67735669 
+ 1758      61527850 
+ 1758      61796C6F 
+ 1759              	.LASF34:
+ 1760 027e 5F536C43 		.ascii	"_SlCmdExt_t\000"
+ 1760      6D644578 
+ 1760      745F7400 
+ 1761              	.LASF56:
+ 1762 028a 70547852 		.ascii	"pTxRxDescBuff\000"
+ 1762      78446573 
+ 1762      63427566 
+ 1762      6600
+ 1763              	.LASF6:
+ 1764 0298 6C6F6E67 		.ascii	"long int\000"
+ 1764      20696E74 
+ 1764      00
+ 1765              	.LASF47:
+ 1766 02a1 4153594E 		.ascii	"ASYNC_EVT_CLASS\000"
+ 1766      435F4556 
+ 1766      545F434C 
+ 1766      41535300 
+ 1767              	.LASF60:
+ 1768 02b1 476C6F62 		.ascii	"GlobalLockObj\000"
+ 1768      616C4C6F 
+ 1768      636B4F62 
+ 1768      6A00
+ 1769              	.LASF46:
+ 1770 02bf 434D445F 		.ascii	"CMD_RESP_CLASS\000"
+ 1770      52455350 
+ 1770      5F434C41 
+ 1770      535300
+ 1771              	.LASF32:
+ 1772 02ce 70547850 		.ascii	"pTxPayload\000"
+ 1772      61796C6F 
+ 1772      616400
+ 1773              	.LASF72:
+ 1774 02d9 54785365 		.ascii	"TxSeqNum\000"
+ 1774      714E756D 
+ 1774      00
+ 1775              	.LASF75:
+ 1776 02e2 536F636B 		.ascii	"SocketNonBlocking\000"
+ 1776      65744E6F 
+ 1776      6E426C6F 
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 37
+
+
+ 1776      636B696E 
+ 1776      6700
+ 1777              	.LASF88:
+ 1778 02f4 5F536C4E 		.ascii	"_SlNonOsSemGet\000"
+ 1778      6F6E4F73 
+ 1778      53656D47 
+ 1778      657400
+ 1779              	.LASF98:
+ 1780 0303 474E5520 		.ascii	"GNU C 4.7.3 20130312 (release) [ARM/embedded-4_7-br"
+ 1780      4320342E 
+ 1780      372E3320 
+ 1780      32303133 
+ 1780      30333132 
+ 1781 0336 616E6368 		.ascii	"anch revision 196615]\000"
+ 1781      20726576 
+ 1781      6973696F 
+ 1781      6E203139 
+ 1781      36363135 
+ 1782              	.LASF82:
+ 1783 034c 5F536C4E 		.ascii	"_SlNonOsSpawnEntry_t\000"
+ 1783      6F6E4F73 
+ 1783      53706177 
+ 1783      6E456E74 
+ 1783      72795F74 
+ 1784              	.LASF57:
+ 1785 0361 70436D64 		.ascii	"pCmdExt\000"
+ 1785      45787400 
+ 1786              	.LASF23:
+ 1787 0369 4F70636F 		.ascii	"Opcode\000"
+ 1787      646500
+ 1788              	.LASF86:
+ 1789 0370 56616C75 		.ascii	"Value\000"
+ 1789      6500
+ 1790              	.LASF95:
+ 1791 0376 5F536C4E 		.ascii	"_SlNonOsMainLoopTask\000"
+ 1791      6F6E4F73 
+ 1791      4D61696E 
+ 1791      4C6F6F70 
+ 1791      5461736B 
+ 1792              	.LASF1:
+ 1793 038b 756E7369 		.ascii	"unsigned char\000"
+ 1793      676E6564 
+ 1793      20636861 
+ 1793      7200
+ 1794              	.LASF0:
+ 1795 0399 7369676E 		.ascii	"signed char\000"
+ 1795      65642063 
+ 1795      68617200 
+ 1796              	.LASF94:
+ 1797 03a5 666C6167 		.ascii	"flags\000"
+ 1797      7300
+ 1798              	.LASF9:
+ 1799 03ab 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1799      206C6F6E 
+ 1799      6720756E 
+ 1799      7369676E 
+ 1799      65642069 
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 38
+
+
+ 1800              	.LASF89:
+ 1801 03c2 7053796E 		.ascii	"pSyncObj\000"
+ 1801      634F626A 
+ 1801      00
+ 1802              	.LASF37:
+ 1803 03cb 41637469 		.ascii	"ActionID\000"
+ 1803      6F6E4944 
+ 1803      00
+ 1804              	.LASF62:
+ 1805 03d4 70496E69 		.ascii	"pInitCallback\000"
+ 1805      7443616C 
+ 1805      6C626163 
+ 1805      6B00
+ 1806              	.LASF79:
+ 1807 03e2 5F536C44 		.ascii	"_SlDriverCb_t\000"
+ 1807      72697665 
+ 1807      7243625F 
+ 1807      7400
+ 1808              	.LASF28:
+ 1809 03f0 5F536C43 		.ascii	"_SlCmdCtrl_t\000"
+ 1809      6D644374 
+ 1809      726C5F74 
+ 1809      00
+ 1810              	.LASF85:
+ 1811 03fd 7053656D 		.ascii	"pSemObj\000"
+ 1811      4F626A00 
+ 1812              	.LASF24:
+ 1813 0405 5F536C47 		.ascii	"_SlGenericHeader_t\000"
+ 1813      656E6572 
+ 1813      69634865 
+ 1813      61646572 
+ 1813      5F7400
+ 1814              	.LASF5:
+ 1815 0418 73686F72 		.ascii	"short unsigned int\000"
+ 1815      7420756E 
+ 1815      7369676E 
+ 1815      65642069 
+ 1815      6E7400
+ 1816              	.LASF92:
+ 1817 042b 54696D65 		.ascii	"Timeout\000"
+ 1817      6F757400 
+ 1818              	.LASF4:
+ 1819 0433 55494E54 		.ascii	"UINT16\000"
+ 1819      313600
+ 1820              	.LASF91:
+ 1821 043a 53657456 		.ascii	"SetValue\000"
+ 1821      616C7565 
+ 1821      00
+ 1822              	.LASF71:
+ 1823 0443 466C6F77 		.ascii	"FlowContCB\000"
+ 1823      436F6E74 
+ 1823      434200
+ 1824              	.LASF29:
+ 1825 044e 54785061 		.ascii	"TxPayloadLen\000"
+ 1825      796C6F61 
+ 1825      644C656E 
+ 1825      00
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 39
+
+
+ 1826              	.LASF55:
+ 1827 045b 70436D64 		.ascii	"pCmdCtrl\000"
+ 1827      4374726C 
+ 1827      00
+ 1828              	.LASF90:
+ 1829 0464 57616974 		.ascii	"WaitValue\000"
+ 1829      56616C75 
+ 1829      6500
+ 1830              	.LASF52:
+ 1831 046e 4173796E 		.ascii	"AsyncEvtHandler\000"
+ 1831      63457674 
+ 1831      48616E64 
+ 1831      6C657200 
+ 1832              	.LASF45:
+ 1833 047e 52454356 		.ascii	"RECV_RESP_CLASS\000"
+ 1833      5F524553 
+ 1833      505F434C 
+ 1833      41535300 
+ 1834              	.LASF18:
+ 1835 048e 5F536C53 		.ascii	"_SlSpawnEntryFunc_t\000"
+ 1835      7061776E 
+ 1835      456E7472 
+ 1835      7946756E 
+ 1835      635F7400 
+ 1836              	.LASF80:
+ 1837 04a2 70456E74 		.ascii	"pEntry\000"
+ 1837      727900
+ 1838              	.LASF8:
+ 1839 04a9 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1839      20756E73 
+ 1839      69676E65 
+ 1839      6420696E 
+ 1839      7400
+ 1840              	.LASF74:
+ 1841 04bb 5278446F 		.ascii	"RxDoneCnt\000"
+ 1841      6E65436E 
+ 1841      7400
+ 1842              	.LASF12:
+ 1843 04c5 646F7562 		.ascii	"double\000"
+ 1843      6C6500
+ 1844              	.LASF44:
+ 1845 04cc 5F536C46 		.ascii	"_SlFlowContCB_t\000"
+ 1845      6C6F7743 
+ 1845      6F6E7443 
+ 1845      425F7400 
+ 1846              	.LASF43:
+ 1847 04dc 54785379 		.ascii	"TxSyncObj\000"
+ 1847      6E634F62 
+ 1847      6A00
+ 1848              	.LASF65:
+ 1849 04e6 50656E64 		.ascii	"PendingPoolIdx\000"
+ 1849      696E6750 
+ 1849      6F6F6C49 
+ 1849      647800
+ 1850              	.LASF22:
+ 1851 04f5 505F494E 		.ascii	"P_INIT_CALLBACK\000"
+ 1851      49545F43 
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 40
+
+
+ 1851      414C4C42 
+ 1851      41434B00 
+ 1852              	.LASF14:
+ 1853 0505 5F536C41 		.ascii	"_SlArgSize_t\000"
+ 1853      72675369 
+ 1853      7A655F74 
+ 1853      00
+ 1854              	.LASF48:
+ 1855 0512 44554D4D 		.ascii	"DUMMY_MSG_CLASS\000"
+ 1855      595F4D53 
+ 1855      475F434C 
+ 1855      41535300 
+ 1856              	.LASF67:
+ 1857 0522 41637469 		.ascii	"ActiveActionsBitmap\000"
+ 1857      76654163 
+ 1857      74696F6E 
+ 1857      73426974 
+ 1857      6D617000 
+ 1858              	.LASF20:
+ 1859 0536 5F536C4E 		.ascii	"_SlNonOsTime_t\000"
+ 1859      6F6E4F73 
+ 1859      54696D65 
+ 1859      5F7400
+ 1860              	.LASF97:
+ 1861 0545 675F5F53 		.ascii	"g__SlNonOsCB\000"
+ 1861      6C4E6F6E 
+ 1861      4F734342 
+ 1861      00
+ 1862              	.LASF84:
+ 1863 0552 5F536C4E 		.ascii	"_SlNonOsCB_t\000"
+ 1863      6F6E4F73 
+ 1863      43425F74 
+ 1863      00
+ 1864              	.LASF87:
+ 1865 055f 5F536C4E 		.ascii	"_SlNonOsSemSet\000"
+ 1865      6F6E4F73 
+ 1865      53656D53 
+ 1865      657400
+ 1866              	.LASF35:
+ 1867 056e 53796E63 		.ascii	"SyncObj\000"
+ 1867      4F626A00 
+ 1868              	.LASF13:
+ 1869 0576 5F536C4F 		.ascii	"_SlOpcode_t\000"
+ 1869      70636F64 
+ 1869      655F7400 
+ 1870              	.LASF59:
+ 1871 0582 5F536C46 		.ascii	"_SlFunctionParams_t\000"
+ 1871      756E6374 
+ 1871      696F6E50 
+ 1871      6172616D 
+ 1871      735F7400 
+ 1872              	.LASF39:
+ 1873 0596 4E657874 		.ascii	"NextIndex\000"
+ 1873      496E6465 
+ 1873      7800
+ 1874              	.LASF78:
+ 1875 05a0 46756E63 		.ascii	"FunctionParams\000"
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\cc8dKisV.s 			page 41
+
+
+ 1875      74696F6E 
+ 1875      50617261 
+ 1875      6D7300
+ 1876              	.LASF76:
+ 1877 05af 536F636B 		.ascii	"SocketTXFailure\000"
+ 1877      65745458 
+ 1877      4661696C 
+ 1877      75726500 
+ 1878              	.LASF96:
+ 1879 05bf 675F7043 		.ascii	"g_pCB\000"
+ 1879      4200
+ 1880              	.LASF81:
+ 1881 05c5 7056616C 		.ascii	"pValue\000"
+ 1881      756500
+ 1882              	.LASF70:
+ 1883 05cc 4973436D 		.ascii	"IsCmdRespWaited\000"
+ 1883      64526573 
+ 1883      70576169 
+ 1883      74656400 
+ 1884              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.7.3 20130312 (release) [ARM/embedded-4_7-br

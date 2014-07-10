@@ -1,0 +1,51 @@
+# wlan_station_spi
+# 2014-07-03 13:26:29Z
+
+# IO_2@[IOP=(3)][IoId=(2)] is reserved: SWDDebugEnabled
+dont_use_io iocell 3 2
+# IO_3@[IOP=(3)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 3 3
+set_location "ClockBlock" m0s8clockblockcell -1 -1 0
+set_location "ClockGenBlock" m0s8clockgenblockcell -1 -1 0
+set_io "LED_BLUE(0)" iocell 0 3
+set_io "LED_GREEN(0)" iocell 0 2
+set_location "Net_103" 1 1 1 3
+set_location "Rx_ISR" interrupt -1 -1 0
+set_location "\UARTM:BUART:counter_load_not\" 0 1 1 3
+set_location "\UARTM:BUART:pollcount_0\" 0 1 0 2
+set_location "\UARTM:BUART:pollcount_1\" 0 1 0 0
+set_location "\UARTM:BUART:rx_address_detected\" 1 0 0 0
+set_location "\UARTM:BUART:rx_bitclk_enable\" 0 1 0 3
+set_location "\UARTM:BUART:rx_counter_load\" 0 0 1 1
+set_location "\UARTM:BUART:rx_last\" 1 0 0 3
+set_location "\UARTM:BUART:rx_load_fifo\" 0 0 0 1
+set_location "\UARTM:BUART:rx_postpoll\" 0 1 0 1
+set_location "\UARTM:BUART:rx_state_0\" 0 0 0 0
+set_location "\UARTM:BUART:rx_state_2\" 0 0 1 0
+set_location "\UARTM:BUART:rx_state_3\" 0 0 0 2
+set_location "\UARTM:BUART:rx_state_stop1_reg\" 0 0 1 2
+set_location "\UARTM:BUART:rx_status_3\" 0 0 0 3
+set_location "\UARTM:BUART:rx_status_4\" 0 0 1 3
+set_location "\UARTM:BUART:rx_status_5\" 1 0 0 1
+set_location "\UARTM:BUART:sRX:RxBitCounter\" 0 0 7
+set_location "\UARTM:BUART:sRX:RxShifter:u0\" 0 0 2
+set_location "\UARTM:BUART:sRX:RxSts\" 1 0 4
+set_location "\UARTM:BUART:sTX:TxShifter:u0\" 1 1 2
+set_location "\UARTM:BUART:sTX:TxSts\" 1 1 4
+set_location "\UARTM:BUART:sTX:sCLOCK:TxBitClkGen\" 0 1 2
+set_location "\UARTM:BUART:tx_bitclk\" 0 1 1 1
+set_location "\UARTM:BUART:tx_bitclk_enable_pre\" 0 1 1 2
+set_location "\UARTM:BUART:tx_state_0\" 1 1 1 0
+set_location "\UARTM:BUART:tx_state_1\" 0 1 1 0
+set_location "\UARTM:BUART:tx_state_2\" 1 1 0 1
+set_location "\UARTM:BUART:tx_status_0\" 1 1 1 2
+set_location "\UARTM:BUART:tx_status_2\" 1 1 1 1
+set_location "\UARTM:BUART:txn\" 1 1 0 0
+set_location "\UART_1:SCB\" m0s8scbcell -1 -1 0
+set_io "\UART_1:rx(0)\" iocell 4 0
+set_io "\UART_1:tx(0)\" iocell 4 1
+set_io "m_cts_pin(0)" iocell 0 7
+set_io "m_rts_pin(0)" iocell 3 7
+set_io "m_rx_pin(0)" iocell 0 4
+set_io "m_tx_pin(0)" iocell 0 5
+set_io "nHIB(0)" iocell 3 6

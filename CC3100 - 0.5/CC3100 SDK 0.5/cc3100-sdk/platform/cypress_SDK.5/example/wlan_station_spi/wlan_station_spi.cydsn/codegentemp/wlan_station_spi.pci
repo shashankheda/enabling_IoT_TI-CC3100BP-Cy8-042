@@ -1,0 +1,17 @@
+# wlan_station_spi
+# 2014-07-03 13:26:28Z
+
+# IO_2@[IOP=(3)][IoId=(2)] is reserved: SWDDebugEnabled
+dont_use_io iocell 3 2
+# IO_3@[IOP=(3)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 3 3
+set_location "ClockGenBlock" m0s8clockgenblockcell -1 -1 0
+set_io "LED_BLUE(0)" iocell 0 3
+set_io "LED_GREEN(0)" iocell 0 2
+set_io "\UART_1:rx(0)\" iocell 4 0
+set_io "\UART_1:tx(0)\" iocell 4 1
+set_io "m_cts_pin(0)" iocell 0 7
+set_io "m_rts_pin(0)" iocell 3 7
+set_io "m_rx_pin(0)" iocell 0 4
+set_io "m_tx_pin(0)" iocell 0 5
+set_io "nHIB(0)" iocell 3 6

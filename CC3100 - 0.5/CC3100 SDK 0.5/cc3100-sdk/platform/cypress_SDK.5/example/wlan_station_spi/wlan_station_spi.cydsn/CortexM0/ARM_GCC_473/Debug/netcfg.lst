@@ -1,0 +1,1618 @@
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 1
+
+
+   1              		.cpu cortex-m0
+   2              		.fpu softvfp
+   3              		.eabi_attribute 20, 1
+   4              		.eabi_attribute 21, 1
+   5              		.eabi_attribute 23, 3
+   6              		.eabi_attribute 24, 1
+   7              		.eabi_attribute 25, 1
+   8              		.eabi_attribute 26, 1
+   9              		.eabi_attribute 30, 6
+  10              		.eabi_attribute 34, 0
+  11              		.eabi_attribute 18, 4
+  12              		.code	16
+  13              		.file	"netcfg.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.global	_SlNetCfgSetCmdCtrl
+  18              		.section	.rodata
+  19              		.align	2
+  20              		.type	_SlNetCfgSetCmdCtrl, %object
+  21              		.size	_SlNetCfgSetCmdCtrl, 4
+  22              	_SlNetCfgSetCmdCtrl:
+  23 0000 3284     		.short	-31694
+  24 0002 08       		.byte	8
+  25 0003 04       		.byte	4
+  26              		.section	.text.sl_NetCfgSet,"ax",%progbits
+  27              		.align	2
+  28              		.global	sl_NetCfgSet
+  29              		.code	16
+  30              		.thumb_func
+  31              		.type	sl_NetCfgSet, %function
+  32              	sl_NetCfgSet:
+  33              	.LFB0:
+  34              		.file 1 "..\\..\\..\\..\\..\\simplelink\\source\\netcfg.c"
+   1:..\..\..\..\..\simplelink\source/netcfg.c **** /*
+   2:..\..\..\..\..\simplelink\source/netcfg.c ****  * netcfg.c - CC31xx/CC32xx Host Driver Implementation
+   3:..\..\..\..\..\simplelink\source/netcfg.c ****  *
+   4:..\..\..\..\..\simplelink\source/netcfg.c ****  * Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
+   5:..\..\..\..\..\simplelink\source/netcfg.c ****  * 
+   6:..\..\..\..\..\simplelink\source/netcfg.c ****  * 
+   7:..\..\..\..\..\simplelink\source/netcfg.c ****  *  Redistribution and use in source and binary forms, with or without 
+   8:..\..\..\..\..\simplelink\source/netcfg.c ****  *  modification, are permitted provided that the following conditions 
+   9:..\..\..\..\..\simplelink\source/netcfg.c ****  *  are met:
+  10:..\..\..\..\..\simplelink\source/netcfg.c ****  *
+  11:..\..\..\..\..\simplelink\source/netcfg.c ****  *    Redistributions of source code must retain the above copyright 
+  12:..\..\..\..\..\simplelink\source/netcfg.c ****  *    notice, this list of conditions and the following disclaimer.
+  13:..\..\..\..\..\simplelink\source/netcfg.c ****  *
+  14:..\..\..\..\..\simplelink\source/netcfg.c ****  *    Redistributions in binary form must reproduce the above copyright
+  15:..\..\..\..\..\simplelink\source/netcfg.c ****  *    notice, this list of conditions and the following disclaimer in the 
+  16:..\..\..\..\..\simplelink\source/netcfg.c ****  *    documentation and/or other materials provided with the   
+  17:..\..\..\..\..\simplelink\source/netcfg.c ****  *    distribution.
+  18:..\..\..\..\..\simplelink\source/netcfg.c ****  *
+  19:..\..\..\..\..\simplelink\source/netcfg.c ****  *    Neither the name of Texas Instruments Incorporated nor the names of
+  20:..\..\..\..\..\simplelink\source/netcfg.c ****  *    its contributors may be used to endorse or promote products derived
+  21:..\..\..\..\..\simplelink\source/netcfg.c ****  *    from this software without specific prior written permission.
+  22:..\..\..\..\..\simplelink\source/netcfg.c ****  *
+  23:..\..\..\..\..\simplelink\source/netcfg.c ****  *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 2
+
+
+  24:..\..\..\..\..\simplelink\source/netcfg.c ****  *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+  25:..\..\..\..\..\simplelink\source/netcfg.c ****  *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  26:..\..\..\..\..\simplelink\source/netcfg.c ****  *  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+  27:..\..\..\..\..\simplelink\source/netcfg.c ****  *  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+  28:..\..\..\..\..\simplelink\source/netcfg.c ****  *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+  29:..\..\..\..\..\simplelink\source/netcfg.c ****  *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  30:..\..\..\..\..\simplelink\source/netcfg.c ****  *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  31:..\..\..\..\..\simplelink\source/netcfg.c ****  *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+  32:..\..\..\..\..\simplelink\source/netcfg.c ****  *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+  33:..\..\..\..\..\simplelink\source/netcfg.c ****  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  34:..\..\..\..\..\simplelink\source/netcfg.c ****  *
+  35:..\..\..\..\..\simplelink\source/netcfg.c **** */
+  36:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  37:..\..\..\..\..\simplelink\source/netcfg.c **** /*****************************************************************************
+  38:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  39:..\..\..\..\..\simplelink\source/netcfg.c ****     API Prototypes
+  40:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  41:..\..\..\..\..\simplelink\source/netcfg.c ****  *****************************************************************************/
+  42:..\..\..\..\..\simplelink\source/netcfg.c **** #include "datatypes.h"
+  43:..\..\..\..\..\simplelink\source/netcfg.c **** #include "simplelink.h"
+  44:..\..\..\..\..\simplelink\source/netcfg.c **** #include "protocol.h"
+  45:..\..\..\..\..\simplelink\source/netcfg.c **** #include "driver.h"
+  46:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  47:..\..\..\..\..\simplelink\source/netcfg.c **** /*****************************************************************************/
+  48:..\..\..\..\..\simplelink\source/netcfg.c **** /* sl_NetCfgSet */
+  49:..\..\..\..\..\simplelink\source/netcfg.c **** /*****************************************************************************/
+  50:..\..\..\..\..\simplelink\source/netcfg.c **** typedef union
+  51:..\..\..\..\..\simplelink\source/netcfg.c **** {
+  52:..\..\..\..\..\simplelink\source/netcfg.c ****     _NetCfgSetGet_t    Cmd;
+  53:..\..\..\..\..\simplelink\source/netcfg.c ****     _BasicResponse_t   Rsp;
+  54:..\..\..\..\..\simplelink\source/netcfg.c **** }_SlNetCfgMsgSet_u;
+  55:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  56:..\..\..\..\..\simplelink\source/netcfg.c **** const _SlCmdCtrl_t _SlNetCfgSetCmdCtrl =
+  57:..\..\..\..\..\simplelink\source/netcfg.c **** {
+  58:..\..\..\..\..\simplelink\source/netcfg.c ****     SL_OPCODE_DEVICE_NETCFG_SET_COMMAND,
+  59:..\..\..\..\..\simplelink\source/netcfg.c ****     sizeof(_NetCfgSetGet_t),
+  60:..\..\..\..\..\simplelink\source/netcfg.c ****     sizeof(_BasicResponse_t)
+  61:..\..\..\..\..\simplelink\source/netcfg.c **** };
+  62:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  63:..\..\..\..\..\simplelink\source/netcfg.c **** #if _SL_INCLUDE_FUNC(sl_NetCfgSet)
+  64:..\..\..\..\..\simplelink\source/netcfg.c **** long sl_NetCfgSet(unsigned char ConfigId ,unsigned char ConfigOpt,unsigned char ConfigLen, unsigned
+  65:..\..\..\..\..\simplelink\source/netcfg.c **** {
+  35              		.loc 1 65 0
+  36              		.cfi_startproc
+  37 0000 80B5     		push	{r7, lr}
+  38              	.LCFI0:
+  39              		.cfi_def_cfa_offset 8
+  40              		.cfi_offset 7, -8
+  41              		.cfi_offset 14, -4
+  42 0002 8AB0     		sub	sp, sp, #40
+  43              	.LCFI1:
+  44              		.cfi_def_cfa_offset 48
+  45 0004 00AF     		add	r7, sp, #0
+  46              	.LCFI2:
+  47              		.cfi_def_cfa_register 7
+  48 0006 3B60     		str	r3, [r7]
+  49 0008 FB1D     		add	r3, r7, #7
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 3
+
+
+  50 000a 1870     		strb	r0, [r3]
+  51 000c BB1D     		add	r3, r7, #6
+  52 000e 1970     		strb	r1, [r3]
+  53 0010 7B1D     		add	r3, r7, #5
+  54 0012 1A70     		strb	r2, [r3]
+  66:..\..\..\..\..\simplelink\source/netcfg.c ****     _SlNetCfgMsgSet_u         Msg;
+  67:..\..\..\..\..\simplelink\source/netcfg.c ****     _SlCmdExt_t               CmdExt;
+  68:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  69:..\..\..\..\..\simplelink\source/netcfg.c **** 	CmdExt.TxPayloadLen = (ConfigLen+3) & (~3);
+  55              		.loc 1 69 0
+  56 0014 7B1D     		add	r3, r7, #5
+  57 0016 1B78     		ldrb	r3, [r3]
+  58 0018 9BB2     		uxth	r3, r3
+  59 001a 0333     		add	r3, r3, #3
+  60 001c 9BB2     		uxth	r3, r3
+  61 001e 0322     		mov	r2, #3
+  62 0020 9343     		bic	r3, r2
+  63 0022 9AB2     		uxth	r2, r3
+  64 0024 3B1C     		mov	r3, r7
+  65 0026 0C33     		add	r3, r3, #12
+  66 0028 1A80     		strh	r2, [r3]
+  70:..\..\..\..\..\simplelink\source/netcfg.c ****     CmdExt.RxPayloadLen = 0;
+  67              		.loc 1 70 0
+  68 002a 3B1C     		mov	r3, r7
+  69 002c 0C33     		add	r3, r3, #12
+  70 002e 0022     		mov	r2, #0
+  71 0030 5A80     		strh	r2, [r3, #2]
+  71:..\..\..\..\..\simplelink\source/netcfg.c ****     CmdExt.pTxPayload = (UINT8 *)pValues;
+  72              		.loc 1 71 0
+  73 0032 3B1C     		mov	r3, r7
+  74 0034 0C33     		add	r3, r3, #12
+  75 0036 3A68     		ldr	r2, [r7]
+  76 0038 9A60     		str	r2, [r3, #8]
+  72:..\..\..\..\..\simplelink\source/netcfg.c ****     CmdExt.pRxPayload = NULL;
+  77              		.loc 1 72 0
+  78 003a 3B1C     		mov	r3, r7
+  79 003c 0C33     		add	r3, r3, #12
+  80 003e 0022     		mov	r2, #0
+  81 0040 DA60     		str	r2, [r3, #12]
+  73:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  74:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  75:..\..\..\..\..\simplelink\source/netcfg.c ****     Msg.Cmd.ConfigId    = ConfigId;
+  82              		.loc 1 75 0
+  83 0042 FB1D     		add	r3, r7, #7
+  84 0044 1B78     		ldrb	r3, [r3]
+  85 0046 9AB2     		uxth	r2, r3
+  86 0048 3B1C     		mov	r3, r7
+  87 004a 1C33     		add	r3, r3, #28
+  88 004c 5A80     		strh	r2, [r3, #2]
+  76:..\..\..\..\..\simplelink\source/netcfg.c ****     Msg.Cmd.ConfigLen   = ConfigLen;
+  89              		.loc 1 76 0
+  90 004e 7B1D     		add	r3, r7, #5
+  91 0050 1B78     		ldrb	r3, [r3]
+  92 0052 9AB2     		uxth	r2, r3
+  93 0054 3B1C     		mov	r3, r7
+  94 0056 1C33     		add	r3, r3, #28
+  95 0058 DA80     		strh	r2, [r3, #6]
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 4
+
+
+  77:..\..\..\..\..\simplelink\source/netcfg.c **** 	Msg.Cmd.ConfigOpt   = ConfigOpt;
+  96              		.loc 1 77 0
+  97 005a BB1D     		add	r3, r7, #6
+  98 005c 1B78     		ldrb	r3, [r3]
+  99 005e 9AB2     		uxth	r2, r3
+ 100 0060 3B1C     		mov	r3, r7
+ 101 0062 1C33     		add	r3, r3, #28
+ 102 0064 9A80     		strh	r2, [r3, #4]
+ 103              	.LBB2:
+  78:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  79:..\..\..\..\..\simplelink\source/netcfg.c ****     VERIFY_RET_OK(_SlDrvCmdOp((_SlCmdCtrl_t *)&_SlNetCfgSetCmdCtrl, &Msg, &CmdExt));
+ 104              		.loc 1 79 0
+ 105 0066 0C49     		ldr	r1, .L5
+ 106 0068 3A1C     		mov	r2, r7
+ 107 006a 1C32     		add	r2, r2, #28
+ 108 006c 3B1C     		mov	r3, r7
+ 109 006e 0C33     		add	r3, r3, #12
+ 110 0070 081C     		mov	r0, r1
+ 111 0072 111C     		mov	r1, r2
+ 112 0074 1A1C     		mov	r2, r3
+ 113 0076 FFF7FEFF 		bl	_SlDrvCmdOp
+ 114 007a 031C     		mov	r3, r0
+ 115 007c 7B62     		str	r3, [r7, #36]
+ 116 007e 7B6A     		ldr	r3, [r7, #36]
+ 117 0080 002B     		cmp	r3, #0
+ 118 0082 00D0     		beq	.L2
+ 119              	.L3:
+ 120              		.loc 1 79 0 is_stmt 0 discriminator 1
+ 121 0084 FEE7     		b	.L3
+ 122              	.L2:
+ 123              	.LBE2:
+  80:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  81:..\..\..\..\..\simplelink\source/netcfg.c ****     return (int)Msg.Rsp.status;
+ 124              		.loc 1 81 0 is_stmt 1
+ 125 0086 3B1C     		mov	r3, r7
+ 126 0088 1C33     		add	r3, r3, #28
+ 127 008a 1B88     		ldrh	r3, [r3]
+ 128 008c 1BB2     		sxth	r3, r3
+  82:..\..\..\..\..\simplelink\source/netcfg.c **** }
+ 129              		.loc 1 82 0
+ 130 008e 181C     		mov	r0, r3
+ 131 0090 BD46     		mov	sp, r7
+ 132 0092 0AB0     		add	sp, sp, #40
+ 133              		@ sp needed for prologue
+ 134 0094 80BD     		pop	{r7, pc}
+ 135              	.L6:
+ 136 0096 C046     		.align	2
+ 137              	.L5:
+ 138 0098 00000000 		.word	_SlNetCfgSetCmdCtrl
+ 139              		.cfi_endproc
+ 140              	.LFE0:
+ 141              		.size	sl_NetCfgSet, .-sl_NetCfgSet
+ 142              		.global	_SlNetCfgGetCmdCtrl
+ 143              		.section	.rodata
+ 144              		.align	2
+ 145              		.type	_SlNetCfgGetCmdCtrl, %object
+ 146              		.size	_SlNetCfgGetCmdCtrl, 4
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 5
+
+
+ 147              	_SlNetCfgGetCmdCtrl:
+ 148 0004 3384     		.short	-31693
+ 149 0006 08       		.byte	8
+ 150 0007 08       		.byte	8
+ 151              		.section	.text.sl_NetCfgGet,"ax",%progbits
+ 152              		.align	2
+ 153              		.global	sl_NetCfgGet
+ 154              		.code	16
+ 155              		.thumb_func
+ 156              		.type	sl_NetCfgGet, %function
+ 157              	sl_NetCfgGet:
+ 158              	.LFB1:
+  83:..\..\..\..\..\simplelink\source/netcfg.c **** #endif
+  84:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  85:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  86:..\..\..\..\..\simplelink\source/netcfg.c **** /*****************************************************************************/
+  87:..\..\..\..\..\simplelink\source/netcfg.c **** /* sl_NetCfgGet */
+  88:..\..\..\..\..\simplelink\source/netcfg.c **** /*****************************************************************************/
+  89:..\..\..\..\..\simplelink\source/netcfg.c **** typedef union
+  90:..\..\..\..\..\simplelink\source/netcfg.c **** {
+  91:..\..\..\..\..\simplelink\source/netcfg.c **** 	_NetCfgSetGet_t	    Cmd;
+  92:..\..\..\..\..\simplelink\source/netcfg.c **** 	_NetCfgSetGet_t	    Rsp;
+  93:..\..\..\..\..\simplelink\source/netcfg.c **** }_SlNetCfgMsgGet_u;
+  94:..\..\..\..\..\simplelink\source/netcfg.c **** 
+  95:..\..\..\..\..\simplelink\source/netcfg.c **** const _SlCmdCtrl_t _SlNetCfgGetCmdCtrl =
+  96:..\..\..\..\..\simplelink\source/netcfg.c **** {
+  97:..\..\..\..\..\simplelink\source/netcfg.c ****     SL_OPCODE_DEVICE_NETCFG_GET_COMMAND,
+  98:..\..\..\..\..\simplelink\source/netcfg.c ****     sizeof(_NetCfgSetGet_t),
+  99:..\..\..\..\..\simplelink\source/netcfg.c ****     sizeof(_NetCfgSetGet_t)
+ 100:..\..\..\..\..\simplelink\source/netcfg.c **** };
+ 101:..\..\..\..\..\simplelink\source/netcfg.c **** 
+ 102:..\..\..\..\..\simplelink\source/netcfg.c **** #if _SL_INCLUDE_FUNC(sl_NetCfgGet)
+ 103:..\..\..\..\..\simplelink\source/netcfg.c **** long sl_NetCfgGet(unsigned char ConfigId, unsigned char *pConfigOpt,unsigned char *pConfigLen, unsi
+ 104:..\..\..\..\..\simplelink\source/netcfg.c **** {
+ 159              		.loc 1 104 0
+ 160              		.cfi_startproc
+ 161 0000 80B5     		push	{r7, lr}
+ 162              	.LCFI3:
+ 163              		.cfi_def_cfa_offset 8
+ 164              		.cfi_offset 7, -8
+ 165              		.cfi_offset 14, -4
+ 166 0002 8CB0     		sub	sp, sp, #48
+ 167              	.LCFI4:
+ 168              		.cfi_def_cfa_offset 56
+ 169 0004 00AF     		add	r7, sp, #0
+ 170              	.LCFI5:
+ 171              		.cfi_def_cfa_register 7
+ 172 0006 B960     		str	r1, [r7, #8]
+ 173 0008 7A60     		str	r2, [r7, #4]
+ 174 000a 3B60     		str	r3, [r7]
+ 175 000c 3B1C     		mov	r3, r7
+ 176 000e 0F33     		add	r3, r3, #15
+ 177 0010 021C     		add	r2, r0, #0
+ 178 0012 1A70     		strb	r2, [r3]
+ 105:..\..\..\..\..\simplelink\source/netcfg.c ****     _SlNetCfgMsgGet_u         Msg;
+ 106:..\..\..\..\..\simplelink\source/netcfg.c ****     _SlCmdExt_t               CmdExt;
+ 107:..\..\..\..\..\simplelink\source/netcfg.c **** 
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 6
+
+
+ 108:..\..\..\..\..\simplelink\source/netcfg.c **** 	if (*pConfigLen == 0)
+ 179              		.loc 1 108 0
+ 180 0014 7B68     		ldr	r3, [r7, #4]
+ 181 0016 1B78     		ldrb	r3, [r3]
+ 182 0018 002B     		cmp	r3, #0
+ 183 001a 01D1     		bne	.L8
+ 109:..\..\..\..\..\simplelink\source/netcfg.c **** 	{
+ 110:..\..\..\..\..\simplelink\source/netcfg.c **** 		return SL_EZEROLEN;
+ 184              		.loc 1 110 0
+ 185 001c 2E4B     		ldr	r3, .L16
+ 186 001e 57E0     		b	.L15
+ 187              	.L8:
+ 111:..\..\..\..\..\simplelink\source/netcfg.c **** 	}
+ 112:..\..\..\..\..\simplelink\source/netcfg.c ****     CmdExt.TxPayloadLen = 0;
+ 188              		.loc 1 112 0
+ 189 0020 3B1C     		mov	r3, r7
+ 190 0022 1433     		add	r3, r3, #20
+ 191 0024 0022     		mov	r2, #0
+ 192 0026 1A80     		strh	r2, [r3]
+ 113:..\..\..\..\..\simplelink\source/netcfg.c ****     CmdExt.RxPayloadLen = *pConfigLen;
+ 193              		.loc 1 113 0
+ 194 0028 7B68     		ldr	r3, [r7, #4]
+ 195 002a 1B78     		ldrb	r3, [r3]
+ 196 002c 1A1C     		mov	r2, r3
+ 197 002e 3B1C     		mov	r3, r7
+ 198 0030 1433     		add	r3, r3, #20
+ 199 0032 5A80     		strh	r2, [r3, #2]
+ 114:..\..\..\..\..\simplelink\source/netcfg.c ****     CmdExt.pTxPayload = NULL;
+ 200              		.loc 1 114 0
+ 201 0034 3B1C     		mov	r3, r7
+ 202 0036 1433     		add	r3, r3, #20
+ 203 0038 0022     		mov	r2, #0
+ 204 003a 9A60     		str	r2, [r3, #8]
+ 115:..\..\..\..\..\simplelink\source/netcfg.c ****     CmdExt.pRxPayload = (UINT8 *)pValues;
+ 205              		.loc 1 115 0
+ 206 003c 3B1C     		mov	r3, r7
+ 207 003e 1433     		add	r3, r3, #20
+ 208 0040 3A68     		ldr	r2, [r7]
+ 209 0042 DA60     		str	r2, [r3, #12]
+ 116:..\..\..\..\..\simplelink\source/netcfg.c **** 	CmdExt.ActualRxPayloadLen = 0;
+ 210              		.loc 1 116 0
+ 211 0044 3B1C     		mov	r3, r7
+ 212 0046 1433     		add	r3, r3, #20
+ 213 0048 0022     		mov	r2, #0
+ 214 004a 9A80     		strh	r2, [r3, #4]
+ 117:..\..\..\..\..\simplelink\source/netcfg.c **** 
+ 118:..\..\..\..\..\simplelink\source/netcfg.c ****     Msg.Cmd.ConfigId    = ConfigId;
+ 215              		.loc 1 118 0
+ 216 004c 3B1C     		mov	r3, r7
+ 217 004e 0F33     		add	r3, r3, #15
+ 218 0050 1B78     		ldrb	r3, [r3]
+ 219 0052 9AB2     		uxth	r2, r3
+ 220 0054 3B1C     		mov	r3, r7
+ 221 0056 2433     		add	r3, r3, #36
+ 222 0058 5A80     		strh	r2, [r3, #2]
+ 119:..\..\..\..\..\simplelink\source/netcfg.c ****     if( pConfigOpt )
+ 223              		.loc 1 119 0
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 7
+
+
+ 224 005a BB68     		ldr	r3, [r7, #8]
+ 225 005c 002B     		cmp	r3, #0
+ 226 005e 05D0     		beq	.L10
+ 120:..\..\..\..\..\simplelink\source/netcfg.c ****     {
+ 121:..\..\..\..\..\simplelink\source/netcfg.c ****        Msg.Cmd.ConfigOpt   = (UINT16)*pConfigOpt;
+ 227              		.loc 1 121 0
+ 228 0060 BB68     		ldr	r3, [r7, #8]
+ 229 0062 1B78     		ldrb	r3, [r3]
+ 230 0064 1A1C     		mov	r2, r3
+ 231 0066 3B1C     		mov	r3, r7
+ 232 0068 2433     		add	r3, r3, #36
+ 233 006a 9A80     		strh	r2, [r3, #4]
+ 234              	.L10:
+ 235              	.LBB3:
+ 122:..\..\..\..\..\simplelink\source/netcfg.c ****     }
+ 123:..\..\..\..\..\simplelink\source/netcfg.c ****     VERIFY_RET_OK(_SlDrvCmdOp((_SlCmdCtrl_t *)&_SlNetCfgGetCmdCtrl, &Msg, &CmdExt));
+ 236              		.loc 1 123 0
+ 237 006c 1B49     		ldr	r1, .L16+4
+ 238 006e 3A1C     		mov	r2, r7
+ 239 0070 2432     		add	r2, r2, #36
+ 240 0072 3B1C     		mov	r3, r7
+ 241 0074 1433     		add	r3, r3, #20
+ 242 0076 081C     		mov	r0, r1
+ 243 0078 111C     		mov	r1, r2
+ 244 007a 1A1C     		mov	r2, r3
+ 245 007c FFF7FEFF 		bl	_SlDrvCmdOp
+ 246 0080 031C     		mov	r3, r0
+ 247 0082 FB62     		str	r3, [r7, #44]
+ 248 0084 FB6A     		ldr	r3, [r7, #44]
+ 249 0086 002B     		cmp	r3, #0
+ 250 0088 00D0     		beq	.L11
+ 251              	.L12:
+ 252              		.loc 1 123 0 is_stmt 0 discriminator 1
+ 253 008a FEE7     		b	.L12
+ 254              	.L11:
+ 255              	.LBE3:
+ 124:..\..\..\..\..\simplelink\source/netcfg.c ****    
+ 125:..\..\..\..\..\simplelink\source/netcfg.c ****      if( pConfigOpt )
+ 256              		.loc 1 125 0 is_stmt 1
+ 257 008c BB68     		ldr	r3, [r7, #8]
+ 258 008e 002B     		cmp	r3, #0
+ 259 0090 05D0     		beq	.L13
+ 126:..\..\..\..\..\simplelink\source/netcfg.c ****      {
+ 127:..\..\..\..\..\simplelink\source/netcfg.c ****        *pConfigOpt = (UINT8)Msg.Rsp.ConfigOpt;
+ 260              		.loc 1 127 0
+ 261 0092 3B1C     		mov	r3, r7
+ 262 0094 2433     		add	r3, r3, #36
+ 263 0096 9B88     		ldrh	r3, [r3, #4]
+ 264 0098 DAB2     		uxtb	r2, r3
+ 265 009a BB68     		ldr	r3, [r7, #8]
+ 266 009c 1A70     		strb	r2, [r3]
+ 267              	.L13:
+ 128:..\..\..\..\..\simplelink\source/netcfg.c ****      }
+ 129:..\..\..\..\..\simplelink\source/netcfg.c **** 	 if (CmdExt.RxPayloadLen < CmdExt.ActualRxPayloadLen) 
+ 268              		.loc 1 129 0
+ 269 009e 3B1C     		mov	r3, r7
+ 270 00a0 1433     		add	r3, r3, #20
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 8
+
+
+ 271 00a2 5A88     		ldrh	r2, [r3, #2]
+ 272 00a4 3B1C     		mov	r3, r7
+ 273 00a6 1433     		add	r3, r3, #20
+ 274 00a8 9B88     		ldrh	r3, [r3, #4]
+ 275 00aa 9A42     		cmp	r2, r3
+ 276 00ac 07D2     		bcs	.L14
+ 130:..\..\..\..\..\simplelink\source/netcfg.c **** 	 {
+ 131:..\..\..\..\..\simplelink\source/netcfg.c **** 	   *pConfigLen = (UINT8)CmdExt.RxPayloadLen;
+ 277              		.loc 1 131 0
+ 278 00ae 3B1C     		mov	r3, r7
+ 279 00b0 1433     		add	r3, r3, #20
+ 280 00b2 5B88     		ldrh	r3, [r3, #2]
+ 281 00b4 DAB2     		uxtb	r2, r3
+ 282 00b6 7B68     		ldr	r3, [r7, #4]
+ 283 00b8 1A70     		strb	r2, [r3]
+ 132:..\..\..\..\..\simplelink\source/netcfg.c **** 	    return SL_ESMALLBUF;
+ 284              		.loc 1 132 0
+ 285 00ba 094B     		ldr	r3, .L16+8
+ 286 00bc 08E0     		b	.L15
+ 287              	.L14:
+ 133:..\..\..\..\..\simplelink\source/netcfg.c **** 	 }
+ 134:..\..\..\..\..\simplelink\source/netcfg.c **** 	else
+ 135:..\..\..\..\..\simplelink\source/netcfg.c **** 	{
+ 136:..\..\..\..\..\simplelink\source/netcfg.c **** 		*pConfigLen = (UINT8)CmdExt.ActualRxPayloadLen;
+ 288              		.loc 1 136 0
+ 289 00be 3B1C     		mov	r3, r7
+ 290 00c0 1433     		add	r3, r3, #20
+ 291 00c2 9B88     		ldrh	r3, [r3, #4]
+ 292 00c4 DAB2     		uxtb	r2, r3
+ 293 00c6 7B68     		ldr	r3, [r7, #4]
+ 294 00c8 1A70     		strb	r2, [r3]
+ 137:..\..\..\..\..\simplelink\source/netcfg.c **** 	}
+ 138:..\..\..\..\..\simplelink\source/netcfg.c **** 
+ 139:..\..\..\..\..\simplelink\source/netcfg.c ****     return (int)Msg.Rsp.Status;
+ 295              		.loc 1 139 0
+ 296 00ca 3B1C     		mov	r3, r7
+ 297 00cc 2433     		add	r3, r3, #36
+ 298 00ce 1B88     		ldrh	r3, [r3]
+ 299              	.L15:
+ 140:..\..\..\..\..\simplelink\source/netcfg.c **** }
+ 300              		.loc 1 140 0
+ 301 00d0 181C     		mov	r0, r3
+ 302 00d2 BD46     		mov	sp, r7
+ 303 00d4 0CB0     		add	sp, sp, #48
+ 304              		@ sp needed for prologue
+ 305 00d6 80BD     		pop	{r7, pc}
+ 306              	.L17:
+ 307              		.align	2
+ 308              	.L16:
+ 309 00d8 2EF8FFFF 		.word	-2002
+ 310 00dc 00000000 		.word	_SlNetCfgGetCmdCtrl
+ 311 00e0 2FF8FFFF 		.word	-2001
+ 312              		.cfi_endproc
+ 313              	.LFE1:
+ 314              		.size	sl_NetCfgGet, .-sl_NetCfgGet
+ 315              		.text
+ 316              	.Letext0:
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 9
+
+
+ 317              		.file 2 "..\\..\\..\\..\\..\\simplelink\\source\\datatypes.h"
+ 318              		.file 3 "..\\..\\..\\..\\..\\simplelink\\source\\protocol.h"
+ 319              		.file 4 "..\\..\\..\\..\\..\\simplelink\\source\\driver.h"
+ 320              		.section	.debug_info,"",%progbits
+ 321              	.Ldebug_info0:
+ 322 0000 92030000 		.4byte	0x392
+ 323 0004 0200     		.2byte	0x2
+ 324 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 325 000a 04       		.byte	0x4
+ 326 000b 01       		.uleb128 0x1
+ 327 000c A0020000 		.4byte	.LASF48
+ 328 0010 01       		.byte	0x1
+ 329 0011 BC010000 		.4byte	.LASF49
+ 330 0015 65000000 		.4byte	.LASF50
+ 331 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 332 001d 00000000 		.4byte	0
+ 333 0021 00000000 		.4byte	0
+ 334 0025 00000000 		.4byte	.Ldebug_line0
+ 335 0029 02       		.uleb128 0x2
+ 336 002a 01       		.byte	0x1
+ 337 002b 06       		.byte	0x6
+ 338 002c 2E030000 		.4byte	.LASF0
+ 339 0030 03       		.uleb128 0x3
+ 340 0031 4B000000 		.4byte	.LASF2
+ 341 0035 02       		.byte	0x2
+ 342 0036 45       		.byte	0x45
+ 343 0037 3B000000 		.4byte	0x3b
+ 344 003b 02       		.uleb128 0x2
+ 345 003c 01       		.byte	0x1
+ 346 003d 08       		.byte	0x8
+ 347 003e 42010000 		.4byte	.LASF1
+ 348 0042 03       		.uleb128 0x3
+ 349 0043 1A020000 		.4byte	.LASF3
+ 350 0047 02       		.byte	0x2
+ 351 0048 4A       		.byte	0x4a
+ 352 0049 4D000000 		.4byte	0x4d
+ 353 004d 02       		.uleb128 0x2
+ 354 004e 02       		.byte	0x2
+ 355 004f 05       		.byte	0x5
+ 356 0050 78020000 		.4byte	.LASF4
+ 357 0054 03       		.uleb128 0x3
+ 358 0055 57020000 		.4byte	.LASF5
+ 359 0059 02       		.byte	0x2
+ 360 005a 4F       		.byte	0x4f
+ 361 005b 5F000000 		.4byte	0x5f
+ 362 005f 02       		.uleb128 0x2
+ 363 0060 02       		.byte	0x2
+ 364 0061 07       		.byte	0x7
+ 365 0062 F4000000 		.4byte	.LASF6
+ 366 0066 02       		.uleb128 0x2
+ 367 0067 04       		.byte	0x4
+ 368 0068 05       		.byte	0x5
+ 369 0069 07030000 		.4byte	.LASF7
+ 370 006d 02       		.uleb128 0x2
+ 371 006e 04       		.byte	0x4
+ 372 006f 07       		.byte	0x7
+ 373 0070 64010000 		.4byte	.LASF8
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 10
+
+
+ 374 0074 02       		.uleb128 0x2
+ 375 0075 08       		.byte	0x8
+ 376 0076 07       		.byte	0x7
+ 377 0077 2B010000 		.4byte	.LASF9
+ 378 007b 04       		.uleb128 0x4
+ 379 007c 494E5400 		.ascii	"INT\000"
+ 380 0080 02       		.byte	0x2
+ 381 0081 6D       		.byte	0x6d
+ 382 0082 86000000 		.4byte	0x86
+ 383 0086 05       		.uleb128 0x5
+ 384 0087 04       		.byte	0x4
+ 385 0088 05       		.byte	0x5
+ 386 0089 696E7400 		.ascii	"int\000"
+ 387 008d 02       		.uleb128 0x2
+ 388 008e 01       		.byte	0x1
+ 389 008f 08       		.byte	0x8
+ 390 0090 FD010000 		.4byte	.LASF10
+ 391 0094 02       		.uleb128 0x2
+ 392 0095 04       		.byte	0x4
+ 393 0096 04       		.byte	0x4
+ 394 0097 25010000 		.4byte	.LASF11
+ 395 009b 02       		.uleb128 0x2
+ 396 009c 08       		.byte	0x8
+ 397 009d 04       		.byte	0x4
+ 398 009e A3010000 		.4byte	.LASF12
+ 399 00a2 03       		.uleb128 0x3
+ 400 00a3 E9020000 		.4byte	.LASF13
+ 401 00a7 02       		.byte	0x2
+ 402 00a8 73       		.byte	0x73
+ 403 00a9 54000000 		.4byte	0x54
+ 404 00ad 03       		.uleb128 0x3
+ 405 00ae 57010000 		.4byte	.LASF14
+ 406 00b2 02       		.byte	0x2
+ 407 00b3 74       		.byte	0x74
+ 408 00b4 30000000 		.4byte	0x30
+ 409 00b8 03       		.uleb128 0x3
+ 410 00b9 7E010000 		.4byte	.LASF15
+ 411 00bd 02       		.byte	0x2
+ 412 00be 76       		.byte	0x76
+ 413 00bf 7B000000 		.4byte	0x7b
+ 414 00c3 02       		.uleb128 0x2
+ 415 00c4 04       		.byte	0x4
+ 416 00c5 07       		.byte	0x7
+ 417 00c6 F0010000 		.4byte	.LASF16
+ 418 00ca 02       		.uleb128 0x2
+ 419 00cb 08       		.byte	0x8
+ 420 00cc 05       		.byte	0x5
+ 421 00cd 3E020000 		.4byte	.LASF17
+ 422 00d1 02       		.uleb128 0x2
+ 423 00d2 04       		.byte	0x4
+ 424 00d3 07       		.byte	0x7
+ 425 00d4 2A020000 		.4byte	.LASF18
+ 426 00d8 06       		.uleb128 0x6
+ 427 00d9 04       		.byte	0x4
+ 428 00da 3B000000 		.4byte	0x3b
+ 429 00de 07       		.uleb128 0x7
+ 430 00df 04       		.byte	0x4
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 11
+
+
+ 431 00e0 03       		.byte	0x3
+ 432 00e1 7C01     		.2byte	0x17c
+ 433 00e3 06010000 		.4byte	0x106
+ 434 00e7 08       		.uleb128 0x8
+ 435 00e8 1E010000 		.4byte	.LASF19
+ 436 00ec 03       		.byte	0x3
+ 437 00ed 7E01     		.2byte	0x17e
+ 438 00ef 42000000 		.4byte	0x42
+ 439 00f3 02       		.byte	0x2
+ 440 00f4 23       		.byte	0x23
+ 441 00f5 00       		.uleb128 0
+ 442 00f6 08       		.uleb128 0x8
+ 443 00f7 12020000 		.4byte	.LASF20
+ 444 00fb 03       		.byte	0x3
+ 445 00fc 7F01     		.2byte	0x17f
+ 446 00fe 54000000 		.4byte	0x54
+ 447 0102 02       		.byte	0x2
+ 448 0103 23       		.byte	0x23
+ 449 0104 02       		.uleb128 0x2
+ 450 0105 00       		.byte	0
+ 451 0106 09       		.uleb128 0x9
+ 452 0107 1D030000 		.4byte	.LASF21
+ 453 010b 03       		.byte	0x3
+ 454 010c 8101     		.2byte	0x181
+ 455 010e DE000000 		.4byte	0xde
+ 456 0112 07       		.uleb128 0x7
+ 457 0113 08       		.byte	0x8
+ 458 0114 03       		.byte	0x3
+ 459 0115 CE02     		.2byte	0x2ce
+ 460 0117 58010000 		.4byte	0x158
+ 461 011b 08       		.uleb128 0x8
+ 462 011c 5E000000 		.4byte	.LASF22
+ 463 0120 03       		.byte	0x3
+ 464 0121 D002     		.2byte	0x2d0
+ 465 0123 54000000 		.4byte	0x54
+ 466 0127 02       		.byte	0x2
+ 467 0128 23       		.byte	0x23
+ 468 0129 00       		.uleb128 0
+ 469 012a 08       		.uleb128 0x8
+ 470 012b 28000000 		.4byte	.LASF23
+ 471 012f 03       		.byte	0x3
+ 472 0130 D102     		.2byte	0x2d1
+ 473 0132 54000000 		.4byte	0x54
+ 474 0136 02       		.byte	0x2
+ 475 0137 23       		.byte	0x23
+ 476 0138 02       		.uleb128 0x2
+ 477 0139 08       		.uleb128 0x8
+ 478 013a E6010000 		.4byte	.LASF24
+ 479 013e 03       		.byte	0x3
+ 480 013f D202     		.2byte	0x2d2
+ 481 0141 54000000 		.4byte	0x54
+ 482 0145 02       		.byte	0x2
+ 483 0146 23       		.byte	0x23
+ 484 0147 04       		.uleb128 0x4
+ 485 0148 08       		.uleb128 0x8
+ 486 0149 20020000 		.4byte	.LASF25
+ 487 014d 03       		.byte	0x3
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 12
+
+
+ 488 014e D302     		.2byte	0x2d3
+ 489 0150 54000000 		.4byte	0x54
+ 490 0154 02       		.byte	0x2
+ 491 0155 23       		.byte	0x23
+ 492 0156 06       		.uleb128 0x6
+ 493 0157 00       		.byte	0
+ 494 0158 09       		.uleb128 0x9
+ 495 0159 02020000 		.4byte	.LASF26
+ 496 015d 03       		.byte	0x3
+ 497 015e D402     		.2byte	0x2d4
+ 498 0160 12010000 		.4byte	0x112
+ 499 0164 0A       		.uleb128 0xa
+ 500 0165 04       		.byte	0x4
+ 501 0166 04       		.byte	0x4
+ 502 0167 28       		.byte	0x28
+ 503 0168 97010000 		.4byte	0x197
+ 504 016c 0B       		.uleb128 0xb
+ 505 016d AA010000 		.4byte	.LASF27
+ 506 0171 04       		.byte	0x4
+ 507 0172 2A       		.byte	0x2a
+ 508 0173 A2000000 		.4byte	0xa2
+ 509 0177 02       		.byte	0x2
+ 510 0178 23       		.byte	0x23
+ 511 0179 00       		.uleb128 0
+ 512 017a 0B       		.uleb128 0xb
+ 513 017b 14010000 		.4byte	.LASF28
+ 514 017f 04       		.byte	0x4
+ 515 0180 2B       		.byte	0x2b
+ 516 0181 AD000000 		.4byte	0xad
+ 517 0185 02       		.byte	0x2
+ 518 0186 23       		.byte	0x23
+ 519 0187 02       		.uleb128 0x2
+ 520 0188 0B       		.uleb128 0xb
+ 521 0189 8D010000 		.4byte	.LASF29
+ 522 018d 04       		.byte	0x4
+ 523 018e 2C       		.byte	0x2c
+ 524 018f AD000000 		.4byte	0xad
+ 525 0193 02       		.byte	0x2
+ 526 0194 23       		.byte	0x23
+ 527 0195 03       		.uleb128 0x3
+ 528 0196 00       		.byte	0
+ 529 0197 03       		.uleb128 0x3
+ 530 0198 3E000000 		.4byte	.LASF30
+ 531 019c 04       		.byte	0x4
+ 532 019d 2D       		.byte	0x2d
+ 533 019e 64010000 		.4byte	0x164
+ 534 01a2 0A       		.uleb128 0xa
+ 535 01a3 10       		.byte	0x10
+ 536 01a4 04       		.byte	0x4
+ 537 01a5 2F       		.byte	0x2f
+ 538 01a6 F1010000 		.4byte	0x1f1
+ 539 01aa 0B       		.uleb128 0xb
+ 540 01ab 51000000 		.4byte	.LASF31
+ 541 01af 04       		.byte	0x4
+ 542 01b0 31       		.byte	0x31
+ 543 01b1 54000000 		.4byte	0x54
+ 544 01b5 02       		.byte	0x2
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 13
+
+
+ 545 01b6 23       		.byte	0x23
+ 546 01b7 00       		.uleb128 0
+ 547 01b8 0B       		.uleb128 0xb
+ 548 01b9 07010000 		.4byte	.LASF32
+ 549 01bd 04       		.byte	0x4
+ 550 01be 32       		.byte	0x32
+ 551 01bf 54000000 		.4byte	0x54
+ 552 01c3 02       		.byte	0x2
+ 553 01c4 23       		.byte	0x23
+ 554 01c5 02       		.uleb128 0x2
+ 555 01c6 0B       		.uleb128 0xb
+ 556 01c7 8D020000 		.4byte	.LASF33
+ 557 01cb 04       		.byte	0x4
+ 558 01cc 33       		.byte	0x33
+ 559 01cd 54000000 		.4byte	0x54
+ 560 01d1 02       		.byte	0x2
+ 561 01d2 23       		.byte	0x23
+ 562 01d3 04       		.uleb128 0x4
+ 563 01d4 0B       		.uleb128 0xb
+ 564 01d5 B1010000 		.4byte	.LASF34
+ 565 01d9 04       		.byte	0x4
+ 566 01da 34       		.byte	0x34
+ 567 01db F1010000 		.4byte	0x1f1
+ 568 01df 02       		.byte	0x2
+ 569 01e0 23       		.byte	0x23
+ 570 01e1 08       		.uleb128 0x8
+ 571 01e2 0B       		.uleb128 0xb
+ 572 01e3 4C020000 		.4byte	.LASF35
+ 573 01e7 04       		.byte	0x4
+ 574 01e8 35       		.byte	0x35
+ 575 01e9 F1010000 		.4byte	0x1f1
+ 576 01ed 02       		.byte	0x2
+ 577 01ee 23       		.byte	0x23
+ 578 01ef 0C       		.uleb128 0xc
+ 579 01f0 00       		.byte	0
+ 580 01f1 06       		.uleb128 0x6
+ 581 01f2 04       		.byte	0x4
+ 582 01f3 30000000 		.4byte	0x30
+ 583 01f7 03       		.uleb128 0x3
+ 584 01f8 97010000 		.4byte	.LASF36
+ 585 01fc 04       		.byte	0x4
+ 586 01fd 36       		.byte	0x36
+ 587 01fe A2010000 		.4byte	0x1a2
+ 588 0202 0C       		.uleb128 0xc
+ 589 0203 08       		.byte	0x8
+ 590 0204 01       		.byte	0x1
+ 591 0205 32       		.byte	0x32
+ 592 0206 21020000 		.4byte	0x221
+ 593 020a 0D       		.uleb128 0xd
+ 594 020b 436D6400 		.ascii	"Cmd\000"
+ 595 020f 01       		.byte	0x1
+ 596 0210 34       		.byte	0x34
+ 597 0211 58010000 		.4byte	0x158
+ 598 0215 0D       		.uleb128 0xd
+ 599 0216 52737000 		.ascii	"Rsp\000"
+ 600 021a 01       		.byte	0x1
+ 601 021b 35       		.byte	0x35
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 14
+
+
+ 602 021c 06010000 		.4byte	0x106
+ 603 0220 00       		.byte	0
+ 604 0221 03       		.uleb128 0x3
+ 605 0222 66020000 		.4byte	.LASF37
+ 606 0226 01       		.byte	0x1
+ 607 0227 36       		.byte	0x36
+ 608 0228 02020000 		.4byte	0x202
+ 609 022c 0C       		.uleb128 0xc
+ 610 022d 08       		.byte	0x8
+ 611 022e 01       		.byte	0x1
+ 612 022f 59       		.byte	0x59
+ 613 0230 4B020000 		.4byte	0x24b
+ 614 0234 0D       		.uleb128 0xd
+ 615 0235 436D6400 		.ascii	"Cmd\000"
+ 616 0239 01       		.byte	0x1
+ 617 023a 5B       		.byte	0x5b
+ 618 023b 58010000 		.4byte	0x158
+ 619 023f 0D       		.uleb128 0xd
+ 620 0240 52737000 		.ascii	"Rsp\000"
+ 621 0244 01       		.byte	0x1
+ 622 0245 5C       		.byte	0x5c
+ 623 0246 58010000 		.4byte	0x158
+ 624 024a 00       		.byte	0
+ 625 024b 03       		.uleb128 0x3
+ 626 024c F5020000 		.4byte	.LASF38
+ 627 0250 01       		.byte	0x1
+ 628 0251 5D       		.byte	0x5d
+ 629 0252 2C020000 		.4byte	0x22c
+ 630 0256 0E       		.uleb128 0xe
+ 631 0257 01       		.byte	0x1
+ 632 0258 31000000 		.4byte	.LASF42
+ 633 025c 01       		.byte	0x1
+ 634 025d 40       		.byte	0x40
+ 635 025e 01       		.byte	0x1
+ 636 025f 66000000 		.4byte	0x66
+ 637 0263 00000000 		.4byte	.LFB0
+ 638 0267 9C000000 		.4byte	.LFE0
+ 639 026b 00000000 		.4byte	.LLST0
+ 640 026f 01       		.byte	0x1
+ 641 0270 E1020000 		.4byte	0x2e1
+ 642 0274 0F       		.uleb128 0xf
+ 643 0275 28000000 		.4byte	.LASF23
+ 644 0279 01       		.byte	0x1
+ 645 027a 40       		.byte	0x40
+ 646 027b 3B000000 		.4byte	0x3b
+ 647 027f 02       		.byte	0x2
+ 648 0280 91       		.byte	0x91
+ 649 0281 57       		.sleb128 -41
+ 650 0282 0F       		.uleb128 0xf
+ 651 0283 E6010000 		.4byte	.LASF24
+ 652 0287 01       		.byte	0x1
+ 653 0288 40       		.byte	0x40
+ 654 0289 3B000000 		.4byte	0x3b
+ 655 028d 02       		.byte	0x2
+ 656 028e 91       		.byte	0x91
+ 657 028f 56       		.sleb128 -42
+ 658 0290 0F       		.uleb128 0xf
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 15
+
+
+ 659 0291 20020000 		.4byte	.LASF25
+ 660 0295 01       		.byte	0x1
+ 661 0296 40       		.byte	0x40
+ 662 0297 3B000000 		.4byte	0x3b
+ 663 029b 02       		.byte	0x2
+ 664 029c 91       		.byte	0x91
+ 665 029d 55       		.sleb128 -43
+ 666 029e 0F       		.uleb128 0xf
+ 667 029f 76010000 		.4byte	.LASF39
+ 668 02a3 01       		.byte	0x1
+ 669 02a4 40       		.byte	0x40
+ 670 02a5 D8000000 		.4byte	0xd8
+ 671 02a9 02       		.byte	0x2
+ 672 02aa 91       		.byte	0x91
+ 673 02ab 50       		.sleb128 -48
+ 674 02ac 10       		.uleb128 0x10
+ 675 02ad 4D736700 		.ascii	"Msg\000"
+ 676 02b1 01       		.byte	0x1
+ 677 02b2 42       		.byte	0x42
+ 678 02b3 21020000 		.4byte	0x221
+ 679 02b7 02       		.byte	0x2
+ 680 02b8 91       		.byte	0x91
+ 681 02b9 6C       		.sleb128 -20
+ 682 02ba 11       		.uleb128 0x11
+ 683 02bb 50010000 		.4byte	.LASF40
+ 684 02bf 01       		.byte	0x1
+ 685 02c0 43       		.byte	0x43
+ 686 02c1 F7010000 		.4byte	0x1f7
+ 687 02c5 02       		.byte	0x2
+ 688 02c6 91       		.byte	0x91
+ 689 02c7 5C       		.sleb128 -36
+ 690 02c8 12       		.uleb128 0x12
+ 691 02c9 66000000 		.4byte	.LBB2
+ 692 02cd 86000000 		.4byte	.LBE2
+ 693 02d1 11       		.uleb128 0x11
+ 694 02d2 5E020000 		.4byte	.LASF41
+ 695 02d6 01       		.byte	0x1
+ 696 02d7 4F       		.byte	0x4f
+ 697 02d8 B8000000 		.4byte	0xb8
+ 698 02dc 02       		.byte	0x2
+ 699 02dd 91       		.byte	0x91
+ 700 02de 74       		.sleb128 -12
+ 701 02df 00       		.byte	0
+ 702 02e0 00       		.byte	0
+ 703 02e1 0E       		.uleb128 0xe
+ 704 02e2 01       		.byte	0x1
+ 705 02e3 10030000 		.4byte	.LASF43
+ 706 02e7 01       		.byte	0x1
+ 707 02e8 67       		.byte	0x67
+ 708 02e9 01       		.byte	0x1
+ 709 02ea 66000000 		.4byte	0x66
+ 710 02ee 00000000 		.4byte	.LFB1
+ 711 02f2 E4000000 		.4byte	.LFE1
+ 712 02f6 38000000 		.4byte	.LLST1
+ 713 02fa 01       		.byte	0x1
+ 714 02fb 6C030000 		.4byte	0x36c
+ 715 02ff 0F       		.uleb128 0xf
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 16
+
+
+ 716 0300 28000000 		.4byte	.LASF23
+ 717 0304 01       		.byte	0x1
+ 718 0305 67       		.byte	0x67
+ 719 0306 3B000000 		.4byte	0x3b
+ 720 030a 02       		.byte	0x2
+ 721 030b 91       		.byte	0x91
+ 722 030c 57       		.sleb128 -41
+ 723 030d 0F       		.uleb128 0xf
+ 724 030e 33020000 		.4byte	.LASF44
+ 725 0312 01       		.byte	0x1
+ 726 0313 67       		.byte	0x67
+ 727 0314 D8000000 		.4byte	0xd8
+ 728 0318 02       		.byte	0x2
+ 729 0319 91       		.byte	0x91
+ 730 031a 50       		.sleb128 -48
+ 731 031b 0F       		.uleb128 0xf
+ 732 031c 82020000 		.4byte	.LASF45
+ 733 0320 01       		.byte	0x1
+ 734 0321 67       		.byte	0x67
+ 735 0322 D8000000 		.4byte	0xd8
+ 736 0326 02       		.byte	0x2
+ 737 0327 91       		.byte	0x91
+ 738 0328 4C       		.sleb128 -52
+ 739 0329 0F       		.uleb128 0xf
+ 740 032a 76010000 		.4byte	.LASF39
+ 741 032e 01       		.byte	0x1
+ 742 032f 67       		.byte	0x67
+ 743 0330 D8000000 		.4byte	0xd8
+ 744 0334 02       		.byte	0x2
+ 745 0335 91       		.byte	0x91
+ 746 0336 48       		.sleb128 -56
+ 747 0337 10       		.uleb128 0x10
+ 748 0338 4D736700 		.ascii	"Msg\000"
+ 749 033c 01       		.byte	0x1
+ 750 033d 69       		.byte	0x69
+ 751 033e 4B020000 		.4byte	0x24b
+ 752 0342 02       		.byte	0x2
+ 753 0343 91       		.byte	0x91
+ 754 0344 6C       		.sleb128 -20
+ 755 0345 11       		.uleb128 0x11
+ 756 0346 50010000 		.4byte	.LASF40
+ 757 034a 01       		.byte	0x1
+ 758 034b 6A       		.byte	0x6a
+ 759 034c F7010000 		.4byte	0x1f7
+ 760 0350 02       		.byte	0x2
+ 761 0351 91       		.byte	0x91
+ 762 0352 5C       		.sleb128 -36
+ 763 0353 12       		.uleb128 0x12
+ 764 0354 6C000000 		.4byte	.LBB3
+ 765 0358 8C000000 		.4byte	.LBE3
+ 766 035c 11       		.uleb128 0x11
+ 767 035d 5E020000 		.4byte	.LASF41
+ 768 0361 01       		.byte	0x1
+ 769 0362 7B       		.byte	0x7b
+ 770 0363 B8000000 		.4byte	0xb8
+ 771 0367 02       		.byte	0x2
+ 772 0368 91       		.byte	0x91
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 17
+
+
+ 773 0369 74       		.sleb128 -12
+ 774 036a 00       		.byte	0
+ 775 036b 00       		.byte	0
+ 776 036c 13       		.uleb128 0x13
+ 777 036d 00000000 		.4byte	.LASF46
+ 778 0371 01       		.byte	0x1
+ 779 0372 38       		.byte	0x38
+ 780 0373 7E030000 		.4byte	0x37e
+ 781 0377 01       		.byte	0x1
+ 782 0378 05       		.byte	0x5
+ 783 0379 03       		.byte	0x3
+ 784 037a 00000000 		.4byte	_SlNetCfgSetCmdCtrl
+ 785 037e 14       		.uleb128 0x14
+ 786 037f 97010000 		.4byte	0x197
+ 787 0383 13       		.uleb128 0x13
+ 788 0384 14000000 		.4byte	.LASF47
+ 789 0388 01       		.byte	0x1
+ 790 0389 5F       		.byte	0x5f
+ 791 038a 7E030000 		.4byte	0x37e
+ 792 038e 01       		.byte	0x1
+ 793 038f 05       		.byte	0x5
+ 794 0390 03       		.byte	0x3
+ 795 0391 00000000 		.4byte	_SlNetCfgGetCmdCtrl
+ 796 0395 00       		.byte	0
+ 797              		.section	.debug_abbrev,"",%progbits
+ 798              	.Ldebug_abbrev0:
+ 799 0000 01       		.uleb128 0x1
+ 800 0001 11       		.uleb128 0x11
+ 801 0002 01       		.byte	0x1
+ 802 0003 25       		.uleb128 0x25
+ 803 0004 0E       		.uleb128 0xe
+ 804 0005 13       		.uleb128 0x13
+ 805 0006 0B       		.uleb128 0xb
+ 806 0007 03       		.uleb128 0x3
+ 807 0008 0E       		.uleb128 0xe
+ 808 0009 1B       		.uleb128 0x1b
+ 809 000a 0E       		.uleb128 0xe
+ 810 000b 55       		.uleb128 0x55
+ 811 000c 06       		.uleb128 0x6
+ 812 000d 11       		.uleb128 0x11
+ 813 000e 01       		.uleb128 0x1
+ 814 000f 52       		.uleb128 0x52
+ 815 0010 01       		.uleb128 0x1
+ 816 0011 10       		.uleb128 0x10
+ 817 0012 06       		.uleb128 0x6
+ 818 0013 00       		.byte	0
+ 819 0014 00       		.byte	0
+ 820 0015 02       		.uleb128 0x2
+ 821 0016 24       		.uleb128 0x24
+ 822 0017 00       		.byte	0
+ 823 0018 0B       		.uleb128 0xb
+ 824 0019 0B       		.uleb128 0xb
+ 825 001a 3E       		.uleb128 0x3e
+ 826 001b 0B       		.uleb128 0xb
+ 827 001c 03       		.uleb128 0x3
+ 828 001d 0E       		.uleb128 0xe
+ 829 001e 00       		.byte	0
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 18
+
+
+ 830 001f 00       		.byte	0
+ 831 0020 03       		.uleb128 0x3
+ 832 0021 16       		.uleb128 0x16
+ 833 0022 00       		.byte	0
+ 834 0023 03       		.uleb128 0x3
+ 835 0024 0E       		.uleb128 0xe
+ 836 0025 3A       		.uleb128 0x3a
+ 837 0026 0B       		.uleb128 0xb
+ 838 0027 3B       		.uleb128 0x3b
+ 839 0028 0B       		.uleb128 0xb
+ 840 0029 49       		.uleb128 0x49
+ 841 002a 13       		.uleb128 0x13
+ 842 002b 00       		.byte	0
+ 843 002c 00       		.byte	0
+ 844 002d 04       		.uleb128 0x4
+ 845 002e 16       		.uleb128 0x16
+ 846 002f 00       		.byte	0
+ 847 0030 03       		.uleb128 0x3
+ 848 0031 08       		.uleb128 0x8
+ 849 0032 3A       		.uleb128 0x3a
+ 850 0033 0B       		.uleb128 0xb
+ 851 0034 3B       		.uleb128 0x3b
+ 852 0035 0B       		.uleb128 0xb
+ 853 0036 49       		.uleb128 0x49
+ 854 0037 13       		.uleb128 0x13
+ 855 0038 00       		.byte	0
+ 856 0039 00       		.byte	0
+ 857 003a 05       		.uleb128 0x5
+ 858 003b 24       		.uleb128 0x24
+ 859 003c 00       		.byte	0
+ 860 003d 0B       		.uleb128 0xb
+ 861 003e 0B       		.uleb128 0xb
+ 862 003f 3E       		.uleb128 0x3e
+ 863 0040 0B       		.uleb128 0xb
+ 864 0041 03       		.uleb128 0x3
+ 865 0042 08       		.uleb128 0x8
+ 866 0043 00       		.byte	0
+ 867 0044 00       		.byte	0
+ 868 0045 06       		.uleb128 0x6
+ 869 0046 0F       		.uleb128 0xf
+ 870 0047 00       		.byte	0
+ 871 0048 0B       		.uleb128 0xb
+ 872 0049 0B       		.uleb128 0xb
+ 873 004a 49       		.uleb128 0x49
+ 874 004b 13       		.uleb128 0x13
+ 875 004c 00       		.byte	0
+ 876 004d 00       		.byte	0
+ 877 004e 07       		.uleb128 0x7
+ 878 004f 13       		.uleb128 0x13
+ 879 0050 01       		.byte	0x1
+ 880 0051 0B       		.uleb128 0xb
+ 881 0052 0B       		.uleb128 0xb
+ 882 0053 3A       		.uleb128 0x3a
+ 883 0054 0B       		.uleb128 0xb
+ 884 0055 3B       		.uleb128 0x3b
+ 885 0056 05       		.uleb128 0x5
+ 886 0057 01       		.uleb128 0x1
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 19
+
+
+ 887 0058 13       		.uleb128 0x13
+ 888 0059 00       		.byte	0
+ 889 005a 00       		.byte	0
+ 890 005b 08       		.uleb128 0x8
+ 891 005c 0D       		.uleb128 0xd
+ 892 005d 00       		.byte	0
+ 893 005e 03       		.uleb128 0x3
+ 894 005f 0E       		.uleb128 0xe
+ 895 0060 3A       		.uleb128 0x3a
+ 896 0061 0B       		.uleb128 0xb
+ 897 0062 3B       		.uleb128 0x3b
+ 898 0063 05       		.uleb128 0x5
+ 899 0064 49       		.uleb128 0x49
+ 900 0065 13       		.uleb128 0x13
+ 901 0066 38       		.uleb128 0x38
+ 902 0067 0A       		.uleb128 0xa
+ 903 0068 00       		.byte	0
+ 904 0069 00       		.byte	0
+ 905 006a 09       		.uleb128 0x9
+ 906 006b 16       		.uleb128 0x16
+ 907 006c 00       		.byte	0
+ 908 006d 03       		.uleb128 0x3
+ 909 006e 0E       		.uleb128 0xe
+ 910 006f 3A       		.uleb128 0x3a
+ 911 0070 0B       		.uleb128 0xb
+ 912 0071 3B       		.uleb128 0x3b
+ 913 0072 05       		.uleb128 0x5
+ 914 0073 49       		.uleb128 0x49
+ 915 0074 13       		.uleb128 0x13
+ 916 0075 00       		.byte	0
+ 917 0076 00       		.byte	0
+ 918 0077 0A       		.uleb128 0xa
+ 919 0078 13       		.uleb128 0x13
+ 920 0079 01       		.byte	0x1
+ 921 007a 0B       		.uleb128 0xb
+ 922 007b 0B       		.uleb128 0xb
+ 923 007c 3A       		.uleb128 0x3a
+ 924 007d 0B       		.uleb128 0xb
+ 925 007e 3B       		.uleb128 0x3b
+ 926 007f 0B       		.uleb128 0xb
+ 927 0080 01       		.uleb128 0x1
+ 928 0081 13       		.uleb128 0x13
+ 929 0082 00       		.byte	0
+ 930 0083 00       		.byte	0
+ 931 0084 0B       		.uleb128 0xb
+ 932 0085 0D       		.uleb128 0xd
+ 933 0086 00       		.byte	0
+ 934 0087 03       		.uleb128 0x3
+ 935 0088 0E       		.uleb128 0xe
+ 936 0089 3A       		.uleb128 0x3a
+ 937 008a 0B       		.uleb128 0xb
+ 938 008b 3B       		.uleb128 0x3b
+ 939 008c 0B       		.uleb128 0xb
+ 940 008d 49       		.uleb128 0x49
+ 941 008e 13       		.uleb128 0x13
+ 942 008f 38       		.uleb128 0x38
+ 943 0090 0A       		.uleb128 0xa
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 20
+
+
+ 944 0091 00       		.byte	0
+ 945 0092 00       		.byte	0
+ 946 0093 0C       		.uleb128 0xc
+ 947 0094 17       		.uleb128 0x17
+ 948 0095 01       		.byte	0x1
+ 949 0096 0B       		.uleb128 0xb
+ 950 0097 0B       		.uleb128 0xb
+ 951 0098 3A       		.uleb128 0x3a
+ 952 0099 0B       		.uleb128 0xb
+ 953 009a 3B       		.uleb128 0x3b
+ 954 009b 0B       		.uleb128 0xb
+ 955 009c 01       		.uleb128 0x1
+ 956 009d 13       		.uleb128 0x13
+ 957 009e 00       		.byte	0
+ 958 009f 00       		.byte	0
+ 959 00a0 0D       		.uleb128 0xd
+ 960 00a1 0D       		.uleb128 0xd
+ 961 00a2 00       		.byte	0
+ 962 00a3 03       		.uleb128 0x3
+ 963 00a4 08       		.uleb128 0x8
+ 964 00a5 3A       		.uleb128 0x3a
+ 965 00a6 0B       		.uleb128 0xb
+ 966 00a7 3B       		.uleb128 0x3b
+ 967 00a8 0B       		.uleb128 0xb
+ 968 00a9 49       		.uleb128 0x49
+ 969 00aa 13       		.uleb128 0x13
+ 970 00ab 00       		.byte	0
+ 971 00ac 00       		.byte	0
+ 972 00ad 0E       		.uleb128 0xe
+ 973 00ae 2E       		.uleb128 0x2e
+ 974 00af 01       		.byte	0x1
+ 975 00b0 3F       		.uleb128 0x3f
+ 976 00b1 0C       		.uleb128 0xc
+ 977 00b2 03       		.uleb128 0x3
+ 978 00b3 0E       		.uleb128 0xe
+ 979 00b4 3A       		.uleb128 0x3a
+ 980 00b5 0B       		.uleb128 0xb
+ 981 00b6 3B       		.uleb128 0x3b
+ 982 00b7 0B       		.uleb128 0xb
+ 983 00b8 27       		.uleb128 0x27
+ 984 00b9 0C       		.uleb128 0xc
+ 985 00ba 49       		.uleb128 0x49
+ 986 00bb 13       		.uleb128 0x13
+ 987 00bc 11       		.uleb128 0x11
+ 988 00bd 01       		.uleb128 0x1
+ 989 00be 12       		.uleb128 0x12
+ 990 00bf 01       		.uleb128 0x1
+ 991 00c0 40       		.uleb128 0x40
+ 992 00c1 06       		.uleb128 0x6
+ 993 00c2 9642     		.uleb128 0x2116
+ 994 00c4 0C       		.uleb128 0xc
+ 995 00c5 01       		.uleb128 0x1
+ 996 00c6 13       		.uleb128 0x13
+ 997 00c7 00       		.byte	0
+ 998 00c8 00       		.byte	0
+ 999 00c9 0F       		.uleb128 0xf
+ 1000 00ca 05       		.uleb128 0x5
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 21
+
+
+ 1001 00cb 00       		.byte	0
+ 1002 00cc 03       		.uleb128 0x3
+ 1003 00cd 0E       		.uleb128 0xe
+ 1004 00ce 3A       		.uleb128 0x3a
+ 1005 00cf 0B       		.uleb128 0xb
+ 1006 00d0 3B       		.uleb128 0x3b
+ 1007 00d1 0B       		.uleb128 0xb
+ 1008 00d2 49       		.uleb128 0x49
+ 1009 00d3 13       		.uleb128 0x13
+ 1010 00d4 02       		.uleb128 0x2
+ 1011 00d5 0A       		.uleb128 0xa
+ 1012 00d6 00       		.byte	0
+ 1013 00d7 00       		.byte	0
+ 1014 00d8 10       		.uleb128 0x10
+ 1015 00d9 34       		.uleb128 0x34
+ 1016 00da 00       		.byte	0
+ 1017 00db 03       		.uleb128 0x3
+ 1018 00dc 08       		.uleb128 0x8
+ 1019 00dd 3A       		.uleb128 0x3a
+ 1020 00de 0B       		.uleb128 0xb
+ 1021 00df 3B       		.uleb128 0x3b
+ 1022 00e0 0B       		.uleb128 0xb
+ 1023 00e1 49       		.uleb128 0x49
+ 1024 00e2 13       		.uleb128 0x13
+ 1025 00e3 02       		.uleb128 0x2
+ 1026 00e4 0A       		.uleb128 0xa
+ 1027 00e5 00       		.byte	0
+ 1028 00e6 00       		.byte	0
+ 1029 00e7 11       		.uleb128 0x11
+ 1030 00e8 34       		.uleb128 0x34
+ 1031 00e9 00       		.byte	0
+ 1032 00ea 03       		.uleb128 0x3
+ 1033 00eb 0E       		.uleb128 0xe
+ 1034 00ec 3A       		.uleb128 0x3a
+ 1035 00ed 0B       		.uleb128 0xb
+ 1036 00ee 3B       		.uleb128 0x3b
+ 1037 00ef 0B       		.uleb128 0xb
+ 1038 00f0 49       		.uleb128 0x49
+ 1039 00f1 13       		.uleb128 0x13
+ 1040 00f2 02       		.uleb128 0x2
+ 1041 00f3 0A       		.uleb128 0xa
+ 1042 00f4 00       		.byte	0
+ 1043 00f5 00       		.byte	0
+ 1044 00f6 12       		.uleb128 0x12
+ 1045 00f7 0B       		.uleb128 0xb
+ 1046 00f8 01       		.byte	0x1
+ 1047 00f9 11       		.uleb128 0x11
+ 1048 00fa 01       		.uleb128 0x1
+ 1049 00fb 12       		.uleb128 0x12
+ 1050 00fc 01       		.uleb128 0x1
+ 1051 00fd 00       		.byte	0
+ 1052 00fe 00       		.byte	0
+ 1053 00ff 13       		.uleb128 0x13
+ 1054 0100 34       		.uleb128 0x34
+ 1055 0101 00       		.byte	0
+ 1056 0102 03       		.uleb128 0x3
+ 1057 0103 0E       		.uleb128 0xe
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 22
+
+
+ 1058 0104 3A       		.uleb128 0x3a
+ 1059 0105 0B       		.uleb128 0xb
+ 1060 0106 3B       		.uleb128 0x3b
+ 1061 0107 0B       		.uleb128 0xb
+ 1062 0108 49       		.uleb128 0x49
+ 1063 0109 13       		.uleb128 0x13
+ 1064 010a 3F       		.uleb128 0x3f
+ 1065 010b 0C       		.uleb128 0xc
+ 1066 010c 02       		.uleb128 0x2
+ 1067 010d 0A       		.uleb128 0xa
+ 1068 010e 00       		.byte	0
+ 1069 010f 00       		.byte	0
+ 1070 0110 14       		.uleb128 0x14
+ 1071 0111 26       		.uleb128 0x26
+ 1072 0112 00       		.byte	0
+ 1073 0113 49       		.uleb128 0x49
+ 1074 0114 13       		.uleb128 0x13
+ 1075 0115 00       		.byte	0
+ 1076 0116 00       		.byte	0
+ 1077 0117 00       		.byte	0
+ 1078              		.section	.debug_loc,"",%progbits
+ 1079              	.Ldebug_loc0:
+ 1080              	.LLST0:
+ 1081 0000 00000000 		.4byte	.LFB0
+ 1082 0004 02000000 		.4byte	.LCFI0
+ 1083 0008 0200     		.2byte	0x2
+ 1084 000a 7D       		.byte	0x7d
+ 1085 000b 00       		.sleb128 0
+ 1086 000c 02000000 		.4byte	.LCFI0
+ 1087 0010 04000000 		.4byte	.LCFI1
+ 1088 0014 0200     		.2byte	0x2
+ 1089 0016 7D       		.byte	0x7d
+ 1090 0017 08       		.sleb128 8
+ 1091 0018 04000000 		.4byte	.LCFI1
+ 1092 001c 06000000 		.4byte	.LCFI2
+ 1093 0020 0200     		.2byte	0x2
+ 1094 0022 7D       		.byte	0x7d
+ 1095 0023 30       		.sleb128 48
+ 1096 0024 06000000 		.4byte	.LCFI2
+ 1097 0028 9C000000 		.4byte	.LFE0
+ 1098 002c 0200     		.2byte	0x2
+ 1099 002e 77       		.byte	0x77
+ 1100 002f 30       		.sleb128 48
+ 1101 0030 00000000 		.4byte	0
+ 1102 0034 00000000 		.4byte	0
+ 1103              	.LLST1:
+ 1104 0038 00000000 		.4byte	.LFB1
+ 1105 003c 02000000 		.4byte	.LCFI3
+ 1106 0040 0200     		.2byte	0x2
+ 1107 0042 7D       		.byte	0x7d
+ 1108 0043 00       		.sleb128 0
+ 1109 0044 02000000 		.4byte	.LCFI3
+ 1110 0048 04000000 		.4byte	.LCFI4
+ 1111 004c 0200     		.2byte	0x2
+ 1112 004e 7D       		.byte	0x7d
+ 1113 004f 08       		.sleb128 8
+ 1114 0050 04000000 		.4byte	.LCFI4
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 23
+
+
+ 1115 0054 06000000 		.4byte	.LCFI5
+ 1116 0058 0200     		.2byte	0x2
+ 1117 005a 7D       		.byte	0x7d
+ 1118 005b 38       		.sleb128 56
+ 1119 005c 06000000 		.4byte	.LCFI5
+ 1120 0060 E4000000 		.4byte	.LFE1
+ 1121 0064 0200     		.2byte	0x2
+ 1122 0066 77       		.byte	0x77
+ 1123 0067 38       		.sleb128 56
+ 1124 0068 00000000 		.4byte	0
+ 1125 006c 00000000 		.4byte	0
+ 1126              		.section	.debug_aranges,"",%progbits
+ 1127 0000 24000000 		.4byte	0x24
+ 1128 0004 0200     		.2byte	0x2
+ 1129 0006 00000000 		.4byte	.Ldebug_info0
+ 1130 000a 04       		.byte	0x4
+ 1131 000b 00       		.byte	0
+ 1132 000c 0000     		.2byte	0
+ 1133 000e 0000     		.2byte	0
+ 1134 0010 00000000 		.4byte	.LFB0
+ 1135 0014 9C000000 		.4byte	.LFE0-.LFB0
+ 1136 0018 00000000 		.4byte	.LFB1
+ 1137 001c E4000000 		.4byte	.LFE1-.LFB1
+ 1138 0020 00000000 		.4byte	0
+ 1139 0024 00000000 		.4byte	0
+ 1140              		.section	.debug_ranges,"",%progbits
+ 1141              	.Ldebug_ranges0:
+ 1142 0000 00000000 		.4byte	.LFB0
+ 1143 0004 9C000000 		.4byte	.LFE0
+ 1144 0008 00000000 		.4byte	.LFB1
+ 1145 000c E4000000 		.4byte	.LFE1
+ 1146 0010 00000000 		.4byte	0
+ 1147 0014 00000000 		.4byte	0
+ 1148              		.section	.debug_line,"",%progbits
+ 1149              	.Ldebug_line0:
+ 1150 0000 BA000000 		.section	.debug_str,"MS",%progbits,1
+ 1150      02006900 
+ 1150      00000201 
+ 1150      FB0E0D00 
+ 1150      01010101 
+ 1151              	.LASF46:
+ 1152 0000 5F536C4E 		.ascii	"_SlNetCfgSetCmdCtrl\000"
+ 1152      65744366 
+ 1152      67536574 
+ 1152      436D6443 
+ 1152      74726C00 
+ 1153              	.LASF47:
+ 1154 0014 5F536C4E 		.ascii	"_SlNetCfgGetCmdCtrl\000"
+ 1154      65744366 
+ 1154      67476574 
+ 1154      436D6443 
+ 1154      74726C00 
+ 1155              	.LASF23:
+ 1156 0028 436F6E66 		.ascii	"ConfigId\000"
+ 1156      69674964 
+ 1156      00
+ 1157              	.LASF42:
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 24
+
+
+ 1158 0031 736C5F4E 		.ascii	"sl_NetCfgSet\000"
+ 1158      65744366 
+ 1158      67536574 
+ 1158      00
+ 1159              	.LASF30:
+ 1160 003e 5F536C43 		.ascii	"_SlCmdCtrl_t\000"
+ 1160      6D644374 
+ 1160      726C5F74 
+ 1160      00
+ 1161              	.LASF2:
+ 1162 004b 55494E54 		.ascii	"UINT8\000"
+ 1162      3800
+ 1163              	.LASF31:
+ 1164 0051 54785061 		.ascii	"TxPayloadLen\000"
+ 1164      796C6F61 
+ 1164      644C656E 
+ 1164      00
+ 1165              	.LASF22:
+ 1166 005e 53746174 		.ascii	"Status\000"
+ 1166      757300
+ 1167              	.LASF50:
+ 1168 0065 433A5C55 		.ascii	"C:\\Users\\X0217454\\Desktop\\CC31xx\\CC3100 - 0.5\\"
+ 1168      73657273 
+ 1168      5C583032 
+ 1168      31373435 
+ 1168      345C4465 
+ 1169 0093 43433331 		.ascii	"CC3100 SDK 0.5\\cc3100-sdk\\platform\\cypress_SDK.5"
+ 1169      30302053 
+ 1169      444B2030 
+ 1169      2E355C63 
+ 1169      63333130 
+ 1170 00c3 5C657861 		.ascii	"\\example\\wlan_station_spi\\wlan_station_spi.cydsn"
+ 1170      6D706C65 
+ 1170      5C776C61 
+ 1170      6E5F7374 
+ 1170      6174696F 
+ 1171 00f3 00       		.ascii	"\000"
+ 1172              	.LASF6:
+ 1173 00f4 73686F72 		.ascii	"short unsigned int\000"
+ 1173      7420756E 
+ 1173      7369676E 
+ 1173      65642069 
+ 1173      6E7400
+ 1174              	.LASF32:
+ 1175 0107 52785061 		.ascii	"RxPayloadLen\000"
+ 1175      796C6F61 
+ 1175      644C656E 
+ 1175      00
+ 1176              	.LASF28:
+ 1177 0114 54784465 		.ascii	"TxDescLen\000"
+ 1177      73634C65 
+ 1177      6E00
+ 1178              	.LASF19:
+ 1179 011e 73746174 		.ascii	"status\000"
+ 1179      757300
+ 1180              	.LASF11:
+ 1181 0125 666C6F61 		.ascii	"float\000"
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 25
+
+
+ 1181      7400
+ 1182              	.LASF9:
+ 1183 012b 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1183      206C6F6E 
+ 1183      6720756E 
+ 1183      7369676E 
+ 1183      65642069 
+ 1184              	.LASF1:
+ 1185 0142 756E7369 		.ascii	"unsigned char\000"
+ 1185      676E6564 
+ 1185      20636861 
+ 1185      7200
+ 1186              	.LASF40:
+ 1187 0150 436D6445 		.ascii	"CmdExt\000"
+ 1187      787400
+ 1188              	.LASF14:
+ 1189 0157 5F536C41 		.ascii	"_SlArgSize_t\000"
+ 1189      72675369 
+ 1189      7A655F74 
+ 1189      00
+ 1190              	.LASF8:
+ 1191 0164 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1191      20756E73 
+ 1191      69676E65 
+ 1191      6420696E 
+ 1191      7400
+ 1192              	.LASF39:
+ 1193 0176 7056616C 		.ascii	"pValues\000"
+ 1193      75657300 
+ 1194              	.LASF15:
+ 1195 017e 5F536C52 		.ascii	"_SlReturnVal_t\000"
+ 1195      65747572 
+ 1195      6E56616C 
+ 1195      5F7400
+ 1196              	.LASF29:
+ 1197 018d 52784465 		.ascii	"RxDescLen\000"
+ 1197      73634C65 
+ 1197      6E00
+ 1198              	.LASF36:
+ 1199 0197 5F536C43 		.ascii	"_SlCmdExt_t\000"
+ 1199      6D644578 
+ 1199      745F7400 
+ 1200              	.LASF12:
+ 1201 01a3 646F7562 		.ascii	"double\000"
+ 1201      6C6500
+ 1202              	.LASF27:
+ 1203 01aa 4F70636F 		.ascii	"Opcode\000"
+ 1203      646500
+ 1204              	.LASF34:
+ 1205 01b1 70547850 		.ascii	"pTxPayload\000"
+ 1205      61796C6F 
+ 1205      616400
+ 1206              	.LASF49:
+ 1207 01bc 2E2E5C2E 		.ascii	"..\\..\\..\\..\\..\\simplelink\\source\\netcfg.c\000"
+ 1207      2E5C2E2E 
+ 1207      5C2E2E5C 
+ 1207      2E2E5C73 
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 26
+
+
+ 1207      696D706C 
+ 1208              	.LASF24:
+ 1209 01e6 436F6E66 		.ascii	"ConfigOpt\000"
+ 1209      69674F70 
+ 1209      7400
+ 1210              	.LASF16:
+ 1211 01f0 756E7369 		.ascii	"unsigned int\000"
+ 1211      676E6564 
+ 1211      20696E74 
+ 1211      00
+ 1212              	.LASF10:
+ 1213 01fd 63686172 		.ascii	"char\000"
+ 1213      00
+ 1214              	.LASF26:
+ 1215 0202 5F4E6574 		.ascii	"_NetCfgSetGet_t\000"
+ 1215      43666753 
+ 1215      65744765 
+ 1215      745F7400 
+ 1216              	.LASF20:
+ 1217 0212 70616464 		.ascii	"padding\000"
+ 1217      696E6700 
+ 1218              	.LASF3:
+ 1219 021a 494E5431 		.ascii	"INT16\000"
+ 1219      3600
+ 1220              	.LASF25:
+ 1221 0220 436F6E66 		.ascii	"ConfigLen\000"
+ 1221      69674C65 
+ 1221      6E00
+ 1222              	.LASF18:
+ 1223 022a 73697A65 		.ascii	"sizetype\000"
+ 1223      74797065 
+ 1223      00
+ 1224              	.LASF44:
+ 1225 0233 70436F6E 		.ascii	"pConfigOpt\000"
+ 1225      6669674F 
+ 1225      707400
+ 1226              	.LASF17:
+ 1227 023e 6C6F6E67 		.ascii	"long long int\000"
+ 1227      206C6F6E 
+ 1227      6720696E 
+ 1227      7400
+ 1228              	.LASF35:
+ 1229 024c 70527850 		.ascii	"pRxPayload\000"
+ 1229      61796C6F 
+ 1229      616400
+ 1230              	.LASF5:
+ 1231 0257 55494E54 		.ascii	"UINT16\000"
+ 1231      313600
+ 1232              	.LASF41:
+ 1233 025e 5F526574 		.ascii	"_RetVal\000"
+ 1233      56616C00 
+ 1234              	.LASF37:
+ 1235 0266 5F536C4E 		.ascii	"_SlNetCfgMsgSet_u\000"
+ 1235      65744366 
+ 1235      674D7367 
+ 1235      5365745F 
+ 1235      7500
+ARM GAS  C:\Users\X0217454\AppData\Local\Temp\ccytybTo.s 			page 27
+
+
+ 1236              	.LASF4:
+ 1237 0278 73686F72 		.ascii	"short int\000"
+ 1237      7420696E 
+ 1237      7400
+ 1238              	.LASF45:
+ 1239 0282 70436F6E 		.ascii	"pConfigLen\000"
+ 1239      6669674C 
+ 1239      656E00
+ 1240              	.LASF33:
+ 1241 028d 41637475 		.ascii	"ActualRxPayloadLen\000"
+ 1241      616C5278 
+ 1241      5061796C 
+ 1241      6F61644C 
+ 1241      656E00
+ 1242              	.LASF48:
+ 1243 02a0 474E5520 		.ascii	"GNU C 4.7.3 20130312 (release) [ARM/embedded-4_7-br"
+ 1243      4320342E 
+ 1243      372E3320 
+ 1243      32303133 
+ 1243      30333132 
+ 1244 02d3 616E6368 		.ascii	"anch revision 196615]\000"
+ 1244      20726576 
+ 1244      6973696F 
+ 1244      6E203139 
+ 1244      36363135 
+ 1245              	.LASF13:
+ 1246 02e9 5F536C4F 		.ascii	"_SlOpcode_t\000"
+ 1246      70636F64 
+ 1246      655F7400 
+ 1247              	.LASF38:
+ 1248 02f5 5F536C4E 		.ascii	"_SlNetCfgMsgGet_u\000"
+ 1248      65744366 
+ 1248      674D7367 
+ 1248      4765745F 
+ 1248      7500
+ 1249              	.LASF7:
+ 1250 0307 6C6F6E67 		.ascii	"long int\000"
+ 1250      20696E74 
+ 1250      00
+ 1251              	.LASF43:
+ 1252 0310 736C5F4E 		.ascii	"sl_NetCfgGet\000"
+ 1252      65744366 
+ 1252      67476574 
+ 1252      00
+ 1253              	.LASF21:
+ 1254 031d 5F426173 		.ascii	"_BasicResponse_t\000"
+ 1254      69635265 
+ 1254      73706F6E 
+ 1254      73655F74 
+ 1254      00
+ 1255              	.LASF0:
+ 1256 032e 7369676E 		.ascii	"signed char\000"
+ 1256      65642063 
+ 1256      68617200 
+ 1257              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.7.3 20130312 (release) [ARM/embedded-4_7-br
